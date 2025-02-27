@@ -2,13 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "DeserializableScene",
   "type": "object",
-  "required": [
-    "ambientLight",
-    "camera",
-    "lights",
-    "objects",
-    "skyColor"
-  ],
+  "required": ["ambientLight", "camera", "lights", "objects", "skyColor"],
   "properties": {
     "ambientLight": {
       "$ref": "#/definitions/HDRColor"
@@ -37,13 +31,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "direction",
-            "fov",
-            "fovMode",
-            "position",
-            "type"
-          ],
+          "required": ["direction", "fov", "fovMode", "position", "type"],
           "properties": {
             "direction": {
               "$ref": "#/definitions/Direction"
@@ -60,9 +48,7 @@
             },
             "type": {
               "type": "string",
-              "enum": [
-                "perspective"
-              ]
+              "enum": ["perspective"]
             }
           }
         }
@@ -72,11 +58,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "color",
-            "position",
-            "type"
-          ],
+          "required": ["color", "position", "type"],
           "properties": {
             "color": {
               "$ref": "#/definitions/HDRColor"
@@ -86,9 +68,7 @@
             },
             "type": {
               "type": "string",
-              "enum": [
-                "point"
-              ]
+              "enum": ["point"]
             }
           }
         }
@@ -98,12 +78,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "albedo",
-            "position",
-            "radius",
-            "type"
-          ],
+          "required": ["albedo", "position", "radius", "type"],
           "properties": {
             "albedo": {
               "$ref": "#/definitions/LDRColor"
@@ -117,20 +92,13 @@
             },
             "type": {
               "type": "string",
-              "enum": [
-                "sphere"
-              ]
+              "enum": ["sphere"]
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "albedo",
-            "normal",
-            "position",
-            "type"
-          ],
+          "required": ["albedo", "normal", "position", "type"],
           "properties": {
             "albedo": {
               "$ref": "#/definitions/LDRColor"
@@ -143,9 +111,29 @@
             },
             "type": {
               "type": "string",
-              "enum": [
-                "plane"
-              ]
+              "enum": ["plane"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["albedo", "position", "size", "scale", "type"],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "size": {
+              "$ref": "#/definitions/Size"
+            },
+            "scale": {
+              "$ref": "#/definitions/Scale"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["cube"]
             }
           }
         }
@@ -157,11 +145,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "x",
-            "y",
-            "z"
-          ],
+          "required": ["x", "y", "z"],
           "properties": {
             "x": {
               "type": "number",
@@ -192,38 +176,27 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "type"
-          ],
+          "required": ["type"],
           "properties": {
             "type": {
               "type": "string",
-              "enum": [
-                "x"
-              ]
+              "enum": ["x"]
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "type"
-          ],
+          "required": ["type"],
           "properties": {
             "type": {
               "type": "string",
-              "enum": [
-                "y"
-              ]
+              "enum": ["y"]
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "aspectRatio",
-            "type"
-          ],
+          "required": ["aspectRatio", "type"],
           "properties": {
             "aspectRatio": {
               "type": "number",
@@ -231,18 +204,13 @@
             },
             "type": {
               "type": "string",
-              "enum": [
-                "cover"
-              ]
+              "enum": ["cover"]
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "aspectRatio",
-            "type"
-          ],
+          "required": ["aspectRatio", "type"],
           "properties": {
             "aspectRatio": {
               "type": "number",
@@ -250,9 +218,7 @@
             },
             "type": {
               "type": "string",
-              "enum": [
-                "contain"
-              ]
+              "enum": ["contain"]
             }
           }
         }
@@ -264,11 +230,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "b",
-            "g",
-            "r"
-          ],
+          "required": ["b", "g", "r"],
           "properties": {
             "b": {
               "type": "number",
@@ -301,11 +263,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "b",
-            "g",
-            "r"
-          ],
+          "required": ["b", "g", "r"],
           "properties": {
             "b": {
               "type": "number",
@@ -332,17 +290,82 @@
         }
       ]
     },
+
+    "Size": {
+      "title": "Size",
+      "description": "A 3D object Size, either as an object `{x, y, z}` or a tuple `[x, y, z]`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["x", "y", "z"],
+          "properties": {
+            "x": {
+              "type": "number",
+              "format": "float"
+            },
+            "y": {
+              "type": "number",
+              "format": "float"
+            },
+            "z": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxItems": 3,
+          "minItems": 3
+        }
+      ]
+    },
+
+    "Scale": {
+      "title": "Scale",
+      "description": "A 3D object Scale, either as an object `{x, y, z}` or a tuple `[x, y, z]`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["x", "y", "z"],
+          "properties": {
+            "x": {
+              "type": "number",
+              "format": "float"
+            },
+            "y": {
+              "type": "number",
+              "format": "float"
+            },
+            "z": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxItems": 3,
+          "minItems": 3
+        }
+      ]
+    },
+
     "Position": {
       "title": "Position",
       "description": "A 3D position, either as an object `{x, y, z}` or a tuple `[x, y, z]`.",
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "x",
-            "y",
-            "z"
-          ],
+          "required": ["x", "y", "z"],
           "properties": {
             "x": {
               "type": "number",

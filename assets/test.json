@@ -29,9 +29,10 @@
       "albedo": [0.5, 1, 0.5]
     },
     {
-      "type": "sphere",
-      "position": [3, 0, 0],
-      "radius": 1,
+      "type": "cube",
+      "position": [1, 0, 0],
+      "size": [2, 2, 2],
+      "scale": [1, 1, 1],
       "albedo": [0.5, 0.5, 1]
     }
   ],

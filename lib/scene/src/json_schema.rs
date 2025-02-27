@@ -73,6 +73,136 @@ impl JsonSchema for PositionSchema {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct SizeSchema {
+    x: f32,
+    y: f32,
+    z: f32,
+}
+
+impl JsonSchema for SizeSchema {
+    fn schema_name() -> String {
+        "Position".to_string()
+    }
+
+    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+        Schema::Object(SchemaObject {
+            metadata: Some(Box::new(Metadata {
+                title: Some("Position".to_string()),
+                description: Some(
+                    "A 3D position, either as an object `{x, y, z}` or a tuple `[x, y, z]`."
+                        .to_string(),
+                ),
+                ..Default::default()
+            })),
+            instance_type: None, // We define multiple formats below
+            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+                one_of: Some(vec![
+                    // Object format: { x: f32, y: f32, z: f32 }
+                    Schema::Object(SchemaObject {
+                        instance_type: Some(InstanceType::Object.into()),
+                        object: Some(Box::new(ObjectValidation {
+                            properties: [
+                                ("x".to_string(), gen.subschema_for::<f32>()),
+                                ("y".to_string(), gen.subschema_for::<f32>()),
+                                ("z".to_string(), gen.subschema_for::<f32>()),
+                            ]
+                            .into_iter()
+                            .collect(),
+                            required: BTreeSet::from([
+                                "x".to_string(),
+                                "y".to_string(),
+                                "z".to_string(),
+                            ]),
+                            ..Default::default()
+                        })),
+                        ..Default::default()
+                    }),
+                    // Tuple format: [x, y, z]
+                    Schema::Object(SchemaObject {
+                        instance_type: Some(InstanceType::Array.into()),
+                        array: Some(Box::new(schemars::schema::ArrayValidation {
+                            items: Some(gen.subschema_for::<f32>().into()),
+                            min_items: Some(3),
+                            max_items: Some(3),
+                            ..Default::default()
+                        })),
+                        ..Default::default()
+                    }),
+                ]),
+                ..Default::default()
+            })),
+            ..Default::default()
+        })
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ScaleSchema {
+    x: f32,
+    y: f32,
+    z: f32,
+}
+
+impl JsonSchema for ScaleSchema {
+    fn schema_name() -> String {
+        "Position".to_string()
+    }
+
+    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+        Schema::Object(SchemaObject {
+            metadata: Some(Box::new(Metadata {
+                title: Some("Position".to_string()),
+                description: Some(
+                    "A 3D position, either as an object `{x, y, z}` or a tuple `[x, y, z]`."
+                        .to_string(),
+                ),
+                ..Default::default()
+            })),
+            instance_type: None, // We define multiple formats below
+            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+                one_of: Some(vec![
+                    // Object format: { x: f32, y: f32, z: f32 }
+                    Schema::Object(SchemaObject {
+                        instance_type: Some(InstanceType::Object.into()),
+                        object: Some(Box::new(ObjectValidation {
+                            properties: [
+                                ("x".to_string(), gen.subschema_for::<f32>()),
+                                ("y".to_string(), gen.subschema_for::<f32>()),
+                                ("z".to_string(), gen.subschema_for::<f32>()),
+                            ]
+                            .into_iter()
+                            .collect(),
+                            required: BTreeSet::from([
+                                "x".to_string(),
+                                "y".to_string(),
+                                "z".to_string(),
+                            ]),
+                            ..Default::default()
+                        })),
+                        ..Default::default()
+                    }),
+                    // Tuple format: [x, y, z]
+                    Schema::Object(SchemaObject {
+                        instance_type: Some(InstanceType::Array.into()),
+                        array: Some(Box::new(schemars::schema::ArrayValidation {
+                            items: Some(gen.subschema_for::<f32>().into()),
+                            min_items: Some(3),
+                            max_items: Some(3),
+                            ..Default::default()
+                        })),
+                        ..Default::default()
+                    }),
+                ]),
+                ..Default::default()
+            })),
+            ..Default::default()
+        })
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DirectionSchema {
     x: f32,
     y: f32,

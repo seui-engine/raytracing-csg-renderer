@@ -1,9 +1,12 @@
-use plane::Plane;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::RTObject;
+
+use cube::Cube;
+use plane::Plane;
 use sphere::Sphere;
 
+pub mod cube;
 pub mod plane;
 pub mod sphere;
 
@@ -12,6 +15,7 @@ pub mod sphere;
 pub enum DeserializableRTObject {
     Sphere(Sphere),
     Plane(Plane),
+    Cube(Cube),
 }
 
 impl DeserializableRTObject {
@@ -19,6 +23,7 @@ impl DeserializableRTObject {
         match self {
             DeserializableRTObject::Sphere(o) => Box::new(o),
             DeserializableRTObject::Plane(o) => Box::new(o),
+            DeserializableRTObject::Cube(o) => Box::new(o),
         }
     }
 }
