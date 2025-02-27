@@ -1,19 +1,23 @@
 use glam::Vec3;
+use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
     rt::{Camera, Ray},
 };
 
-use crate::deserialize::{deserialize_direction, deserialize_position};
+use crate::{
+    deserialize::{deserialize_direction, deserialize_position},
+    json_schema::{DirectionSchema, PositionSchema},
+};
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct AspectRatio {
     aspect_ratio: f32,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum FovMode {
     X,
@@ -22,14 +26,16 @@ pub enum FovMode {
     Contain(AspectRatio),
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct DeserializablePerspectiveCamera {
     fov: f32,
     fov_mode: FovMode,
     #[serde(deserialize_with = "deserialize_position")]
+    #[schemars(with = "PositionSchema")]
     position: Position,
     #[serde(deserialize_with = "deserialize_direction")]
+    #[schemars(with = "DirectionSchema")]
     direction: Direction,
 }
 

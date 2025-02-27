@@ -2,26 +2,31 @@ use std::rc::Rc;
 
 use camera::DeserializableCamera;
 use deserialize::deserialize_hdr_color;
+use json_schema::HDRColorSchema;
 use light::DeserializableLight;
 use object::DeserializableRTObject;
+use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::Scene;
 use seui_engine_raytracing_csg_renderer_types::HDRColor;
 
 pub mod camera;
 pub mod deserialize;
+pub mod json_schema;
 pub mod light;
 pub mod object;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct DeserializableScene {
     pub camera: DeserializableCamera,
     pub objects: Vec<DeserializableRTObject>,
     pub lights: Vec<DeserializableLight>,
     #[serde(deserialize_with = "deserialize_hdr_color")]
+    #[schemars(with = "HDRColorSchema")]
     pub sky_color: HDRColor,
     #[serde(deserialize_with = "deserialize_hdr_color")]
+    #[schemars(with = "HDRColorSchema")]
     pub ambient_light: HDRColor,
 }
 

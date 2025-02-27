@@ -1,10 +1,11 @@
 use perspective::DeserializablePerspectiveCamera;
+use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::Camera;
 
 pub mod perspective;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum DeserializableCamera {
     Perspective(DeserializablePerspectiveCamera),

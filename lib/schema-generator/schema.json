@@ -1,0 +1,373 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DeserializableScene",
+  "type": "object",
+  "required": [
+    "ambientLight",
+    "camera",
+    "lights",
+    "objects",
+    "skyColor"
+  ],
+  "properties": {
+    "ambientLight": {
+      "$ref": "#/definitions/HDRColor"
+    },
+    "camera": {
+      "$ref": "#/definitions/DeserializableCamera"
+    },
+    "lights": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/DeserializableLight"
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/DeserializableRTObject"
+      }
+    },
+    "skyColor": {
+      "$ref": "#/definitions/HDRColor"
+    }
+  },
+  "definitions": {
+    "DeserializableCamera": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "direction",
+            "fov",
+            "fovMode",
+            "position",
+            "type"
+          ],
+          "properties": {
+            "direction": {
+              "$ref": "#/definitions/Direction"
+            },
+            "fov": {
+              "type": "number",
+              "format": "float"
+            },
+            "fovMode": {
+              "$ref": "#/definitions/FovMode"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "perspective"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "DeserializableLight": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "color",
+            "position",
+            "type"
+          ],
+          "properties": {
+            "color": {
+              "$ref": "#/definitions/HDRColor"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "point"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "DeserializableRTObject": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "albedo",
+            "position",
+            "radius",
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "sphere"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "albedo",
+            "normal",
+            "position",
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "normal": {
+              "$ref": "#/definitions/Direction"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "plane"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Direction": {
+      "title": "Direction",
+      "description": "A 3D normal, either as an object `{x, y, z}` or a tuple `[x, y, z]`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "properties": {
+            "x": {
+              "type": "number",
+              "format": "float"
+            },
+            "y": {
+              "type": "number",
+              "format": "float"
+            },
+            "z": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxItems": 3,
+          "minItems": 3
+        }
+      ]
+    },
+    "FovMode": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "x"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "y"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "aspectRatio",
+            "type"
+          ],
+          "properties": {
+            "aspectRatio": {
+              "type": "number",
+              "format": "float"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "cover"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "aspectRatio",
+            "type"
+          ],
+          "properties": {
+            "aspectRatio": {
+              "type": "number",
+              "format": "float"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "contain"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "HDRColor": {
+      "title": "HDRColor",
+      "description": "A HDR color, either as an object `{r, g, b}` or a tuple `[r, g, b]`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "b",
+            "g",
+            "r"
+          ],
+          "properties": {
+            "b": {
+              "type": "number",
+              "format": "float"
+            },
+            "g": {
+              "type": "number",
+              "format": "float"
+            },
+            "r": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxItems": 3,
+          "minItems": 3
+        }
+      ]
+    },
+    "LDRColor": {
+      "title": "LDRColor",
+      "description": "A LDR color, either as an object `{r, g, b}` or a tuple `[r, g, b]`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "b",
+            "g",
+            "r"
+          ],
+          "properties": {
+            "b": {
+              "type": "number",
+              "format": "float"
+            },
+            "g": {
+              "type": "number",
+              "format": "float"
+            },
+            "r": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxItems": 3,
+          "minItems": 3
+        }
+      ]
+    },
+    "Position": {
+      "title": "Position",
+      "description": "A 3D position, either as an object `{x, y, z}` or a tuple `[x, y, z]`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
+          "properties": {
+            "x": {
+              "type": "number",
+              "format": "float"
+            },
+            "y": {
+              "type": "number",
+              "format": "float"
+            },
+            "z": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxItems": 3,
+          "minItems": 3
+        }
+      ]
+    }
+  }
+}

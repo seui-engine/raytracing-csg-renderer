@@ -1,3 +1,10 @@
 [workspace]
 resolver = "2"
-members = [ "core", "main", "scene","types"]
+members = [
+    "lib/core",
+    "lib/main",
+    "lib/scene",
+    "lib/schema-generator",
+    "lib/types",
+]
+default-members = ["lib/main"]

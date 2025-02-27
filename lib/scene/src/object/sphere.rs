@@ -1,7 +1,10 @@
 use std::rc::Rc;
 
+use crate::json_schema::{LDRColorSchema, PositionSchema};
+
 use super::super::deserialize::{deserialize_ldr_color, deserialize_position};
 use glam::Vec3;
+use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
@@ -9,13 +12,15 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Sphere {
     radius: f32,
     #[serde(deserialize_with = "deserialize_position")]
+    #[schemars(with = "PositionSchema")]
     position: Position,
     #[serde(deserialize_with = "deserialize_ldr_color")]
+    #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
 }
 

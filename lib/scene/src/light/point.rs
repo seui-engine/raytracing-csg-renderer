@@ -1,3 +1,4 @@
+use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
@@ -5,14 +6,19 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 };
 use seui_engine_raytracing_csg_renderer_types::HDRColor;
 
-use crate::deserialize::{deserialize_hdr_color, deserialize_position};
+use crate::{
+    deserialize::{deserialize_hdr_color, deserialize_position},
+    json_schema::{HDRColorSchema, PositionSchema},
+};
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct PointLight {
     #[serde(deserialize_with = "deserialize_position")]
+    #[schemars(with = "PositionSchema")]
     position: Position,
     #[serde(deserialize_with = "deserialize_hdr_color")]
+    #[schemars(with = "HDRColorSchema")]
     color: HDRColor,
 }
 

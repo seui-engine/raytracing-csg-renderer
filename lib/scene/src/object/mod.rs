@@ -1,4 +1,5 @@
 use plane::Plane;
+use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::RTObject;
 use sphere::Sphere;
@@ -6,7 +7,7 @@ use sphere::Sphere;
 pub mod plane;
 pub mod sphere;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum DeserializableRTObject {
     Sphere(Sphere),
