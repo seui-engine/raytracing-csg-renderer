@@ -1,13 +1,10 @@
 [package]
-name = "seui-engine-raytracing-csg-renderer-main"
+name = "seui-engine-raytracing-csg-renderer-scene"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.31", features = ["derive"] }
 glam = "0.30.0"
-image = "0.25.5"
-serde_json = "1.0.139"
+serde = { version = "1.0.218", features = ["derive"] }
 seui-engine-raytracing-csg-renderer-core = { version = "0.1.0", path = "../core" }
-seui-engine-raytracing-csg-renderer-scene = { version = "0.1.0", path = "../scene" }
 seui-engine-raytracing-csg-renderer-types = { version = "0.1.0", path = "../types" }

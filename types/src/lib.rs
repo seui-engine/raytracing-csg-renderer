@@ -1,13 +1,93 @@
+use std::ops::{Add, Div, Mul};
+
 #[derive(Clone, Copy, Debug)]
-pub struct HDRPixel {
+pub struct HDRColor {
     pub r: f32,
     pub g: f32,
     pub b: f32,
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct LDRPixel {
+pub struct LDRColor {
     pub r: f32,
     pub g: f32,
     pub b: f32,
+}
+
+impl HDRColor {
+    pub const BLACK: HDRColor = HDRColor {
+        r: 0.0,
+        g: 0.0,
+        b: 0.0,
+    };
+}
+
+impl LDRColor {
+    pub fn new(r: f32, g: f32, b: f32) -> LDRColor {
+        LDRColor {
+            r: r.min(1.0),
+            g: g.min(1.0),
+            b: b.min(1.0),
+        }
+    }
+}
+
+impl Mul<LDRColor> for HDRColor {
+    type Output = HDRColor;
+
+    fn mul(self, rhs: LDRColor) -> Self::Output {
+        HDRColor {
+            r: self.r * rhs.r,
+            g: self.g * rhs.g,
+            b: self.b * rhs.b,
+        }
+    }
+}
+
+impl Mul<HDRColor> for LDRColor {
+    type Output = HDRColor;
+
+    fn mul(self, rhs: HDRColor) -> Self::Output {
+        HDRColor {
+            r: self.r * rhs.r,
+            g: self.g * rhs.g,
+            b: self.b * rhs.b,
+        }
+    }
+}
+
+impl Add for HDRColor {
+    type Output = HDRColor;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        HDRColor {
+            r: self.r + rhs.r,
+            g: self.g + rhs.g,
+            b: self.b + rhs.b,
+        }
+    }
+}
+
+impl Mul<f32> for HDRColor {
+    type Output = HDRColor;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        HDRColor {
+            r: self.r * rhs,
+            g: self.g * rhs,
+            b: self.b * rhs,
+        }
+    }
+}
+
+impl Div<f32> for HDRColor {
+    type Output = HDRColor;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        HDRColor {
+            r: self.r / rhs,
+            g: self.g / rhs,
+            b: self.b / rhs,
+        }
+    }
 }

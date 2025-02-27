@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Deref, Mul, Neg, Sub};
 
 use glam::Vec3;
 
@@ -25,6 +25,10 @@ impl Direction {
     pub fn new(value: Vec3) -> Self {
         Self(value.normalize())
     }
+
+    pub fn dot(self, rhs: Direction) -> f32 {
+        (*self).dot(*rhs)
+    }
 }
 
 impl From<Direction> for Vec3 {
@@ -36,6 +40,11 @@ impl From<Direction> for Vec3 {
 impl Move {
     pub fn new(value: Vec3) -> Self {
         Self(value)
+    }
+
+    pub fn direction_and_length(self) -> (Direction, f32) {
+        let length = self.length();
+        (Direction(*self / length), length)
     }
 }
 
@@ -58,5 +67,59 @@ impl Sub<Position> for Position {
 
     fn sub(self, rhs: Position) -> Self::Output {
         Move(self.0 - rhs.0)
+    }
+}
+
+impl Deref for Position {
+    type Target = Vec3;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl Deref for Direction {
+    type Target = Vec3;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl Deref for Move {
+    type Target = Vec3;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl Neg for Direction {
+    type Output = Direction;
+
+    fn neg(self) -> Self::Output {
+        Direction(-self.0)
+    }
+}
+
+impl Neg for Move {
+    type Output = Move;
+
+    fn neg(self) -> Self::Output {
+        Move(-self.0)
+    }
+}
+
+impl Mul<f32> for Direction {
+    type Output = Move;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Move(self.0 * rhs)
+    }
+}
+
+impl From<Move> for Position {
+    fn from(val: Move) -> Self {
+        Position(val.0)
     }
 }
