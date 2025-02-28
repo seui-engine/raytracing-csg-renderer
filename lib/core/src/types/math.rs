@@ -9,11 +9,6 @@ pub struct Direction(Vec3);
 #[derive(Clone, Copy, Debug)]
 pub struct Move(Vec3);
 
-#[derive(Clone, Copy, Debug)]
-pub struct Size(Vec3);
-#[derive(Clone, Copy, Debug)]
-pub struct Scale(Vec3);
-
 impl Position {
     pub fn new(value: Vec3) -> Self {
         Self(value)
@@ -126,107 +121,5 @@ impl Mul<f32> for Direction {
 impl From<Move> for Position {
     fn from(val: Move) -> Self {
         Position(val.0)
-    }
-}
-
-// Size
-impl Size {
-    pub fn new(value: Vec3) -> Self {
-        Self(value)
-    }
-}
-
-impl Mul<f32> for Size {
-    type Output = Size;
-
-    fn mul(self, rhs: f32) -> Self::Output {
-        Size(self.0 * rhs)
-    }
-}
-
-impl Div<f32> for Size {
-    type Output = Size;
-
-    fn div(self, rhs: f32) -> Self::Output {
-        Size(self.0 / rhs)
-    }
-}
-
-impl From<Move> for Size {
-    fn from(val: Move) -> Self {
-        Size(val.0)
-    }
-}
-
-impl Deref for Size {
-    type Target = Vec3;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl From<Size> for Vec3 {
-    fn from(val: Size) -> Self {
-        val.0
-    }
-}
-
-impl Sub<Size> for Size {
-    type Output = Move;
-
-    fn sub(self, rhs: Size) -> Self::Output {
-        Move(self.0 - rhs.0)
-    }
-}
-
-// Scale
-impl Scale {
-    pub fn new(value: Vec3) -> Self {
-        Self(value)
-    }
-}
-
-impl Mul<f32> for Scale {
-    type Output = Scale;
-
-    fn mul(self, val: f32) -> Self::Output {
-        Scale(self.0 * val)
-    }
-}
-
-impl Div<f32> for Scale {
-    type Output = Scale;
-
-    fn div(self, rhs: f32) -> Self::Output {
-        Scale(self.0 / rhs)
-    }
-}
-
-impl From<Move> for Scale {
-    fn from(val: Move) -> Self {
-        Scale(val.0)
-    }
-}
-
-impl Deref for Scale {
-    type Target = Vec3;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl From<Scale> for Vec3 {
-    fn from(val: Scale) -> Self {
-        val.0
-    }
-}
-
-impl Sub<Scale> for Scale {
-    type Output = Move;
-
-    fn sub(self, rhs: Scale) -> Self::Output {
-        Move(self.0 - rhs.0)
     }
 }

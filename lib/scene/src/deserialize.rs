@@ -1,11 +1,11 @@
 use glam::Vec3;
 use serde::de::{self, MapAccess, SeqAccess, Visitor};
 use serde::Deserializer;
-use seui_engine_raytracing_csg_renderer_core::types::math::{
-    Direction, Move, Position, Scale, Size,
-};
+use seui_engine_raytracing_csg_renderer_core::types::math::{Direction, Move, Position};
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use std::fmt;
+
+use crate::json_schema::Scale;
 
 pub fn deserialize_hdr_color<'de, D>(deserializer: D) -> Result<HDRColor, D::Error>
 where
@@ -307,66 +307,6 @@ where
     deserializer.deserialize_any(Vec3Visitor)
 }
 
-pub fn deserialize_size<'de, D>(deserializer: D) -> Result<Size, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    struct Vec3Visitor;
-
-    impl<'de> Visitor<'de> for Vec3Visitor {
-        type Value = Size;
-
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            formatter.write_str("a struct {x, y, z} or an array [x, y, z]")
-        }
-
-        // Deserialize from { x, y, z }
-        fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-        where
-            A: MapAccess<'de>,
-        {
-            let mut x = None;
-            let mut y = None;
-            let mut z = None;
-
-            while let Some(key) = map.next_key::<String>()? {
-                match key.as_str() {
-                    "x" => x = Some(map.next_value()?),
-                    "y" => y = Some(map.next_value()?),
-                    "z" => z = Some(map.next_value()?),
-                    _ => return Err(de::Error::unknown_field(&key, &["x", "y", "z"])),
-                }
-            }
-
-            let x = x.ok_or_else(|| de::Error::missing_field("x"))?;
-            let y = y.ok_or_else(|| de::Error::missing_field("y"))?;
-            let z = z.ok_or_else(|| de::Error::missing_field("z"))?;
-
-            Ok(Size::new(Vec3::new(x, y, z)))
-        }
-
-        // Deserialize from [x, y, z]
-        fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-        where
-            A: SeqAccess<'de>,
-        {
-            let x = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-            let y = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-            let z = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
-
-            Ok(Size::new(Vec3::new(x, y, z)))
-        }
-    }
-
-    deserializer.deserialize_any(Vec3Visitor)
-}
-
 pub fn deserialize_scale<'de, D>(deserializer: D) -> Result<Scale, D::Error>
 where
     D: Deserializer<'de>,
@@ -402,7 +342,7 @@ where
             let y = y.ok_or_else(|| de::Error::missing_field("y"))?;
             let z = z.ok_or_else(|| de::Error::missing_field("z"))?;
 
-            Ok(Scale::new(Vec3::new(x, y, z)))
+            Ok(Scale { x, y, z })
         }
 
         // Deserialize from [x, y, z]
@@ -420,7 +360,7 @@ where
                 .next_element()?
                 .ok_or_else(|| de::Error::invalid_length(2, &self))?;
 
-            Ok(Scale::new(Vec3::new(x, y, z)))
+            Ok(Scale { x, y, z })
         }
     }
 
