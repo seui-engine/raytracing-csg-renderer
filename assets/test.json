@@ -11,6 +11,54 @@
   },
   "objects": [
     {
+      "type": "difference",
+      "a": {
+        "type": "intersection",
+        "a": {
+          "type": "sphere",
+          "position": [-2, 0, -3],
+          "radius": 1.33,
+          "albedo": [0.2, 0.2, 1]
+        },
+        "b": {
+          "type": "cube",
+          "position": [-2, 0, -3],
+          "scale": [1, 1, 1],
+          "albedo": [1, 0.2, 0.2]
+        }
+      },
+      "b": {
+        "type": "sphere",
+        "position": [-2, 0, -3],
+        "radius": 1.2,
+        "albedo": [0.2, 1, 0.2]
+      }
+    },
+    {
+      "type": "difference",
+      "a": {
+        "type": "intersection",
+        "a": {
+          "type": "sphere",
+          "position": [2, 0, -3],
+          "radius": 1.33,
+          "albedo": [0.2, 0.2, 1]
+        },
+        "b": {
+          "type": "cube",
+          "position": [2, 0, -3],
+          "scale": [1, 1, 1],
+          "albedo": [1, 0.2, 0.2]
+        }
+      },
+      "b": {
+        "type": "sphere",
+        "position": [2, 0, -3],
+        "radius": 1.2,
+        "albedo": [0.2, 1, 0.2]
+      }
+    },
+    {
       "type": "plane",
       "position": [0, 0, -5],
       "normal": [0, 0, 1],

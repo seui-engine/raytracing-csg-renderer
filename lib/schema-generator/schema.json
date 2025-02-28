@@ -99,6 +99,72 @@
         {
           "type": "object",
           "required": [
+            "a",
+            "b",
+            "type"
+          ],
+          "properties": {
+            "a": {
+              "$ref": "#/definitions/DeserializableRTObject"
+            },
+            "b": {
+              "$ref": "#/definitions/DeserializableRTObject"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "union"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
+          "properties": {
+            "a": {
+              "$ref": "#/definitions/DeserializableRTObject"
+            },
+            "b": {
+              "$ref": "#/definitions/DeserializableRTObject"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "intersection"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
+          "properties": {
+            "a": {
+              "$ref": "#/definitions/DeserializableRTObject"
+            },
+            "b": {
+              "$ref": "#/definitions/DeserializableRTObject"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "difference"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
             "albedo",
             "position",
             "radius",

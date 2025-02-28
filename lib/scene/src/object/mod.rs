@@ -1,3 +1,4 @@
+use csg::{DeserializableDifference, DeserializableIntersection, DeserializableUnion};
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::RTObject;
@@ -6,6 +7,7 @@ use cube::Cube;
 use plane::Plane;
 use sphere::Sphere;
 
+pub mod csg;
 pub mod cube;
 pub mod plane;
 pub mod sphere;
@@ -13,6 +15,9 @@ pub mod sphere;
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(tag = "type", rename_all = "camelCase")]
 pub enum DeserializableRTObject {
+    Union(DeserializableUnion),
+    Intersection(DeserializableIntersection),
+    Difference(DeserializableDifference),
     Sphere(Sphere),
     Plane(Plane),
     Cube(Cube),
@@ -21,6 +26,9 @@ pub enum DeserializableRTObject {
 impl DeserializableRTObject {
     pub fn into_rt_object(self) -> Box<dyn RTObject> {
         match self {
+            DeserializableRTObject::Union(o) => o.into_rt_object(),
+            DeserializableRTObject::Intersection(o) => o.into_rt_object(),
+            DeserializableRTObject::Difference(o) => o.into_rt_object(),
             DeserializableRTObject::Sphere(o) => Box::new(o),
             DeserializableRTObject::Plane(o) => Box::new(o),
             DeserializableRTObject::Cube(o) => Box::new(o),
