@@ -9,9 +9,9 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PositionSchema {
-    x: f32,
-    y: f32,
-    z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl JsonSchema for PositionSchema {
@@ -139,9 +139,9 @@ impl JsonSchema for Scale {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DirectionSchema {
-    x: f32,
-    y: f32,
-    z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl JsonSchema for DirectionSchema {
@@ -204,9 +204,9 @@ impl JsonSchema for DirectionSchema {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MoveSchema {
-    x: f32,
-    y: f32,
-    z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl JsonSchema for MoveSchema {
@@ -269,9 +269,9 @@ impl JsonSchema for MoveSchema {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HDRColorSchema {
-    x: f32,
-    y: f32,
-    z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl JsonSchema for HDRColorSchema {
@@ -334,9 +334,9 @@ impl JsonSchema for HDRColorSchema {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LDRColorSchema {
-    x: f32,
-    y: f32,
-    z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl JsonSchema for LDRColorSchema {

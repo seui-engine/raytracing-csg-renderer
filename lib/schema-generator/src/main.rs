@@ -1,5 +1,4 @@
 use schemars::schema_for;
-use serde_json;
 use seui_engine_raytracing_csg_renderer_scene::DeserializableScene;
 use std::fs::File;
 use std::io::Write;

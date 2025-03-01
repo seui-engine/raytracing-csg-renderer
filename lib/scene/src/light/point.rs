@@ -2,7 +2,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Light, Ray},
+    rt::Light,
 };
 use seui_engine_raytracing_csg_renderer_types::HDRColor;
 
