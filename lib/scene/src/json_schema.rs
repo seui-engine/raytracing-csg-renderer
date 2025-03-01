@@ -4,10 +4,7 @@ use schemars::{
     schema::{InstanceType, Metadata, ObjectValidation, Schema, SchemaObject},
     JsonSchema, SchemaGenerator,
 };
-use serde::Deserialize;
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct PositionSchema {
     pub x: f32,
     pub y: f32,
@@ -71,8 +68,7 @@ impl JsonSchema for PositionSchema {
     }
 }
 
-#[derive(Clone, Copy, Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Clone, Copy, Debug)]
 pub struct Scale {
     pub x: f32,
     pub y: f32,
@@ -136,8 +132,6 @@ impl JsonSchema for Scale {
     }
 }
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct DirectionSchema {
     pub x: f32,
     pub y: f32,
@@ -201,8 +195,6 @@ impl JsonSchema for DirectionSchema {
     }
 }
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct MoveSchema {
     pub x: f32,
     pub y: f32,
@@ -266,8 +258,6 @@ impl JsonSchema for MoveSchema {
     }
 }
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct HDRColorSchema {
     pub x: f32,
     pub y: f32,
@@ -331,8 +321,6 @@ impl JsonSchema for HDRColorSchema {
     }
 }
 
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct LDRColorSchema {
     pub x: f32,
     pub y: f32,
