@@ -6,8 +6,7 @@
       "type": "cover",
       "aspectRatio": 1.7777777777
     },
-    "position": [0, -10, 0],
-    "direction": [0, 1, 0]
+    "position": [0, -10, 0]
   },
   "objects": [
     {
@@ -23,7 +22,6 @@
         "b": {
           "type": "cube",
           "position": [-6, 0, -3],
-          "scale": [1, 1, 1],
           "albedo": [1, 0.2, 0.2]
         }
       },
@@ -47,7 +45,6 @@
         "b": {
           "type": "cube",
           "position": [6, 0, -3],
-          "scale": [1, 1, 1],
           "albedo": [1, 0.2, 0.2]
         }
       },
@@ -60,40 +57,33 @@
     },
     {
       "type": "plane",
-      "position": [0, 0, -5],
-      "normal": [0, 0, 1],
-      "albedo": [1, 1, 1]
+      "position": [0, 0, -5]
     },
     {
       "type": "sphere",
       "position": [-3, 0, 0],
-      "radius": 1,
       "albedo": [1, 0.5, 0.5]
     },
     {
       "type": "difference",
       "a": {
         "type": "sphere",
-        "position": [0, 0, 0],
-        "radius": 1,
         "albedo": [0.5, 1, 0.5]
       },
       "b": {
         "type": "quadric",
         "albedo": [0.5, 0.5, 0.5],
-        "position": [0, 0, 0],
         "inside": [0, 0, -1],
         "c200": 1,
         "c020": 1,
         "c002": -1,
-        "c110": 0,
-        "c011": 0,
-        "c101": 0,
-        "c100": 0,
-        "c010": 0,
-        "c001": 0,
         "c000": -0.25
       }
+    },
+    {
+      "type": "cube",
+      "position": [3, 0, 0],
+      "albedo": [0.5, 0.5, 1]
     },
     {
       "type": "quadric",
@@ -102,14 +92,7 @@
       "inside": [-5, 5, 0],
       "c200": 1,
       "c020": 1,
-      "c002": -0.25,
-      "c110": 0,
-      "c011": 0,
-      "c101": 0,
-      "c100": 0,
-      "c010": 0,
-      "c001": 0,
-      "c000": 0
+      "c002": -0.25
     }
   ],
   "lights": [

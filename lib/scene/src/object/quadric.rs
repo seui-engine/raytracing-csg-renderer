@@ -14,31 +14,41 @@ use crate::{
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
-use super::util::enhance_normal;
+use super::util::{enhance_normal, zero};
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Quadric {
-    #[serde(deserialize_with = "deserialize_position")]
+    #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
 
-    #[serde(deserialize_with = "deserialize_ldr_color")]
+    #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
 
+    #[serde(default = "zero")]
     c200: f32,
+    #[serde(default = "zero")]
     c020: f32,
+    #[serde(default = "zero")]
     c002: f32,
+    #[serde(default = "zero")]
     c110: f32,
+    #[serde(default = "zero")]
     c011: f32,
+    #[serde(default = "zero")]
     c101: f32,
+    #[serde(default = "zero")]
     c100: f32,
+    #[serde(default = "zero")]
     c010: f32,
+    #[serde(default = "zero")]
     c001: f32,
+    #[serde(default = "zero")]
     c000: f32,
 
-    #[serde(deserialize_with = "deserialize_position")]
+    #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     inside: Position,
 }

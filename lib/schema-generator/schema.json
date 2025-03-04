@@ -38,10 +38,8 @@
         {
           "type": "object",
           "required": [
-            "direction",
             "fov",
             "fovMode",
-            "position",
             "type"
           ],
           "properties": {
@@ -73,8 +71,6 @@
         {
           "type": "object",
           "required": [
-            "color",
-            "position",
             "type"
           ],
           "properties": {
@@ -165,9 +161,6 @@
         {
           "type": "object",
           "required": [
-            "albedo",
-            "position",
-            "radius",
             "type"
           ],
           "properties": {
@@ -178,6 +171,7 @@
               "$ref": "#/definitions/Position"
             },
             "radius": {
+              "default": 1.0,
               "type": "number",
               "format": "float"
             },
@@ -192,9 +186,6 @@
         {
           "type": "object",
           "required": [
-            "albedo",
-            "normal",
-            "position",
             "type"
           ],
           "properties": {
@@ -218,9 +209,6 @@
         {
           "type": "object",
           "required": [
-            "albedo",
-            "position",
-            "scale",
             "type"
           ],
           "properties": {
@@ -244,19 +232,6 @@
         {
           "type": "object",
           "required": [
-            "albedo",
-            "c000",
-            "c001",
-            "c002",
-            "c010",
-            "c011",
-            "c020",
-            "c100",
-            "c101",
-            "c110",
-            "c200",
-            "inside",
-            "position",
             "type"
           ],
           "properties": {
@@ -264,42 +239,52 @@
               "$ref": "#/definitions/LDRColor"
             },
             "c000": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c001": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c002": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c010": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c011": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c020": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c100": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c101": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c110": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
             "c200": {
+              "default": 0.0,
               "type": "number",
               "format": "float"
             },
