@@ -26,15 +26,19 @@ pub enum FovMode {
     Contain(AspectRatio),
 }
 
+fn forward() -> Direction {
+    Direction::new(Vec3::Y)
+}
+
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct DeserializablePerspectiveCamera {
     fov: f32,
     fov_mode: FovMode,
-    #[serde(deserialize_with = "deserialize_position")]
+    #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
-    #[serde(deserialize_with = "deserialize_direction")]
+    #[serde(default = "forward", deserialize_with = "deserialize_direction")]
     #[schemars(with = "DirectionSchema")]
     direction: Direction,
 }

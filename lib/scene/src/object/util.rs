@@ -11,3 +11,11 @@ pub fn enhance_normal(
         -face_normal
     }
 }
+
+pub fn one() -> f32 {
+    1.0
+}
+
+pub fn zero() -> f32 {
+    0.0
+}

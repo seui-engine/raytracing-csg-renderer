@@ -22,6 +22,26 @@ impl HDRColor {
     };
 }
 
+impl Default for LDRColor {
+    fn default() -> Self {
+        Self {
+            r: 1.0,
+            g: 1.0,
+            b: 1.0,
+        }
+    }
+}
+
+impl Default for HDRColor {
+    fn default() -> Self {
+        Self {
+            r: 1.0,
+            g: 1.0,
+            b: 1.0,
+        }
+    }
+}
+
 impl LDRColor {
     pub fn new(r: f32, g: f32, b: f32) -> LDRColor {
         LDRColor {

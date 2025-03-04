@@ -14,10 +14,10 @@ use crate::{
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct PointLight {
-    #[serde(deserialize_with = "deserialize_position")]
+    #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
-    #[serde(deserialize_with = "deserialize_hdr_color")]
+    #[serde(default, deserialize_with = "deserialize_hdr_color")]
     #[schemars(with = "HDRColorSchema")]
     color: HDRColor,
 }

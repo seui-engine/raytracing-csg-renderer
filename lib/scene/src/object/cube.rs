@@ -16,15 +16,15 @@ use seui_engine_raytracing_csg_renderer_types::LDRColor;
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Cube {
-    #[serde(deserialize_with = "deserialize_position")]
-    #[schemars(with = "PositionSchema")]
+    #[serde(default, deserialize_with = "deserialize_position")]
+    #[schemars(default, with = "PositionSchema")]
     position: Position,
 
     #[serde(deserialize_with = "deserialize_ldr_color")]
-    #[schemars(with = "LDRColorSchema")]
+    #[schemars(default, with = "LDRColorSchema")]
     albedo: LDRColor,
 
-    #[serde(deserialize_with = "deserialize_scale")]
+    #[serde(default, deserialize_with = "deserialize_scale")]
     scale: Scale,
 }
 

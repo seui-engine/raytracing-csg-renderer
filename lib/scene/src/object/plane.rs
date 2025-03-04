@@ -5,6 +5,7 @@ use crate::json_schema::{DirectionSchema, LDRColorSchema, PositionSchema};
 use super::super::deserialize::{
     deserialize_direction, deserialize_ldr_color, deserialize_position,
 };
+use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
@@ -13,16 +14,20 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
+fn up() -> Direction {
+    Direction::new(Vec3::Z)
+}
+
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Plane {
-    #[serde(deserialize_with = "deserialize_position")]
+    #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
-    #[serde(deserialize_with = "deserialize_direction")]
+    #[serde(default = "up", deserialize_with = "deserialize_direction")]
     #[schemars(with = "DirectionSchema")]
     normal: Direction,
-    #[serde(deserialize_with = "deserialize_ldr_color")]
+    #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
 }

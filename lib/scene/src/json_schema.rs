@@ -75,6 +75,16 @@ pub struct Scale {
     pub z: f32,
 }
 
+impl Default for Scale {
+    fn default() -> Self {
+        Self {
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+        }
+    }
+}
+
 impl JsonSchema for Scale {
     fn schema_name() -> String {
         "Scale".to_string()

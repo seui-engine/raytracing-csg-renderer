@@ -2,11 +2,11 @@ use std::ops::{Add, Deref, Mul, Neg, Sub};
 
 use glam::Vec3;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct Position(Vec3);
 #[derive(Clone, Copy, Debug)]
 pub struct Direction(Vec3);
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct Move(Vec3);
 
 impl Position {
