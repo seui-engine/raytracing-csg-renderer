@@ -7,7 +7,11 @@ use std::{fs::File, io::Read, path::Path};
 
 /// Command-line arguments parser
 #[derive(Parser, Debug)]
-#[command(version = "0.1.0", about = "Saves scene into image as PNG")]
+#[command(
+    version = "0.1.0",
+    about = "Saves scene into image as PNG",
+    rename_all = "kebab-case"
+)]
 struct Args {
     scene: String,
 
@@ -21,6 +25,9 @@ struct Args {
 
     #[arg(short = 'H', long, default_value_t = 1080)]
     height: usize,
+
+    #[arg(long)]
+    scene_type: Option<String>,
 }
 
 pub fn save_ldr_image<P: AsRef<Path>>(
@@ -43,15 +50,40 @@ pub fn save_ldr_image<P: AsRef<Path>>(
     img.save(path)
 }
 
-fn load_scene(scene_file: &str, screen_aspect_ratio: f32) -> Scene {
+enum SceneType {
+    Json,
+    Yaml,
+}
+
+fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio: f32) -> Scene {
     let mut file = File::open(scene_file).expect("Failed to open scene file");
     let mut content_str = String::new();
     file.read_to_string(&mut content_str)
         .expect("Failed to read scene file");
 
-    serde_json::from_str::<DeserializableScene>(&content_str)
-        .expect("Failed to parse scene JSON")
-        .into_scene(screen_aspect_ratio)
+    match match scene_type {
+        None => {
+            if scene_file.ends_with(".json") {
+                SceneType::Json
+            } else if scene_file.ends_with(".yaml") {
+                SceneType::Yaml
+            } else {
+                panic!("Failed to recognize scene type")
+            }
+        }
+        Some(t) if t == "json" => SceneType::Json,
+        Some(t) if t == "yaml" => SceneType::Yaml,
+        _ => {
+            panic!("unrecognized scene type")
+        }
+    } {
+        SceneType::Json => serde_json::from_str::<DeserializableScene>(&content_str)
+            .expect("Failed to parse scene JSON")
+            .into_scene(screen_aspect_ratio),
+        SceneType::Yaml => serde_yaml::from_str::<DeserializableScene>(&content_str)
+            .expect("Failed to parse scene YAML")
+            .into_scene(screen_aspect_ratio),
+    }
 }
 
 fn tmp_hdr_to_ldr(color: HDRColor) -> LDRColor {
@@ -77,7 +109,11 @@ fn main() {
         output_file.push_str(".png");
     }
 
-    let scene = load_scene(&args.scene, args.width as f32 / args.height as f32);
+    let scene = load_scene(
+        &args.scene,
+        &args.scene_type,
+        args.width as f32 / args.height as f32,
+    );
 
     let mut content = Vec::new();
     for y in 0..args.height {

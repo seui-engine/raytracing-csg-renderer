@@ -5,6 +5,9 @@
       "url": "./lib/schema-generator/schema.json"
     }
   ],
+  "yaml.schemas": {
+    "./lib/schema-generator/schema.json": "/assets/**/*.yaml"
+  },
   "[rust]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "rust-lang.rust-analyzer"
@@ -13,7 +16,7 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[json]": {
+  "[json][yaml]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
