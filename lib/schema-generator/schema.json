@@ -316,6 +316,102 @@
               ]
             }
           }
+        },
+        {
+          "type": "object",
+          "required": [
+            "albedo",
+            "c000",
+            "c001",
+            "c002",
+            "c003",
+            "c010",
+            "c020",
+            "c021",
+            "c030",
+            "c100",
+            "c102",
+            "c111",
+            "c200",
+            "c210",
+            "c300",
+            "inside",
+            "position",
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "c000": {
+              "type": "number",
+              "format": "float"
+            },
+            "c001": {
+              "type": "number",
+              "format": "float"
+            },
+            "c002": {
+              "type": "number",
+              "format": "float"
+            },
+            "c003": {
+              "type": "number",
+              "format": "float"
+            },
+            "c010": {
+              "type": "number",
+              "format": "float"
+            },
+            "c020": {
+              "type": "number",
+              "format": "float"
+            },
+            "c021": {
+              "type": "number",
+              "format": "float"
+            },
+            "c030": {
+              "type": "number",
+              "format": "float"
+            },
+            "c100": {
+              "type": "number",
+              "format": "float"
+            },
+            "c102": {
+              "type": "number",
+              "format": "float"
+            },
+            "c111": {
+              "type": "number",
+              "format": "float"
+            },
+            "c200": {
+              "type": "number",
+              "format": "float"
+            },
+            "c210": {
+              "type": "number",
+              "format": "float"
+            },
+            "c300": {
+              "type": "number",
+              "format": "float"
+            },
+            "inside": {
+              "$ref": "#/definitions/Position"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "cubic"
+              ]
+            }
+          }
         }
       ]
     },

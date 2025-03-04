@@ -1,5 +1,6 @@
 use csg::{DeserializableDifference, DeserializableIntersection, DeserializableUnion};
 use cube::Cube;
+use cubic::Cubic;
 use plane::Plane;
 use quadric::Quadric;
 use schemars::JsonSchema;
@@ -9,6 +10,7 @@ use sphere::Sphere;
 
 pub mod csg;
 pub mod cube;
+pub mod cubic;
 pub mod plane;
 pub mod quadric;
 pub mod sphere;
@@ -24,6 +26,7 @@ pub enum DeserializableRTObject {
     Plane(Plane),
     Cube(Cube),
     Quadric(Quadric),
+    Cubic(Cubic),
 }
 
 impl DeserializableRTObject {
@@ -36,6 +39,7 @@ impl DeserializableRTObject {
             DeserializableRTObject::Plane(o) => Box::new(o),
             DeserializableRTObject::Cube(o) => Box::new(o),
             DeserializableRTObject::Quadric(o) => Box::new(o),
+            DeserializableRTObject::Cubic(o) => Box::new(o),
         }
     }
 }
