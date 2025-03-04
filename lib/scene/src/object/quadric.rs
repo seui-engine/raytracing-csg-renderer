@@ -48,34 +48,51 @@ impl Quadric {
         // Move the sphere to the origin for simplicity
         let origin: Position = (ray.origin - self.position).into();
 
-        let a = self.c200 * ray.direction.x.powi(2)
-            + self.c020 * ray.direction.y.powi(2)
-            + self.c002 * ray.direction.z.powi(2)
-            + self.c110 * ray.direction.x * ray.direction.y
-            + self.c011 * ray.direction.y * ray.direction.z
-            + self.c101 * ray.direction.x * ray.direction.z;
-        let b = 2.0 * self.c200 * origin.x * ray.direction.x
-            + 2.0 * self.c020 * origin.y * ray.direction.y
-            + 2.0 * self.c002 * origin.z * ray.direction.z
-            + self.c110 * origin.x * ray.direction.y
-            + self.c110 * origin.y * ray.direction.x
-            + self.c011 * origin.y * ray.direction.z
-            + self.c011 * origin.z * ray.direction.y
-            + self.c101 * origin.x * ray.direction.z
-            + self.c101 * origin.z * ray.direction.x
-            + self.c100 * ray.direction.x
-            + self.c010 * ray.direction.y
-            + self.c001 * ray.direction.z;
-        let c = self.c200 * origin.x.powi(2)
-            + self.c020 * origin.y.powi(2)
-            + self.c002 * origin.z.powi(2)
-            + self.c110 * origin.x * origin.y
-            + self.c011 * origin.y * origin.z
-            + self.c101 * origin.x * origin.z
-            + self.c100 * origin.x
-            + self.c010 * origin.y
-            + self.c001 * origin.z
-            + self.c000;
+        let (a, b, c) = {
+            let mut a = 0.0;
+            let mut b = 0.0;
+            let mut c = 0.0;
+            // c200
+            a += self.c200 * ray.direction.x.powi(2);
+            b += self.c200 * 2.0 * ray.direction.x * origin.x;
+            c += self.c200 * origin.x.powi(2);
+            // c020
+            a += self.c020 * ray.direction.y.powi(2);
+            b += self.c020 * 2.0 * ray.direction.y * origin.y;
+            c += self.c020 * origin.y.powi(2);
+            // c002
+            a += self.c002 * ray.direction.z.powi(2);
+            b += self.c002 * 2.0 * ray.direction.z * origin.z;
+            c += self.c002 * origin.z.powi(2);
+            // c110
+            a += self.c110 * ray.direction.x * ray.direction.y;
+            b += self.c110 * ray.direction.x * origin.y;
+            b += self.c110 * origin.x * ray.direction.y;
+            c += self.c110 * origin.x * origin.y;
+            // c011
+            a += self.c011 * ray.direction.y * ray.direction.z;
+            b += self.c011 * ray.direction.y * origin.z;
+            b += self.c011 * origin.y * ray.direction.z;
+            c += self.c011 * origin.y * origin.z;
+            // c101
+            a += self.c101 * ray.direction.x * ray.direction.z;
+            b += self.c101 * ray.direction.x * origin.z;
+            b += self.c101 * origin.x * ray.direction.z;
+            c += self.c101 * origin.x * origin.z;
+            // c100
+            b += self.c100 * ray.direction.x;
+            c += self.c100 * origin.x;
+            // c010
+            b += self.c010 * ray.direction.y;
+            c += self.c010 * origin.y;
+            // c001
+            b += self.c001 * ray.direction.z;
+            c += self.c001 * origin.z;
+            // c000
+            c += self.c000;
+            // done
+            (a, b, c)
+        };
 
         let discriminant = b.powi(2) - 4.0 * a * c;
         if discriminant < 0.0 {
@@ -100,7 +117,7 @@ impl Quadric {
             Some((
                 Hit {
                     distance: t2,
-                    normal: -self.normal(origin + ray.direction * t2),
+                    normal: self.normal(origin + ray.direction * t2),
                     albedo: self.albedo,
                     is_front_face: true,
                     brdf: Rc::new(|normal, direction| normal.dot(direction)),

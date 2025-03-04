@@ -1,0 +1,55 @@
+{
+  "camera": {
+    "type": "perspective",
+    "fov": 90,
+    "fovMode": {
+      "type": "cover",
+      "aspectRatio": 1.7777777777
+    },
+    "position": [0, -40, 10],
+    "direction": [0, 1, 0]
+  },
+  "objects": [
+    {
+      "type": "quadratic",
+      "albedo": [0, 1, 0],
+      "position": [0, 0, 0],
+      "inside": [0, 0, 100],
+      "c300": 1,
+      "c030": 1,
+      "c003": 1,
+      "c000": -8,
+      "c001": 0,
+      "c002": 0,
+      "c010": 0,
+      "c011": 0,
+      "c012": 0,
+      "c020": 0,
+      "c021": 0,
+      "c100": 0,
+      "c101": 0,
+      "c102": 0,
+      "c110": 0,
+      "c111": 0,
+      "c120": 0,
+      "c200": 0,
+      "c201": 0,
+      "c210": 0
+    },
+    {
+      "type": "sphere",
+      "position": [0, 0, 0],
+      "albedo": [1, 0, 0],
+      "radius": 1
+    }
+  ],
+  "lights": [
+    {
+      "type": "point",
+      "position": [0, 0, 10],
+      "color": [200, 200, 200]
+    }
+  ],
+  "skyColor": [0.1, 0.11, 0.2],
+  "ambientLight": [0.1, 0.1, 0.1]
+}

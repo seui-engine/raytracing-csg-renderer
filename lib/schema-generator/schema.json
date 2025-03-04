@@ -326,13 +326,19 @@
             "c002",
             "c003",
             "c010",
+            "c011",
+            "c012",
             "c020",
             "c021",
             "c030",
             "c100",
+            "c101",
             "c102",
+            "c110",
             "c111",
+            "c120",
             "c200",
+            "c201",
             "c210",
             "c300",
             "inside",
@@ -363,6 +369,14 @@
               "type": "number",
               "format": "float"
             },
+            "c011": {
+              "type": "number",
+              "format": "float"
+            },
+            "c012": {
+              "type": "number",
+              "format": "float"
+            },
             "c020": {
               "type": "number",
               "format": "float"
@@ -379,7 +393,15 @@
               "type": "number",
               "format": "float"
             },
+            "c101": {
+              "type": "number",
+              "format": "float"
+            },
             "c102": {
+              "type": "number",
+              "format": "float"
+            },
+            "c110": {
               "type": "number",
               "format": "float"
             },
@@ -387,7 +409,15 @@
               "type": "number",
               "format": "float"
             },
+            "c120": {
+              "type": "number",
+              "format": "float"
+            },
             "c200": {
+              "type": "number",
+              "format": "float"
+            },
+            "c201": {
               "type": "number",
               "format": "float"
             },
@@ -408,7 +438,7 @@
             "type": {
               "type": "string",
               "enum": [
-                "cubic"
+                "quadratic"
               ]
             }
           }
