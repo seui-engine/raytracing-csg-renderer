@@ -240,6 +240,82 @@
               ]
             }
           }
+        },
+        {
+          "type": "object",
+          "required": [
+            "albedo",
+            "c000",
+            "c001",
+            "c002",
+            "c010",
+            "c011",
+            "c020",
+            "c100",
+            "c101",
+            "c110",
+            "c200",
+            "inside",
+            "position",
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "c000": {
+              "type": "number",
+              "format": "float"
+            },
+            "c001": {
+              "type": "number",
+              "format": "float"
+            },
+            "c002": {
+              "type": "number",
+              "format": "float"
+            },
+            "c010": {
+              "type": "number",
+              "format": "float"
+            },
+            "c011": {
+              "type": "number",
+              "format": "float"
+            },
+            "c020": {
+              "type": "number",
+              "format": "float"
+            },
+            "c100": {
+              "type": "number",
+              "format": "float"
+            },
+            "c101": {
+              "type": "number",
+              "format": "float"
+            },
+            "c110": {
+              "type": "number",
+              "format": "float"
+            },
+            "c200": {
+              "type": "number",
+              "format": "float"
+            },
+            "inside": {
+              "$ref": "#/definitions/Position"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "quadric"
+              ]
+            }
+          }
         }
       ]
     },
