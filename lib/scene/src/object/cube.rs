@@ -20,7 +20,7 @@ pub struct Cube {
     #[schemars(default, with = "PositionSchema")]
     position: Position,
 
-    #[serde(deserialize_with = "deserialize_ldr_color")]
+    #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(default, with = "LDRColorSchema")]
     albedo: LDRColor,
 
@@ -119,7 +119,7 @@ impl RTObject for Cube {
             }
             if t_max >= 0.0 {
                 result.push(Hit {
-                    normal: Direction::new(-normal_max),
+                    normal: Direction::new(normal_max),
                     distance: t_max,
                     is_front_face: false,
                     albedo: self.albedo,

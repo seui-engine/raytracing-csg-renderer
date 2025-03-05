@@ -16,7 +16,8 @@ pub fn sample(scene: &Scene, x: f32, y: f32) -> HDRColor {
                 };
                 let shadow_hit = scene.test(shadow_ray);
                 if shadow_hit.map(|x| x.distance).unwrap_or(f32::INFINITY) > distance {
-                    result = result + hit.albedo * color * (hit.brdf)(hit.normal, direction)
+                    result =
+                        result + hit.albedo * color * (hit.brdf)(hit.normal, direction).max(0.0)
                 }
             }
         }

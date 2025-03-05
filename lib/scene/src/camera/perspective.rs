@@ -69,11 +69,16 @@ impl DeserializablePerspectiveCamera {
                 (tan_half_fov_x * scale, tan_half_fov_y * scale)
             }
         };
+
+        let right = self.direction.cross(Vec3::Z).normalize();
+        let up = right.cross(*self.direction).normalize();
         Box::new(PerspectiveCamera {
             tan_half_fov_x,
             tan_half_fov_y,
             position: self.position,
             direction: self.direction,
+            right,
+            up,
         })
     }
 }
@@ -83,22 +88,20 @@ struct PerspectiveCamera {
     tan_half_fov_y: f32,
     position: Position,
     direction: Direction,
+    right: Vec3,
+    up: Vec3,
 }
 
 impl Camera for PerspectiveCamera {
     fn ray(&self, x: f32, y: f32) -> Ray {
         let dir_x = (2.0 * x - 1.0) * self.tan_half_fov_x;
         let dir_z = (1.0 - 2.0 * y) * self.tan_half_fov_y;
-        let dir_y = 1.0;
 
-        let right = Vec3::X;
-        let up = Vec3::Z;
-
-        let world_direction = Direction::new(*self.direction * dir_y + right * dir_x + up * dir_z);
+        let direction = Direction::new(*self.direction + dir_x * self.right + self.up * dir_z);
 
         Ray {
             origin: self.position,
-            direction: world_direction,
+            direction,
         }
     }
 }
