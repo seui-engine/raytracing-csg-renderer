@@ -12,13 +12,13 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct AspectRatio {
     aspect_ratio: f32,
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(tag = "type", rename_all = "camelCase")]
+#[serde(tag = "type", rename_all = "camelCase", deny_unknown_fields)]
 pub enum FovMode {
     X,
     Y,
@@ -31,7 +31,7 @@ fn forward() -> Direction {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializablePerspectiveCamera {
     fov: f32,
     fov_mode: FovMode,

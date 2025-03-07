@@ -45,6 +45,7 @@ impl JsonSchema for PositionSchema {
                                 "y".to_string(),
                                 "z".to_string(),
                             ]),
+                            additional_properties: Some(Box::new(Schema::Bool(false))),
                             ..Default::default()
                         })),
                         ..Default::default()
@@ -119,6 +120,7 @@ impl JsonSchema for Scale {
                                 "y".to_string(),
                                 "z".to_string(),
                             ]),
+                            additional_properties: Some(Box::new(Schema::Bool(false))),
                             ..Default::default()
                         })),
                         ..Default::default()
@@ -182,6 +184,7 @@ impl JsonSchema for DirectionSchema {
                                 "y".to_string(),
                                 "z".to_string(),
                             ]),
+                            additional_properties: Some(Box::new(Schema::Bool(false))),
                             ..Default::default()
                         })),
                         ..Default::default()
@@ -245,6 +248,7 @@ impl JsonSchema for MoveSchema {
                                 "y".to_string(),
                                 "z".to_string(),
                             ]),
+                            additional_properties: Some(Box::new(Schema::Bool(false))),
                             ..Default::default()
                         })),
                         ..Default::default()
@@ -308,6 +312,7 @@ impl JsonSchema for HDRColorSchema {
                                 "g".to_string(),
                                 "b".to_string(),
                             ]),
+                            additional_properties: Some(Box::new(Schema::Bool(false))),
                             ..Default::default()
                         })),
                         ..Default::default()
@@ -371,6 +376,7 @@ impl JsonSchema for LDRColorSchema {
                                 "g".to_string(),
                                 "b".to_string(),
                             ]),
+                            additional_properties: Some(Box::new(Schema::Bool(false))),
                             ..Default::default()
                         })),
                         ..Default::default()

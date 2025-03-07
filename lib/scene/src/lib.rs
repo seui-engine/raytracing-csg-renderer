@@ -17,7 +17,7 @@ pub mod light;
 pub mod object;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableScene {
     pub camera: DeserializableCamera,
     pub objects: Vec<DeserializableRTObject>,

@@ -15,7 +15,7 @@ pub mod sphere;
 pub mod util;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(tag = "type", rename_all = "camelCase")]
+#[serde(tag = "type", rename_all = "camelCase", deny_unknown_fields)]
 pub enum DeserializableRTObject {
     Union(DeserializableUnion),
     Intersection(DeserializableIntersection),

@@ -4,7 +4,7 @@ use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::{Hit, RTObject, Ray};
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableUnion {
     a: Box<DeserializableRTObject>,
     b: Box<DeserializableRTObject>,
@@ -20,7 +20,7 @@ impl DeserializableUnion {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableIntersection {
     a: Box<DeserializableRTObject>,
     b: Box<DeserializableRTObject>,
@@ -36,7 +36,7 @@ impl DeserializableIntersection {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableDifference {
     a: Box<DeserializableRTObject>,
     b: Box<DeserializableRTObject>,
