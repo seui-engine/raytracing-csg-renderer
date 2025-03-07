@@ -52,6 +52,10 @@ impl RTObject for Sphere {
         }
 
         let t1 = (-b - sqrt_d) / (2.0 * a);
+        if t1.is_nan() {
+            return result; // error
+        }
+
         if t1 < 0.0 {
             // If t1 is negative, ray started inside the sphere
             result.push(Hit {
