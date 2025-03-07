@@ -74,8 +74,23 @@ pub struct Quadratic {
 }
 
 pub fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
-    if a == 0.0 {
-        panic!("This is not a cubic equation");
+    if a.abs() <= 0.001 {
+        let mut roots = Vec::new();
+        if b.abs() <= 0.001 {
+            if c.abs() <= 0.001 {
+                return roots;
+            } else {
+                roots.push(-d / c);
+            }
+        } else {
+            let discriminant = c.powi(2) - 4.0 * b * d;
+            if discriminant >= 0.0 {
+                roots.push((-c + discriminant.sqrt()) / (2.0 * b));
+                roots.push((-c - discriminant.sqrt()) / (2.0 * b));
+            }
+        }
+        roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+        return roots;
     }
 
     let a1 = b / a;
@@ -95,6 +110,9 @@ pub fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
         roots.push(s + t - a_div_3);
     } else {
         let theta = (r / (-q.powi(3)).sqrt()).acos();
+        if theta.is_nan() {
+            return roots;
+        }
         let sqrt_q = (-q).sqrt();
         roots.push(2.0 * sqrt_q * (theta / 3.0).cos() - a_div_3);
         roots.push(2.0 * sqrt_q * ((theta + 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
@@ -271,6 +289,8 @@ impl Quadratic {
     }
 }
 
+static mut LOGGED: bool = false;
+
 impl RTObject for Quadratic {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let (inside_direction, inside_length) = (ray.origin - self.inside).direction_and_length();
@@ -284,6 +304,16 @@ impl RTObject for Quadratic {
             .count()
             % 2
             == 0;
+
+        unsafe {
+            if !LOGGED {
+                LOGGED = true;
+                println!(
+                    "distances: {inside_length}, {:?}",
+                    internal.iter().map(|h| h.distance).collect::<Vec<_>>()
+                );
+            }
+        }
 
         let mut result = Vec::new();
 
