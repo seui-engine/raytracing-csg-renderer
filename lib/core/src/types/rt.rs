@@ -15,7 +15,6 @@ pub struct Hit {
     pub is_front_face: bool,
     pub albedo: LDRColor,
     pub normal: Direction,
-    pub brdf: Rc<dyn Fn(Direction, Direction) -> f32>,
     pub distance: f32,
 }
 
