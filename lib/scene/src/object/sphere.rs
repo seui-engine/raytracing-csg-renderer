@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::json_schema::{LDRColorSchema, PositionSchema};
 
 use super::{
@@ -61,7 +59,6 @@ impl RTObject for Sphere {
                 normal: -ray.direction, // Opposite direction
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         } else {
             let normal: Vec3 = *(origin + ray.direction * t1) * 2.0;
@@ -70,7 +67,6 @@ impl RTObject for Sphere {
                 normal: Direction::new(normal),
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         }
 
@@ -80,7 +76,6 @@ impl RTObject for Sphere {
             normal: Direction::new(normal),
             albedo: self.albedo,
             is_front_face: false,
-            brdf: Rc::new(|normal, direction| normal.dot(direction)),
         });
 
         result
