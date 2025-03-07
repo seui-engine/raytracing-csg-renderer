@@ -31,16 +31,6 @@ impl Direction {
     }
 }
 
-impl Default for Direction {
-    fn default() -> Self {
-        Direction(Vec3 {
-            x: 0.0,
-            y: -1.0,
-            z: 0.0,
-        })
-    }
-}
-
 impl From<Direction> for Vec3 {
     fn from(val: Direction) -> Self {
         val.0

@@ -2,7 +2,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "DeserializableScene",
   "type": "object",
-  "required": ["ambientLight", "camera", "lights", "objects", "skyColor"],
+  "required": [
+    "ambientLight",
+    "camera",
+    "lights",
+    "objects",
+    "skyColor"
+  ],
   "properties": {
     "ambientLight": {
       "$ref": "#/definitions/HDRColor"
@@ -31,7 +37,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["fov", "fovMode", "type"],
+          "required": [
+            "fov",
+            "fovMode",
+            "type"
+          ],
           "properties": {
             "direction": {
               "$ref": "#/definitions/Direction"
@@ -48,7 +58,9 @@
             },
             "type": {
               "type": "string",
-              "enum": ["perspective"]
+              "enum": [
+                "perspective"
+              ]
             }
           }
         }
@@ -58,7 +70,9 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "color": {
               "$ref": "#/definitions/HDRColor"
@@ -68,13 +82,17 @@
             },
             "type": {
               "type": "string",
-              "enum": ["point"]
+              "enum": [
+                "point"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "color": {
               "$ref": "#/definitions/HDRColor"
@@ -84,7 +102,9 @@
             },
             "type": {
               "type": "string",
-              "enum": ["directional"]
+              "enum": [
+                "directional"
+              ]
             }
           }
         }
@@ -94,7 +114,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["a", "b", "type"],
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
           "properties": {
             "a": {
               "$ref": "#/definitions/DeserializableRTObject"
@@ -104,13 +128,19 @@
             },
             "type": {
               "type": "string",
-              "enum": ["union"]
+              "enum": [
+                "union"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["a", "b", "type"],
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
           "properties": {
             "a": {
               "$ref": "#/definitions/DeserializableRTObject"
@@ -120,13 +150,19 @@
             },
             "type": {
               "type": "string",
-              "enum": ["intersection"]
+              "enum": [
+                "intersection"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["a", "b", "type"],
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
           "properties": {
             "a": {
               "$ref": "#/definitions/DeserializableRTObject"
@@ -136,13 +172,17 @@
             },
             "type": {
               "type": "string",
-              "enum": ["difference"]
+              "enum": [
+                "difference"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "albedo": {
               "$ref": "#/definitions/LDRColor"
@@ -157,13 +197,17 @@
             },
             "type": {
               "type": "string",
-              "enum": ["sphere"]
+              "enum": [
+                "sphere"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "albedo": {
               "$ref": "#/definitions/LDRColor"
@@ -176,13 +220,17 @@
             },
             "type": {
               "type": "string",
-              "enum": ["plane"]
+              "enum": [
+                "plane"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "albedo": {
               "$ref": "#/definitions/LDRColor"
@@ -195,13 +243,17 @@
             },
             "type": {
               "type": "string",
-              "enum": ["cube"]
+              "enum": [
+                "cube"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "albedo": {
               "$ref": "#/definitions/LDRColor"
@@ -264,7 +316,9 @@
             },
             "type": {
               "type": "string",
-              "enum": ["quadric"]
+              "enum": [
+                "quadric"
+              ]
             }
           }
         }
@@ -276,7 +330,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["x", "y", "z"],
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
           "properties": {
             "x": {
               "type": "number",
@@ -307,27 +365,38 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "type": {
               "type": "string",
-              "enum": ["x"]
+              "enum": [
+                "x"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "properties": {
             "type": {
               "type": "string",
-              "enum": ["y"]
+              "enum": [
+                "y"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["aspectRatio", "type"],
+          "required": [
+            "aspectRatio",
+            "type"
+          ],
           "properties": {
             "aspectRatio": {
               "type": "number",
@@ -335,13 +404,18 @@
             },
             "type": {
               "type": "string",
-              "enum": ["cover"]
+              "enum": [
+                "cover"
+              ]
             }
           }
         },
         {
           "type": "object",
-          "required": ["aspectRatio", "type"],
+          "required": [
+            "aspectRatio",
+            "type"
+          ],
           "properties": {
             "aspectRatio": {
               "type": "number",
@@ -349,7 +423,9 @@
             },
             "type": {
               "type": "string",
-              "enum": ["contain"]
+              "enum": [
+                "contain"
+              ]
             }
           }
         }
@@ -361,7 +437,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["b", "g", "r"],
+          "required": [
+            "b",
+            "g",
+            "r"
+          ],
           "properties": {
             "b": {
               "type": "number",
@@ -394,7 +474,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["b", "g", "r"],
+          "required": [
+            "b",
+            "g",
+            "r"
+          ],
           "properties": {
             "b": {
               "type": "number",
@@ -427,7 +511,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["x", "y", "z"],
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
           "properties": {
             "x": {
               "type": "number",
@@ -460,7 +548,11 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["x", "y", "z"],
+          "required": [
+            "x",
+            "y",
+            "z"
+          ],
           "properties": {
             "x": {
               "type": "number",
