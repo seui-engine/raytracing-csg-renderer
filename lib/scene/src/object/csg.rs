@@ -176,7 +176,11 @@ impl RTObject for Difference {
         all_hits.append(&mut a_hits.clone());
         all_hits.append(&mut a_hits);
         all_hits.append(&mut b_hits);
-        all_hits.sort_by(|h1, h2| h1.distance.partial_cmp(&h2.distance).unwrap());
+        all_hits.sort_by(|h1, h2| {
+            h1.distance
+                .partial_cmp(&h2.distance)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
 
         remove_duplicate_hits(&mut all_hits);
 
