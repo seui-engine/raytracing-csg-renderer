@@ -24,6 +24,8 @@ struct Args {
     height: usize,
     #[arg(long)]
     scene_type: Option<String>,
+    #[arg(short = 'j', long, default_value_t = num_cpus::get())]
+    threads: usize,
 }
 
 pub fn save_ldr_image<P: AsRef<Path>>(
@@ -99,6 +101,10 @@ fn tmp_hdr_to_ldr(color: HDRColor) -> LDRColor {
 
 fn main() {
     let args = Args::parse();
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(args.threads)
+        .build_global()
+        .expect("Failed to set the number of threads");
 
     let mut output_file = args.output.clone();
     if !args.no_output_png_suffix && !output_file.ends_with(".png") {
