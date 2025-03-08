@@ -1,4 +1,4 @@
-use seui_engine_raytracing_csg_renderer_types::HDRColor;
+use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use types::{
     math::Direction,
     rt::{Ray, Scene},
@@ -28,9 +28,7 @@ pub fn sample(scene: &Scene, x: f32, y: f32) -> HDRColor {
 
                 if !is_shadowed {
                     result = result
-                        + hit.albedo
-                            * color
-                            * brdf(-ray.direction, direction, hit.normal, 0.5, 0.5).max(0.0)
+                        + color * brdf(-ray.direction, direction, hit.normal, 0.5, 0.5, hit.albedo)
                 }
             }
         }
@@ -45,10 +43,11 @@ fn brdf(
     surface_to_light: Direction,
     surface_normal: Direction,
     roughness: f32,
-    f0: f32,
-) -> f32 {
+    metallic: f32,    // Metallic factor (0 = non-metal, 1 = full metal)
+    albedo: LDRColor, // Now using RGB instead of a single float
+) -> HDRColor {
     fn fresnel_schlick(cos_theta: f32, f0: f32) -> f32 {
-        f0 + (1f32 - f0) * (1f32 - cos_theta).powf(5f32)
+        f0 + (1.0 - f0) * (1.0 - cos_theta).powf(5.0)
     }
 
     fn ggx_ndf(n: Direction, h: Direction, roughness: f32) -> f32 {
@@ -56,16 +55,16 @@ fn brdf(
         let alpha2 = alpha * alpha;
         let cos_n_h = n.dot(h);
         let cos_n_h2 = cos_n_h * cos_n_h;
-        let denom = cos_n_h2 * alpha2 + (1f32 - cos_n_h2);
+        let denom = cos_n_h2 * alpha2 + (1.0 - cos_n_h2);
         alpha2 / (std::f32::consts::PI * denom * denom)
     }
 
     fn geometric_attenuation(n: Direction, v: Direction, l: Direction, roughness: f32) -> f32 {
-        let k = (roughness + 1f32) * (roughness + 1f32) / 8f32;
+        let k = (roughness + 1.0) * (roughness + 1.0) / 8.0;
         let cos_n_v = n.dot(v);
-        let g_v = cos_n_v / (cos_n_v * (1f32 - k) + k);
+        let g_v = cos_n_v / (cos_n_v * (1.0 - k) + k);
         let cos_n_l = n.dot(l);
-        let g_l = cos_n_l / (cos_n_l * (1f32 - k) + k);
+        let g_l = cos_n_l / (cos_n_l * (1.0 - k) + k);
         g_v * g_l
     }
 
@@ -80,15 +79,51 @@ fn brdf(
         let d = ggx_ndf(n, h, roughness);
         let f = fresnel_schlick(h.dot(v), f0);
         let g = geometric_attenuation(n, v, l, roughness);
-        let specular = (d * f * g) / (4f32 * n.dot(v) * n.dot(v));
-        specular
+        (d * f * g) / (4.0 * n.dot(v) * n.dot(l))
     }
 
-    cook_torrance_specular(
+    let n_dot_l = surface_normal.dot(surface_to_light).max(0.0);
+
+    let f0_r = albedo.r * metallic + (1.0 - metallic) * 0.04;
+    let f0_g = albedo.g * metallic + (1.0 - metallic) * 0.04;
+    let f0_b = albedo.b * metallic + (1.0 - metallic) * 0.04;
+
+    let specular_r = cook_torrance_specular(
         surface_to_view,
         surface_to_light,
         surface_normal,
         roughness,
-        f0,
-    )
+        f0_r,
+    );
+    let specular_g = cook_torrance_specular(
+        surface_to_view,
+        surface_to_light,
+        surface_normal,
+        roughness,
+        f0_g,
+    );
+    let specular_b = cook_torrance_specular(
+        surface_to_view,
+        surface_to_light,
+        surface_normal,
+        roughness,
+        f0_b,
+    );
+
+    let fresnel_r = fresnel_schlick(n_dot_l, f0_r);
+    let fresnel_g = fresnel_schlick(n_dot_l, f0_g);
+    let fresnel_b = fresnel_schlick(n_dot_l, f0_b);
+
+    let diffuse_r =
+        (1.0 - fresnel_r) * (1.0 - metallic) * (albedo.r / std::f32::consts::PI) * n_dot_l;
+    let diffuse_g =
+        (1.0 - fresnel_g) * (1.0 - metallic) * (albedo.g / std::f32::consts::PI) * n_dot_l;
+    let diffuse_b =
+        (1.0 - fresnel_b) * (1.0 - metallic) * (albedo.b / std::f32::consts::PI) * n_dot_l;
+
+    HDRColor {
+        r: (diffuse_r + specular_r).max(0.0),
+        g: (diffuse_g + specular_g).max(0.0),
+        b: (diffuse_b + specular_b).max(0.0),
+    }
 }
