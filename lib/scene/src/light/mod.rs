@@ -12,7 +12,7 @@ pub enum DeserializableLight {
 }
 
 impl DeserializableLight {
-    pub fn into_light(self) -> Box<dyn Light> {
+    pub fn into_light(self) -> Box<dyn Light + Send + Sync> {
         match self {
             DeserializableLight::Point(c) => Box::new(c),
         }

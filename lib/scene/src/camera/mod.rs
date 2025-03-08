@@ -12,7 +12,7 @@ pub enum DeserializableCamera {
 }
 
 impl DeserializableCamera {
-    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera> {
+    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera + Send + Sync> {
         match self {
             DeserializableCamera::Perspective(c) => c.into_camera(screen_aspect_ratio),
         }

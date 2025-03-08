@@ -27,7 +27,7 @@ pub enum DeserializableRTObject {
 }
 
 impl DeserializableRTObject {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         match self {
             DeserializableRTObject::Union(o) => o.into_rt_object(),
             DeserializableRTObject::Intersection(o) => o.into_rt_object(),

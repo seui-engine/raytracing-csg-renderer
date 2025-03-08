@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use camera::DeserializableCamera;
 use deserialize::deserialize_hdr_color;
@@ -44,7 +44,7 @@ impl DeserializableScene {
                 .into_iter()
                 .map(DeserializableLight::into_light)
                 .collect(),
-            sky_color: Rc::new(move |_| self.sky_color),
+            sky_color: Arc::new(move |_| self.sky_color),
             ambient_light: self.ambient_light,
         }
     }

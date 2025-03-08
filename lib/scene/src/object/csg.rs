@@ -11,7 +11,7 @@ pub struct DeserializableUnion {
 }
 
 impl DeserializableUnion {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Union {
             a: self.a.into_rt_object(),
             b: self.b.into_rt_object(),
@@ -27,7 +27,7 @@ pub struct DeserializableIntersection {
 }
 
 impl DeserializableIntersection {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Intersection {
             a: self.a.into_rt_object(),
             b: self.b.into_rt_object(),
@@ -43,7 +43,7 @@ pub struct DeserializableDifference {
 }
 
 impl DeserializableDifference {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Difference {
             a: self.a.into_rt_object(),
             b: self.b.into_rt_object(),
@@ -68,8 +68,8 @@ fn remove_duplicate_hits(sorted: &mut Vec<Hit>) {
 }
 
 struct Union {
-    a: Box<dyn RTObject>,
-    b: Box<dyn RTObject>,
+    a: Box<dyn RTObject + Send + Sync>,
+    b: Box<dyn RTObject + Send + Sync>,
 }
 
 impl RTObject for Union {
@@ -112,8 +112,8 @@ impl RTObject for Union {
 }
 
 struct Intersection {
-    a: Box<dyn RTObject>,
-    b: Box<dyn RTObject>,
+    a: Box<dyn RTObject + Send + Sync>,
+    b: Box<dyn RTObject + Send + Sync>,
 }
 
 impl RTObject for Intersection {
@@ -156,8 +156,8 @@ impl RTObject for Intersection {
 }
 
 struct Difference {
-    a: Box<dyn RTObject>,
-    b: Box<dyn RTObject>,
+    a: Box<dyn RTObject + Send + Sync>,
+    b: Box<dyn RTObject + Send + Sync>,
 }
 
 impl RTObject for Difference {

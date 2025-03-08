@@ -44,7 +44,7 @@ pub struct DeserializablePerspectiveCamera {
 }
 
 impl DeserializablePerspectiveCamera {
-    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera> {
+    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera + Send + Sync> {
         let (tan_half_fov_x, tan_half_fov_y) = match self.fov_mode {
             FovMode::X => {
                 let tan_half_fov_x = (self.fov.to_radians() / 2.0).tan();
