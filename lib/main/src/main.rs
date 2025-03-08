@@ -26,6 +26,8 @@ struct Args {
     scene_type: Option<String>,
     #[arg(short = 'j', long, default_value_t = num_cpus::get())]
     threads: usize,
+    #[arg(short, long, default_value_t = 1)]
+    super_sampling: usize,
 }
 
 pub fn save_ldr_image<P: AsRef<Path>>(
@@ -117,16 +119,29 @@ fn main() {
         args.width as f32 / args.height as f32,
     );
 
+    let ss_factor = args.super_sampling;
+    let inv_ss_factor = 1.0 / (ss_factor * ss_factor) as f32;
+
     let content: Vec<Vec<LDRColor>> = (0..args.height)
         .into_par_iter()
         .map(|y| {
             (0..args.width)
                 .map(|x| {
-                    tmp_hdr_to_ldr(sample(
-                        &scene,
-                        x as f32 / (args.width as f32 - 1.0),
-                        y as f32 / (args.height as f32 - 1.0),
-                    ))
+                    let mut color = HDRColor {
+                        r: 0.0,
+                        g: 0.0,
+                        b: 0.0,
+                    };
+                    for sy in 0..ss_factor {
+                        for sx in 0..ss_factor {
+                            let sample_x = (x as f32 + sx as f32 / ss_factor as f32)
+                                / (args.width as f32 - 1.0);
+                            let sample_y = (y as f32 + sy as f32 / ss_factor as f32)
+                                / (args.height as f32 - 1.0);
+                            color = color + sample(&scene, sample_x, sample_y);
+                        }
+                    }
+                    tmp_hdr_to_ldr(color * inv_ss_factor)
                 })
                 .collect()
         })
