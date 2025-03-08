@@ -32,6 +32,7 @@
       "$ref": "#/definitions/HDRColor"
     }
   },
+  "additionalProperties": false,
   "definitions": {
     "DeserializableCamera": {
       "oneOf": [
@@ -62,7 +63,8 @@
                 "perspective"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -86,7 +88,8 @@
                 "point"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -132,7 +135,8 @@
                 "union"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -154,7 +158,8 @@
                 "intersection"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -176,7 +181,8 @@
                 "difference"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -201,7 +207,8 @@
                 "sphere"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -224,7 +231,8 @@
                 "plane"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -247,7 +255,8 @@
                 "cube"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -320,7 +329,8 @@
                 "quadric"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -348,7 +358,8 @@
               "type": "number",
               "format": "float"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "array",
@@ -375,7 +386,8 @@
                 "x"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -389,7 +401,8 @@
                 "y"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -408,7 +421,8 @@
                 "cover"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -427,7 +441,8 @@
                 "contain"
               ]
             }
-          }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -455,7 +470,8 @@
               "type": "number",
               "format": "float"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "array",
@@ -492,7 +508,8 @@
               "type": "number",
               "format": "float"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "array",
@@ -529,7 +546,8 @@
               "type": "number",
               "format": "float"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "array",
@@ -566,7 +584,8 @@
               "type": "number",
               "format": "float"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "array",

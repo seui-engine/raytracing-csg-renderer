@@ -12,13 +12,13 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct AspectRatio {
     aspect_ratio: f32,
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(tag = "type", rename_all = "camelCase")]
+#[serde(tag = "type", rename_all = "camelCase", deny_unknown_fields)]
 pub enum FovMode {
     X,
     Y,
@@ -31,7 +31,7 @@ fn forward() -> Direction {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializablePerspectiveCamera {
     fov: f32,
     fov_mode: FovMode,
@@ -44,7 +44,7 @@ pub struct DeserializablePerspectiveCamera {
 }
 
 impl DeserializablePerspectiveCamera {
-    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera> {
+    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera + Send + Sync> {
         let (tan_half_fov_x, tan_half_fov_y) = match self.fov_mode {
             FovMode::X => {
                 let tan_half_fov_x = (self.fov.to_radians() / 2.0).tan();

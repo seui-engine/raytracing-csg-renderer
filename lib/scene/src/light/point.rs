@@ -12,7 +12,7 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct PointLight {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]

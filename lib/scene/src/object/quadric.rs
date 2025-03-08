@@ -15,7 +15,7 @@ use crate::{
 use super::util::{enhance_normal, zero};
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Quadric {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]

@@ -14,7 +14,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Sphere {
     #[serde(default = "one")]
     radius: f32,

@@ -17,7 +17,7 @@ fn up() -> Direction {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Plane {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]

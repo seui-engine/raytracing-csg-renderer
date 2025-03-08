@@ -12,7 +12,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Cube {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(default, with = "PositionSchema")]

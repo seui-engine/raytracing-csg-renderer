@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 
@@ -31,10 +31,10 @@ pub trait Camera {
 }
 
 pub struct Scene {
-    pub camera: Box<dyn Camera>,
-    pub objects: Vec<Box<dyn RTObject>>,
-    pub lights: Vec<Box<dyn Light>>,
-    pub sky_color: Rc<dyn Fn(Direction) -> HDRColor>,
+    pub camera: Box<dyn Camera + Send + Sync>,
+    pub objects: Vec<Box<dyn RTObject + Send + Sync>>,
+    pub lights: Vec<Box<dyn Light + Send + Sync>>,
+    pub sky_color: Arc<dyn Fn(Direction) -> HDRColor + Send + Sync>,
     pub ambient_light: HDRColor,
 }
 
