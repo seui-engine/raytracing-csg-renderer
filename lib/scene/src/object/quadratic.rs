@@ -72,10 +72,10 @@ pub struct Quadratic {
 }
 
 pub fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
-    if a.abs() <= 0.001 {
+    if a.abs() <= 0.000001 {
         let mut roots = Vec::new();
-        if b.abs() <= 0.001 {
-            if c.abs() <= 0.001 {
+        if b.abs() <= 0.000001 {
+            if c.abs() <= 0.000001 {
                 return roots;
             } else {
                 roots.push(-d / c);
@@ -286,8 +286,6 @@ impl Quadratic {
     }
 }
 
-static mut LOGGED: bool = false;
-
 impl RTObject for Quadratic {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let (inside_direction, inside_length) = (ray.origin - self.inside).direction_and_length();
@@ -296,21 +294,11 @@ impl RTObject for Quadratic {
             direction: inside_direction,
         });
         let inside = internal
-            .iter()
+            .into_iter()
             .filter(|hit| hit.distance < inside_length)
             .count()
             % 2
             == 0;
-
-        unsafe {
-            if !LOGGED {
-                LOGGED = true;
-                println!(
-                    "distances: {inside_length}, {:?}",
-                    internal.iter().map(|h| h.distance).collect::<Vec<_>>()
-                );
-            }
-        }
 
         let mut result = Vec::new();
 
@@ -324,7 +312,7 @@ impl RTObject for Quadratic {
                 is_front_face,
             });
         }
-        for hit in internal.into_iter() {
+        for hit in self.internal_test(ray).into_iter() {
             is_front_face = !is_front_face;
             result.push(Hit {
                 normal: enhance_normal(ray.direction, hit.normal, is_front_face),

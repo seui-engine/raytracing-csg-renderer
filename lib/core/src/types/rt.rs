@@ -10,7 +10,7 @@ pub struct Ray {
     pub direction: Direction,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Hit {
     pub is_front_face: bool,
     pub albedo: LDRColor,
