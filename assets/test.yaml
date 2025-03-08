@@ -69,18 +69,24 @@ objects:
     position: [3, 0, 0]
     albedo: [0.5, 0.5, 1]
 
-  - type: quadric
-    albedo: [0.5, 0.5, 0.5]
-    position: [-5, 5, 3]
-    inside: [-5, 5, 0]
-    c200: 1
-    c020: 1
-    c002: -0.25
+  - type: intersection
+    a:
+      type: quadric
+      albedo: [0.5, 0.5, 0.5]
+      position: [-5, 5, 3]
+      inside: [-5, 5, 0]
+      c200: 1
+      c020: 1
+      c002: -0.25
+    b:
+      type: sphere
+      position: [-5, 5, 3]
+      radius: 9
 
 lights:
-  - type: point
-    position: [0, 0, 14]
-    color: [200, 200, 200]
+  - type: directional
+    direction: [1, -2, -10]
+    color: [0.5, 0.5, 0.5]
 
 skyColor: [0.1, 0.11, 0.2]
 ambientLight: [0.1, 0.1, 0.1]

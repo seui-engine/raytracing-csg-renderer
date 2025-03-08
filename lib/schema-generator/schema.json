@@ -90,6 +90,26 @@
             }
           },
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "color": {
+              "$ref": "#/definitions/HDRColor"
+            },
+            "direction": {
+              "$ref": "#/definitions/Direction"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "directional"
+              ]
+            }
+          }
         }
       ]
     },
