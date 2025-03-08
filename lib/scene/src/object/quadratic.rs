@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -248,7 +246,6 @@ impl Quadratic {
                 normal: self.normal(origin + ray.direction * distance),
                 albedo: self.albedo,
                 is_front_face: true, // decided later
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             })
             .collect()
     }
@@ -325,7 +322,6 @@ impl RTObject for Quadratic {
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         }
         for hit in internal.into_iter() {
@@ -342,7 +338,6 @@ impl RTObject for Quadratic {
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         }
 

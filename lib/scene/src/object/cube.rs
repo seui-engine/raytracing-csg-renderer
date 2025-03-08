@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::json_schema::{LDRColorSchema, PositionSchema, Scale};
 
 use super::super::deserialize::{deserialize_ldr_color, deserialize_position, deserialize_scale};
@@ -14,7 +12,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Cube {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(default, with = "PositionSchema")]
@@ -114,7 +112,6 @@ impl RTObject for Cube {
                     distance: t_min,
                     is_front_face: true,
                     albedo: self.albedo,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 });
             }
             if t_max >= 0.0 {
@@ -123,7 +120,6 @@ impl RTObject for Cube {
                     distance: t_max,
                     is_front_face: false,
                     albedo: self.albedo,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 });
             }
         }

@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::json_schema::{DirectionSchema, LDRColorSchema, PositionSchema};
 
 use super::super::deserialize::{
@@ -19,7 +17,7 @@ fn up() -> Direction {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Plane {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
@@ -52,14 +50,12 @@ impl RTObject for Plane {
                     normal: -ray.direction,
                     albedo: self.albedo,
                     is_front_face: true,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 });
                 result.push(Hit {
                     distance: f32::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 });
             }
             return result;
@@ -71,14 +67,12 @@ impl RTObject for Plane {
                 normal: self.normal,
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
             result.push(Hit {
                 distance: f32::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         } else {
             result.push(Hit {
@@ -86,14 +80,12 @@ impl RTObject for Plane {
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
             result.push(Hit {
                 distance: t,
                 normal: self.normal,
                 albedo: self.albedo,
                 is_front_face: false,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         }
 

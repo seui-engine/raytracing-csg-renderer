@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -17,7 +15,7 @@ use crate::{
 use super::util::{enhance_normal, zero};
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Quadric {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
@@ -130,14 +128,12 @@ impl Quadric {
                     normal: self.normal(origin + ray.direction * t2),
                     albedo: self.albedo,
                     is_front_face: true,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 },
                 Hit {
                     distance: f32::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 },
             ))
         } else {
@@ -147,14 +143,12 @@ impl Quadric {
                     normal: self.normal(origin + ray.direction * t1),
                     albedo: self.albedo,
                     is_front_face: true,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 },
                 Hit {
                     distance: t2,
                     normal: self.normal(origin + ray.direction * t2),
                     albedo: self.albedo,
                     is_front_face: false,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 },
             ))
         }
@@ -199,7 +193,6 @@ impl RTObject for Quadric {
                     normal: -ray.direction,
                     albedo: self.albedo,
                     is_front_face: true,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 });
                 result.push(Hit {
                     normal: enhance_normal(ray.direction, hit1.normal, false),
@@ -216,7 +209,6 @@ impl RTObject for Quadric {
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
-                    brdf: Rc::new(|normal, direction| normal.dot(direction)),
                 });
             } else {
                 result.push(Hit {
@@ -234,14 +226,12 @@ impl RTObject for Quadric {
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
             result.push(Hit {
                 distance: f32::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         }
 

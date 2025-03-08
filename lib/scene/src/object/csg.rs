@@ -4,14 +4,14 @@ use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::{Hit, RTObject, Ray};
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableUnion {
     a: Box<DeserializableRTObject>,
     b: Box<DeserializableRTObject>,
 }
 
 impl DeserializableUnion {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Union {
             a: self.a.into_rt_object(),
             b: self.b.into_rt_object(),
@@ -20,14 +20,14 @@ impl DeserializableUnion {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableIntersection {
     a: Box<DeserializableRTObject>,
     b: Box<DeserializableRTObject>,
 }
 
 impl DeserializableIntersection {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Intersection {
             a: self.a.into_rt_object(),
             b: self.b.into_rt_object(),
@@ -36,14 +36,14 @@ impl DeserializableIntersection {
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableDifference {
     a: Box<DeserializableRTObject>,
     b: Box<DeserializableRTObject>,
 }
 
 impl DeserializableDifference {
-    pub fn into_rt_object(self) -> Box<dyn RTObject> {
+    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Difference {
             a: self.a.into_rt_object(),
             b: self.b.into_rt_object(),
@@ -68,8 +68,8 @@ fn remove_duplicate_hits(sorted: &mut Vec<Hit>) {
 }
 
 struct Union {
-    a: Box<dyn RTObject>,
-    b: Box<dyn RTObject>,
+    a: Box<dyn RTObject + Send + Sync>,
+    b: Box<dyn RTObject + Send + Sync>,
 }
 
 impl RTObject for Union {
@@ -112,8 +112,8 @@ impl RTObject for Union {
 }
 
 struct Intersection {
-    a: Box<dyn RTObject>,
-    b: Box<dyn RTObject>,
+    a: Box<dyn RTObject + Send + Sync>,
+    b: Box<dyn RTObject + Send + Sync>,
 }
 
 impl RTObject for Intersection {
@@ -156,8 +156,8 @@ impl RTObject for Intersection {
 }
 
 struct Difference {
-    a: Box<dyn RTObject>,
-    b: Box<dyn RTObject>,
+    a: Box<dyn RTObject + Send + Sync>,
+    b: Box<dyn RTObject + Send + Sync>,
 }
 
 impl RTObject for Difference {

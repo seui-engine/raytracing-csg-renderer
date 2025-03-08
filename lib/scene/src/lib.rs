@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use camera::DeserializableCamera;
 use deserialize::deserialize_hdr_color;
@@ -17,7 +17,7 @@ pub mod light;
 pub mod object;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableScene {
     pub camera: DeserializableCamera,
     pub objects: Vec<DeserializableRTObject>,
@@ -44,7 +44,7 @@ impl DeserializableScene {
                 .into_iter()
                 .map(DeserializableLight::into_light)
                 .collect(),
-            sky_color: Rc::new(move |_| self.sky_color),
+            sky_color: Arc::new(move |_| self.sky_color),
             ambient_light: self.ambient_light,
         }
     }

@@ -1,5 +1,6 @@
 use clap::Parser;
 use image::{Rgb, RgbImage};
+use rayon::prelude::*;
 use seui_engine_raytracing_csg_renderer_core::{sample, types::rt::Scene};
 use seui_engine_raytracing_csg_renderer_scene::DeserializableScene;
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
@@ -14,20 +15,17 @@ use std::{fs::File, io::Read, path::Path};
 )]
 struct Args {
     scene: String,
-
     output: String,
-
     #[arg(short, long)]
     no_output_png_suffix: bool,
-
     #[arg(short = 'W', long, default_value_t = 1920)]
     width: usize,
-
     #[arg(short = 'H', long, default_value_t = 1080)]
     height: usize,
-
     #[arg(long)]
     scene_type: Option<String>,
+    #[arg(short = 'j', long, default_value_t = num_cpus::get())]
+    threads: usize,
 }
 
 pub fn save_ldr_image<P: AsRef<Path>>(
@@ -74,7 +72,7 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
         Some(t) if t == "json" => SceneType::Json,
         Some(t) if t == "yaml" => SceneType::Yaml,
         _ => {
-            panic!("unrecognized scene type")
+            panic!("Unrecognized scene type")
         }
     } {
         SceneType::Json => serde_json::from_str::<DeserializableScene>(&content_str)
@@ -103,6 +101,10 @@ fn tmp_hdr_to_ldr(color: HDRColor) -> LDRColor {
 
 fn main() {
     let args = Args::parse();
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(args.threads)
+        .build_global()
+        .expect("Failed to set the number of threads");
 
     let mut output_file = args.output.clone();
     if !args.no_output_png_suffix && !output_file.ends_with(".png") {
@@ -115,18 +117,20 @@ fn main() {
         args.width as f32 / args.height as f32,
     );
 
-    let mut content = Vec::new();
-    for y in 0..args.height {
-        let mut row = Vec::new();
-        for x in 0..args.width {
-            row.push(tmp_hdr_to_ldr(sample(
-                &scene,
-                x as f32 / (args.width as f32 - 1.0),
-                y as f32 / (args.height as f32 - 1.0),
-            )))
-        }
-        content.push(row);
-    }
+    let content: Vec<Vec<LDRColor>> = (0..args.height)
+        .into_par_iter()
+        .map(|y| {
+            (0..args.width)
+                .map(|x| {
+                    tmp_hdr_to_ldr(sample(
+                        &scene,
+                        x as f32 / (args.width as f32 - 1.0),
+                        y as f32 / (args.height as f32 - 1.0),
+                    ))
+                })
+                .collect()
+        })
+        .collect();
 
     if let Err(e) = save_ldr_image(args.width, args.height, content, output_file) {
         eprintln!("Error saving image: {}", e);

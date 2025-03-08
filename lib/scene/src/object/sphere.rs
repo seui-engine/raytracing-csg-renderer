@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::json_schema::{LDRColorSchema, PositionSchema};
 
 use super::{
@@ -16,7 +14,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Sphere {
     #[serde(default = "one")]
     radius: f32,
@@ -54,6 +52,10 @@ impl RTObject for Sphere {
         }
 
         let t1 = (-b - sqrt_d) / (2.0 * a);
+        if t1.is_nan() {
+            return result; // error
+        }
+
         if t1 < 0.0 {
             // If t1 is negative, ray started inside the sphere
             result.push(Hit {
@@ -61,7 +63,6 @@ impl RTObject for Sphere {
                 normal: -ray.direction, // Opposite direction
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         } else {
             let normal: Vec3 = *(origin + ray.direction * t1) * 2.0;
@@ -70,7 +71,6 @@ impl RTObject for Sphere {
                 normal: Direction::new(normal),
                 albedo: self.albedo,
                 is_front_face: true,
-                brdf: Rc::new(|normal, direction| normal.dot(direction)),
             });
         }
 
@@ -80,7 +80,6 @@ impl RTObject for Sphere {
             normal: Direction::new(normal),
             albedo: self.albedo,
             is_front_face: false,
-            brdf: Rc::new(|normal, direction| normal.dot(direction)),
         });
 
         result
