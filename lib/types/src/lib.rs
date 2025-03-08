@@ -64,6 +64,18 @@ impl Mul<LDRColor> for HDRColor {
     }
 }
 
+impl Mul<HDRColor> for HDRColor {
+    type Output = HDRColor;
+
+    fn mul(self, rhs: HDRColor) -> Self::Output {
+        HDRColor {
+            r: self.r * rhs.r,
+            g: self.g * rhs.g,
+            b: self.b * rhs.b,
+        }
+    }
+}
+
 impl Mul<HDRColor> for LDRColor {
     type Output = HDRColor;
 
