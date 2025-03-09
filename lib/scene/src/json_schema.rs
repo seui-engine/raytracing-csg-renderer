@@ -1,7 +1,10 @@
 use std::collections::BTreeSet;
 
 use schemars::{
-    schema::{InstanceType, Metadata, ObjectValidation, Schema, SchemaObject},
+    schema::{
+        ArrayValidation, InstanceType, Metadata, NumberValidation, ObjectValidation, Schema,
+        SchemaObject, SubschemaValidation,
+    },
     JsonSchema, SchemaGenerator,
 };
 
@@ -27,7 +30,7 @@ impl JsonSchema for PositionSchema {
                 ..Default::default()
             })),
             instance_type: None, // We define multiple formats below
-            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+            subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
                     // Object format: { x: f32, y: f32, z: f32 }
                     Schema::Object(SchemaObject {
@@ -53,7 +56,7 @@ impl JsonSchema for PositionSchema {
                     // Tuple format: [x, y, z]
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
-                        array: Some(Box::new(schemars::schema::ArrayValidation {
+                        array: Some(Box::new(ArrayValidation {
                             items: Some(gen.subschema_for::<f32>().into()),
                             min_items: Some(3),
                             max_items: Some(3),
@@ -102,16 +105,16 @@ impl JsonSchema for Scale {
                 ..Default::default()
             })),
             instance_type: None, // We define multiple formats below
-            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+            subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
                     // Object format: { x: f32, y: f32, z: f32 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
                             properties: [
-                                ("x".to_string(), gen.subschema_for::<f32>()),
-                                ("y".to_string(), gen.subschema_for::<f32>()),
-                                ("z".to_string(), gen.subschema_for::<f32>()),
+                                ("x".to_string(), float_nonnegative()),
+                                ("y".to_string(), float_nonnegative()),
+                                ("z".to_string(), float_nonnegative()),
                             ]
                             .into_iter()
                             .collect(),
@@ -128,8 +131,8 @@ impl JsonSchema for Scale {
                     // Tuple format: [x, y, z]
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
-                        array: Some(Box::new(schemars::schema::ArrayValidation {
-                            items: Some(gen.subschema_for::<f32>().into()),
+                        array: Some(Box::new(ArrayValidation {
+                            items: Some(float_nonnegative().into()),
                             min_items: Some(3),
                             max_items: Some(3),
                             ..Default::default()
@@ -166,7 +169,7 @@ impl JsonSchema for DirectionSchema {
                 ..Default::default()
             })),
             instance_type: None, // We define multiple formats below
-            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+            subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
                     // Object format: { x: f32, y: f32, z: f32 }
                     Schema::Object(SchemaObject {
@@ -192,7 +195,7 @@ impl JsonSchema for DirectionSchema {
                     // Tuple format: [x, y, z]
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
-                        array: Some(Box::new(schemars::schema::ArrayValidation {
+                        array: Some(Box::new(ArrayValidation {
                             items: Some(gen.subschema_for::<f32>().into()),
                             min_items: Some(3),
                             max_items: Some(3),
@@ -230,7 +233,7 @@ impl JsonSchema for MoveSchema {
                 ..Default::default()
             })),
             instance_type: None, // We define multiple formats below
-            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+            subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
                     // Object format: { x: f32, y: f32, z: f32 }
                     Schema::Object(SchemaObject {
@@ -256,7 +259,7 @@ impl JsonSchema for MoveSchema {
                     // Tuple format: [x, y, z]
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
-                        array: Some(Box::new(schemars::schema::ArrayValidation {
+                        array: Some(Box::new(ArrayValidation {
                             items: Some(gen.subschema_for::<f32>().into()),
                             min_items: Some(3),
                             max_items: Some(3),
@@ -294,16 +297,16 @@ impl JsonSchema for HDRColorSchema {
                 ..Default::default()
             })),
             instance_type: None, // We define multiple formats below
-            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+            subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
                     // Object format: { x: f32, y: f32, z: f32 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
                             properties: [
-                                ("r".to_string(), gen.subschema_for::<f32>()),
-                                ("g".to_string(), gen.subschema_for::<f32>()),
-                                ("b".to_string(), gen.subschema_for::<f32>()),
+                                ("r".to_string(), float_nonnegative()),
+                                ("g".to_string(), float_nonnegative()),
+                                ("b".to_string(), float_nonnegative()),
                             ]
                             .into_iter()
                             .collect(),
@@ -320,8 +323,8 @@ impl JsonSchema for HDRColorSchema {
                     // Tuple format: [x, y, z]
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
-                        array: Some(Box::new(schemars::schema::ArrayValidation {
-                            items: Some(gen.subschema_for::<f32>().into()),
+                        array: Some(Box::new(ArrayValidation {
+                            items: Some(float_nonnegative().into()),
                             min_items: Some(3),
                             max_items: Some(3),
                             ..Default::default()
@@ -358,16 +361,16 @@ impl JsonSchema for LDRColorSchema {
                 ..Default::default()
             })),
             instance_type: None, // We define multiple formats below
-            subschemas: Some(Box::new(schemars::schema::SubschemaValidation {
+            subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
                     // Object format: { x: f32, y: f32, z: f32 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
                             properties: [
-                                ("r".to_string(), gen.subschema_for::<f32>()),
-                                ("g".to_string(), gen.subschema_for::<f32>()),
-                                ("b".to_string(), gen.subschema_for::<f32>()),
+                                ("r".to_string(), float_ldr()),
+                                ("g".to_string(), float_ldr()),
+                                ("b".to_string(), float_ldr()),
                             ]
                             .into_iter()
                             .collect(),
@@ -384,8 +387,8 @@ impl JsonSchema for LDRColorSchema {
                     // Tuple format: [x, y, z]
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
-                        array: Some(Box::new(schemars::schema::ArrayValidation {
-                            items: Some(gen.subschema_for::<f32>().into()),
+                        array: Some(Box::new(ArrayValidation {
+                            items: Some(float_ldr().into()),
                             min_items: Some(3),
                             max_items: Some(3),
                             ..Default::default()
@@ -398,4 +401,29 @@ impl JsonSchema for LDRColorSchema {
             ..Default::default()
         })
     }
+}
+
+fn float_nonnegative() -> Schema {
+    Schema::Object(SchemaObject {
+        instance_type: Some(InstanceType::Number.into()),
+        format: Some("float".to_string()),
+        number: Some(Box::new(NumberValidation {
+            minimum: Some(0.0),
+            ..Default::default()
+        })),
+        ..Default::default()
+    })
+}
+
+fn float_ldr() -> Schema {
+    Schema::Object(SchemaObject {
+        instance_type: Some(InstanceType::Number.into()),
+        format: Some("float".to_string()),
+        number: Some(Box::new(NumberValidation {
+            minimum: Some(0.0),
+            maximum: Some(1.0),
+            ..Default::default()
+        })),
+        ..Default::default()
+    })
 }

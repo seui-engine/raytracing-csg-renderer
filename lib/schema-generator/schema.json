@@ -584,15 +584,18 @@
           "properties": {
             "b": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
             },
             "g": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
             },
             "r": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
             }
           },
           "additionalProperties": false
@@ -601,7 +604,8 @@
           "type": "array",
           "items": {
             "type": "number",
-            "format": "float"
+            "format": "float",
+            "minimum": 0.0
           },
           "maxItems": 3,
           "minItems": 3
@@ -622,15 +626,21 @@
           "properties": {
             "b": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "g": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "r": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             }
           },
           "additionalProperties": false
@@ -639,7 +649,9 @@
           "type": "array",
           "items": {
             "type": "number",
-            "format": "float"
+            "format": "float",
+            "maximum": 1.0,
+            "minimum": 0.0
           },
           "maxItems": 3,
           "minItems": 3
@@ -698,15 +710,18 @@
           "properties": {
             "x": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
             },
             "y": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
             },
             "z": {
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
             }
           },
           "additionalProperties": false
@@ -715,7 +730,8 @@
           "type": "array",
           "items": {
             "type": "number",
-            "format": "float"
+            "format": "float",
+            "minimum": 0.0
           },
           "maxItems": 3,
           "minItems": 3

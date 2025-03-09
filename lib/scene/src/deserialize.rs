@@ -31,9 +31,9 @@ where
 
             while let Some(key) = map.next_key::<String>()? {
                 match key.as_str() {
-                    "r" => r = Some(map.next_value()?),
-                    "g" => g = Some(map.next_value()?),
-                    "b" => b = Some(map.next_value()?),
+                    "r" => r = Some(map.next_value::<f32>()?.max(0.0)),
+                    "g" => g = Some(map.next_value::<f32>()?.max(0.0)),
+                    "b" => b = Some(map.next_value::<f32>()?.max(0.0)),
                     _ => return Err(de::Error::unknown_field(&key, &["r", "g", "b"])),
                 }
             }
@@ -51,14 +51,17 @@ where
             A: SeqAccess<'de>,
         {
             let r = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(0, &self))?
+                .max(0.0);
             let g = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(1, &self))?
+                .max(0.0);
             let b = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(2, &self))?
+                .max(0.0);
 
             Ok(HDRColor { r, g, b })
         }
@@ -91,9 +94,9 @@ where
 
             while let Some(key) = map.next_key::<String>()? {
                 match key.as_str() {
-                    "r" => r = Some(map.next_value()?),
-                    "g" => g = Some(map.next_value()?),
-                    "b" => b = Some(map.next_value()?),
+                    "r" => r = Some(map.next_value::<f32>()?.clamp(0.0, 1.0)),
+                    "g" => g = Some(map.next_value::<f32>()?.clamp(0.0, 1.0)),
+                    "b" => b = Some(map.next_value::<f32>()?.clamp(0.0, 1.0)),
                     _ => return Err(de::Error::unknown_field(&key, &["r", "g", "b"])),
                 }
             }
@@ -111,14 +114,17 @@ where
             A: SeqAccess<'de>,
         {
             let r = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(0, &self))?
+                .clamp(0.0, 1.0);
             let g = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(1, &self))?
+                .clamp(0.0, 1.0);
             let b = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(2, &self))?
+                .clamp(0.0, 1.0);
 
             Ok(LDRColor::new(r, g, b))
         }
@@ -331,9 +337,9 @@ where
 
             while let Some(key) = map.next_key::<String>()? {
                 match key.as_str() {
-                    "x" => x = Some(map.next_value()?),
-                    "y" => y = Some(map.next_value()?),
-                    "z" => z = Some(map.next_value()?),
+                    "x" => x = Some(map.next_value::<f32>()?.max(0.0)),
+                    "y" => y = Some(map.next_value::<f32>()?.max(0.0)),
+                    "z" => z = Some(map.next_value::<f32>()?.max(0.0)),
                     _ => return Err(de::Error::unknown_field(&key, &["x", "y", "z"])),
                 }
             }
@@ -351,14 +357,17 @@ where
             A: SeqAccess<'de>,
         {
             let x = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(0, &self))?
+                .max(0.0);
             let y = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(1, &self))?
+                .max(0.0);
             let z = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+                .next_element::<f32>()?
+                .ok_or_else(|| de::Error::invalid_length(2, &self))?
+                .max(0.0);
 
             Ok(Scale { x, y, z })
         }
