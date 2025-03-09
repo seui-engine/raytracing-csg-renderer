@@ -7,85 +7,44 @@ camera:
   position: [0, -10, 0]
 
 objects:
-  - type: difference
-    a:
-      type: intersection
-      a:
-        type: sphere
-        position: [-6, 0, -3]
-        radius: 1.33
-        albedo: [0.2, 0.2, 1]
-      b:
-        type: cube
-        position: [-6, 0, -3]
-        scale: [1, 1, 1]
-        albedo: [1, 0.2, 0.2]
-    b:
-      type: sphere
-      position: [-6, 0, -3]
-      radius: 1.2
-      albedo: [0.2, 1, 0.2]
-
-  - type: difference
-    a:
-      type: intersection
-      a:
-        type: sphere
-        position: [6, 0, -3]
-        radius: 1.33
-        albedo: [0.2, 0.2, 1]
-      b:
-        type: cube
-        position: [6, 0, -3]
-        scale: [1, 1, 1]
-        albedo: [1, 0.2, 0.2]
-    b:
-      type: sphere
-      position: [6, 0, -3]
-      radius: 1.2
-      albedo: [0.2, 1, 0.2]
-
   - type: plane
     position: [0, 0, -5]
 
+  # gold
+  - type: sphere
+    albedo: [1.00, 0.78, 0.34]
+    roughness: 0.45
+    metallic: 1
+
+  # silver
   - type: sphere
     position: [-3, 0, 0]
-    albedo: [1, 0.5, 0.5]
+    albedo: [0.95, 0.93, 0.88]
+    roughness: 0.35
+    metallic: 1
 
-  - type: difference
-    a:
-      type: sphere
-      albedo: [0.5, 1, 0.5]
-    b:
-      type: quadric
-      position: [0, 0, 0]
-      inside: [0, 0, -1]
-      c200: 1
-      c020: 1
-      c002: -1
-      c000: -0.25
-
-  - type: cube
+  # copper
+  - type: sphere
     position: [3, 0, 0]
-    albedo: [0.5, 0.5, 1]
+    albedo: [0.95, 0.64, 0.54]
+    roughness: 0.4
+    metallic: 1
 
-  - type: intersection
-    a:
-      type: quadric
-      albedo: [0.5, 0.5, 0.5]
-      position: [-5, 5, 3]
-      inside: [-5, 5, 0]
-      c200: 1
-      c020: 1
-      c002: -0.25
-    b:
-      type: sphere
-      position: [-5, 5, 3]
-      radius: 9
+  # plastic (red)
+  - type: sphere
+    position: [-6, 0, 0]
+    albedo: [0.9, 0.1, 0.1]
+    roughness: 0.3
+
+  # rubber
+  - type: sphere
+    position: [6, 0, 0]
+    albedo: [0.02, 0.02, 0.02]
+    roughness: 0.8
 
 lights:
   - type: directional
-    direction: [1, -2, -10]
+    direction: [1, 2, -10]
     color: [0.5, 0.5, 0.5]
 
 skyColor: [0.1, 0.11, 0.2]

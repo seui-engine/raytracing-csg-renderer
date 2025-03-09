@@ -1,4 +1,7 @@
-use crate::json_schema::{LDRColorSchema, PositionSchema};
+use crate::{
+    deserialize::{deserialize_ldr_float, deserialize_nonnegative_float},
+    json_schema::{LDRColorSchema, PositionSchema},
+};
 
 use super::{
     super::deserialize::{deserialize_ldr_color, deserialize_position},
@@ -16,7 +19,8 @@ use seui_engine_raytracing_csg_renderer_types::LDRColor;
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Sphere {
-    #[serde(default = "one")]
+    #[serde(default = "one", deserialize_with = "deserialize_nonnegative_float")]
+    #[schemars(range(min = 0))]
     radius: f32,
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
@@ -24,6 +28,12 @@ pub struct Sphere {
     #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    roughness: f32,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    metallic: f32,
 }
 
 impl RTObject for Sphere {
@@ -63,6 +73,8 @@ impl RTObject for Sphere {
                 normal: -ray.direction, // Opposite direction
                 albedo: self.albedo,
                 is_front_face: true,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         } else {
             let normal: Vec3 = *(origin + ray.direction * t1) * 2.0;
@@ -71,6 +83,8 @@ impl RTObject for Sphere {
                 normal: Direction::new(normal),
                 albedo: self.albedo,
                 is_front_face: true,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         }
 
@@ -80,6 +94,8 @@ impl RTObject for Sphere {
             normal: Direction::new(normal),
             albedo: self.albedo,
             is_front_face: false,
+            roughness: self.roughness,
+            metallic: self.metallic,
         });
 
         result

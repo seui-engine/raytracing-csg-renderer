@@ -16,6 +16,8 @@ pub struct Hit {
     pub albedo: LDRColor,
     pub normal: Direction,
     pub distance: f32,
+    pub roughness: f32,
+    pub metallic: f32,
 }
 
 pub trait RTObject {

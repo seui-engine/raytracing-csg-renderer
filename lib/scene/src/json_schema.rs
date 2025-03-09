@@ -94,7 +94,7 @@ impl JsonSchema for Scale {
         "Scale".to_string()
     }
 
-    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
         Schema::Object(SchemaObject {
             metadata: Some(Box::new(Metadata {
                 title: Some("Scale".to_string()),
@@ -286,7 +286,7 @@ impl JsonSchema for HDRColorSchema {
         "HDRColor".to_string()
     }
 
-    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
         Schema::Object(SchemaObject {
             metadata: Some(Box::new(Metadata {
                 title: Some("HDRColor".to_string()),
@@ -350,7 +350,7 @@ impl JsonSchema for LDRColorSchema {
         "LDRColor".to_string()
     }
 
-    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
         Schema::Object(SchemaObject {
             metadata: Some(Box::new(Metadata {
                 title: Some("LDRColor".to_string()),

@@ -1,4 +1,7 @@
-use crate::json_schema::{LDRColorSchema, PositionSchema, Scale};
+use crate::{
+    deserialize::deserialize_ldr_float,
+    json_schema::{LDRColorSchema, PositionSchema, Scale},
+};
 
 use super::super::deserialize::{deserialize_ldr_color, deserialize_position, deserialize_scale};
 
@@ -17,13 +20,17 @@ pub struct Cube {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(default, with = "PositionSchema")]
     position: Position,
-
     #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(default, with = "LDRColorSchema")]
     albedo: LDRColor,
-
     #[serde(default, deserialize_with = "deserialize_scale")]
     scale: Scale,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    roughness: f32,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    metallic: f32,
 }
 
 impl RTObject for Cube {
@@ -112,6 +119,8 @@ impl RTObject for Cube {
                     distance: t_min,
                     is_front_face: true,
                     albedo: self.albedo,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 });
             }
             if t_max >= 0.0 {
@@ -120,6 +129,8 @@ impl RTObject for Cube {
                     distance: t_max,
                     is_front_face: false,
                     albedo: self.albedo,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 });
             }
         }

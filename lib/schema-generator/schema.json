@@ -193,13 +193,28 @@
             "albedo": {
               "$ref": "#/definitions/LDRColor"
             },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
             "position": {
               "$ref": "#/definitions/Position"
             },
             "radius": {
               "default": 1.0,
               "type": "number",
-              "format": "float"
+              "format": "float",
+              "minimum": 0.0
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "type": {
               "type": "string",
@@ -219,11 +234,25 @@
             "albedo": {
               "$ref": "#/definitions/LDRColor"
             },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
             "normal": {
               "$ref": "#/definitions/Direction"
             },
             "position": {
               "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "type": {
               "type": "string",
@@ -243,8 +272,22 @@
             "albedo": {
               "$ref": "#/definitions/LDRColor"
             },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
             "position": {
               "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "scale": {
               "$ref": "#/definitions/Scale"
@@ -320,8 +363,22 @@
             "inside": {
               "$ref": "#/definitions/Position"
             },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
             "position": {
               "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "type": {
               "type": "string",
@@ -445,8 +502,22 @@
             "inside": {
               "$ref": "#/definitions/Position"
             },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
             "position": {
               "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
             },
             "type": {
               "type": "string",

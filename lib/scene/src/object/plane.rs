@@ -1,4 +1,7 @@
-use crate::json_schema::{DirectionSchema, LDRColorSchema, PositionSchema};
+use crate::{
+    deserialize::deserialize_ldr_float,
+    json_schema::{DirectionSchema, LDRColorSchema, PositionSchema},
+};
 
 use super::super::deserialize::{
     deserialize_direction, deserialize_ldr_color, deserialize_position,
@@ -28,6 +31,12 @@ pub struct Plane {
     #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    roughness: f32,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    metallic: f32,
 }
 
 impl RTObject for Plane {
@@ -50,12 +59,16 @@ impl RTObject for Plane {
                     normal: -ray.direction,
                     albedo: self.albedo,
                     is_front_face: true,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 });
                 result.push(Hit {
                     distance: f32::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 });
             }
             return result;
@@ -67,12 +80,16 @@ impl RTObject for Plane {
                 normal: self.normal,
                 albedo: self.albedo,
                 is_front_face: true,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
             result.push(Hit {
                 distance: f32::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         } else {
             result.push(Hit {
@@ -80,12 +97,16 @@ impl RTObject for Plane {
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face: true,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
             result.push(Hit {
                 distance: t,
                 normal: self.normal,
                 albedo: self.albedo,
                 is_front_face: false,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         }
 

@@ -8,7 +8,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{
-    deserialize::{deserialize_ldr_color, deserialize_position},
+    deserialize::{deserialize_ldr_color, deserialize_ldr_float, deserialize_position},
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
@@ -20,10 +20,15 @@ pub struct Quadratic {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
-
     #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    roughness: f32,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    metallic: f32,
 
     #[serde(default = "zero")]
     c300: f32,
@@ -246,6 +251,8 @@ impl Quadratic {
                 normal: self.normal(origin + ray.direction * distance),
                 albedo: self.albedo,
                 is_front_face: true, // decided later
+                roughness: self.roughness,
+                metallic: self.metallic,
             })
             .collect()
     }
@@ -310,6 +317,8 @@ impl RTObject for Quadratic {
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         }
         for hit in self.internal_test(ray).into_iter() {
@@ -326,6 +335,8 @@ impl RTObject for Quadratic {
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         }
 

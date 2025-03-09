@@ -8,7 +8,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{
-    deserialize::{deserialize_ldr_color, deserialize_position},
+    deserialize::{deserialize_ldr_color, deserialize_ldr_float, deserialize_position},
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
@@ -20,10 +20,15 @@ pub struct Quadric {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
-
     #[serde(default, deserialize_with = "deserialize_ldr_color")]
     #[schemars(with = "LDRColorSchema")]
     albedo: LDRColor,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    roughness: f32,
+    #[serde(default, deserialize_with = "deserialize_ldr_float")]
+    #[schemars(range(min = 0, max = 1))]
+    metallic: f32,
 
     #[serde(default = "zero")]
     c200: f32,
@@ -128,12 +133,16 @@ impl Quadric {
                     normal: self.normal(origin + ray.direction * t2),
                     albedo: self.albedo,
                     is_front_face: true,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 },
                 Hit {
                     distance: f32::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 },
             ))
         } else {
@@ -143,12 +152,16 @@ impl Quadric {
                     normal: self.normal(origin + ray.direction * t1),
                     albedo: self.albedo,
                     is_front_face: true,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 },
                 Hit {
                     distance: t2,
                     normal: self.normal(origin + ray.direction * t2),
                     albedo: self.albedo,
                     is_front_face: false,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 },
             ))
         }
@@ -193,6 +206,8 @@ impl RTObject for Quadric {
                     normal: -ray.direction,
                     albedo: self.albedo,
                     is_front_face: true,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 });
                 result.push(Hit {
                     normal: enhance_normal(ray.direction, hit1.normal, false),
@@ -209,6 +224,8 @@ impl RTObject for Quadric {
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
+                    roughness: self.roughness,
+                    metallic: self.metallic,
                 });
             } else {
                 result.push(Hit {
@@ -226,12 +243,16 @@ impl RTObject for Quadric {
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face: true,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
             result.push(Hit {
                 distance: f32::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
+                roughness: self.roughness,
+                metallic: self.metallic,
             });
         }
 

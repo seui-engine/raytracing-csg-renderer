@@ -375,3 +375,93 @@ where
 
     deserializer.deserialize_any(Vec3Visitor)
 }
+
+pub fn deserialize_nonnegative_float<'de, D>(deserializer: D) -> Result<f32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct F32Visitor;
+
+    impl<'de> Visitor<'de> for F32Visitor {
+        type Value = f32;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a number between 0 and 1")
+        }
+
+        fn visit_f32<E>(self, value: f32) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok(value.max(0.0))
+        }
+
+        fn visit_f64<E>(self, value: f64) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok((value as f32).max(0.0))
+        }
+
+        fn visit_i64<E>(self, value: i64) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok((value as f32).max(0.0))
+        }
+
+        fn visit_u64<E>(self, value: u64) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok((value as f32).max(0.0))
+        }
+    }
+
+    deserializer.deserialize_any(F32Visitor)
+}
+
+pub fn deserialize_ldr_float<'de, D>(deserializer: D) -> Result<f32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct F32Visitor;
+
+    impl<'de> Visitor<'de> for F32Visitor {
+        type Value = f32;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a number between 0 and 1")
+        }
+
+        fn visit_f32<E>(self, value: f32) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok(value.clamp(0.0, 1.0))
+        }
+
+        fn visit_f64<E>(self, value: f64) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok((value as f32).clamp(0.0, 1.0))
+        }
+
+        fn visit_i64<E>(self, value: i64) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok((value as f32).clamp(0.0, 1.0))
+        }
+
+        fn visit_u64<E>(self, value: u64) -> Result<f32, E>
+        where
+            E: de::Error,
+        {
+            Ok((value as f32).clamp(0.0, 1.0))
+        }
+    }
+
+    deserializer.deserialize_any(F32Visitor)
+}

@@ -28,7 +28,15 @@ pub fn sample(scene: &Scene, x: f32, y: f32) -> HDRColor {
 
                 if !is_shadowed {
                     result = result
-                        + color * brdf(-ray.direction, direction, hit.normal, 0.5, 0.5, hit.albedo)
+                        + brdf(
+                            -ray.direction,
+                            direction,
+                            hit.normal,
+                            hit.roughness,
+                            hit.metallic,
+                            hit.albedo,
+                            color,
+                        )
                 }
             }
         }
@@ -43,17 +51,19 @@ fn brdf(
     surface_to_light: Direction,
     surface_normal: Direction,
     roughness: f32,
-    metallic: f32,    // Metallic factor (0 = non-metal, 1 = full metal)
-    albedo: LDRColor, // Now using RGB instead of a single float
+    metallic: f32,
+    albedo: LDRColor,
+    light_color: HDRColor,
 ) -> HDRColor {
     fn fresnel_schlick(cos_theta: f32, f0: f32) -> f32 {
+        let cos_theta = cos_theta.clamp(0.0, 1.0);
         f0 + (1.0 - f0) * (1.0 - cos_theta).powf(5.0)
     }
 
     fn ggx_ndf(n: Direction, h: Direction, roughness: f32) -> f32 {
         let alpha = roughness * roughness;
         let alpha2 = alpha * alpha;
-        let cos_n_h = n.dot(h);
+        let cos_n_h = n.dot(h).clamp(0.0, 1.0);
         let cos_n_h2 = cos_n_h * cos_n_h;
         let denom = cos_n_h2 * alpha2 + (1.0 - cos_n_h2);
         alpha2 / (std::f32::consts::PI * denom * denom)
@@ -61,9 +71,9 @@ fn brdf(
 
     fn geometric_attenuation(n: Direction, v: Direction, l: Direction, roughness: f32) -> f32 {
         let k = (roughness + 1.0) * (roughness + 1.0) / 8.0;
-        let cos_n_v = n.dot(v);
+        let cos_n_v = n.dot(v).max(1e-5);
         let g_v = cos_n_v / (cos_n_v * (1.0 - k) + k);
-        let cos_n_l = n.dot(l);
+        let cos_n_l = n.dot(l).max(1e-5);
         let g_l = cos_n_l / (cos_n_l * (1.0 - k) + k);
         g_v * g_l
     }
@@ -77,53 +87,58 @@ fn brdf(
     ) -> f32 {
         let h = Direction::new(*v + *l);
         let d = ggx_ndf(n, h, roughness);
-        let f = fresnel_schlick(h.dot(v), f0);
+        let f = fresnel_schlick(h.dot(v).clamp(0.0, 1.0), f0);
         let g = geometric_attenuation(n, v, l, roughness);
-        (d * f * g) / (4.0 * n.dot(v) * n.dot(l))
+        (d * f * g) / (4.0 * n.dot(v).max(1e-5) * n.dot(l).max(1e-5))
     }
 
     let n_dot_l = surface_normal.dot(surface_to_light).max(0.0);
 
-    let f0_r = albedo.r * metallic + (1.0 - metallic) * 0.04;
-    let f0_g = albedo.g * metallic + (1.0 - metallic) * 0.04;
-    let f0_b = albedo.b * metallic + (1.0 - metallic) * 0.04;
+    let f0 = LDRColor {
+        r: albedo.r * metallic + (1.0 - metallic) * 0.04,
+        g: albedo.g * metallic + (1.0 - metallic) * 0.04,
+        b: albedo.b * metallic + (1.0 - metallic) * 0.04,
+    };
 
-    let specular_r = cook_torrance_specular(
-        surface_to_view,
-        surface_to_light,
-        surface_normal,
-        roughness,
-        f0_r,
-    );
-    let specular_g = cook_torrance_specular(
-        surface_to_view,
-        surface_to_light,
-        surface_normal,
-        roughness,
-        f0_g,
-    );
-    let specular_b = cook_torrance_specular(
-        surface_to_view,
-        surface_to_light,
-        surface_normal,
-        roughness,
-        f0_b,
-    );
+    let specular = LDRColor {
+        r: cook_torrance_specular(
+            surface_to_view,
+            surface_to_light,
+            surface_normal,
+            roughness,
+            f0.r,
+        ),
+        g: cook_torrance_specular(
+            surface_to_view,
+            surface_to_light,
+            surface_normal,
+            roughness,
+            f0.g,
+        ),
+        b: cook_torrance_specular(
+            surface_to_view,
+            surface_to_light,
+            surface_normal,
+            roughness,
+            f0.b,
+        ),
+    };
 
-    let fresnel_r = fresnel_schlick(n_dot_l, f0_r);
-    let fresnel_g = fresnel_schlick(n_dot_l, f0_g);
-    let fresnel_b = fresnel_schlick(n_dot_l, f0_b);
+    let fresnel = LDRColor {
+        r: fresnel_schlick(n_dot_l, f0.r),
+        g: fresnel_schlick(n_dot_l, f0.g),
+        b: fresnel_schlick(n_dot_l, f0.b),
+    };
 
-    let diffuse_r =
-        (1.0 - fresnel_r) * (1.0 - metallic) * (albedo.r / std::f32::consts::PI) * n_dot_l;
-    let diffuse_g =
-        (1.0 - fresnel_g) * (1.0 - metallic) * (albedo.g / std::f32::consts::PI) * n_dot_l;
-    let diffuse_b =
-        (1.0 - fresnel_b) * (1.0 - metallic) * (albedo.b / std::f32::consts::PI) * n_dot_l;
+    let diffuse = LDRColor {
+        r: (1.0 - fresnel.r) * (1.0 - metallic) * (albedo.r / std::f32::consts::PI) * n_dot_l,
+        g: (1.0 - fresnel.g) * (1.0 - metallic) * (albedo.g / std::f32::consts::PI) * n_dot_l,
+        b: (1.0 - fresnel.b) * (1.0 - metallic) * (albedo.b / std::f32::consts::PI) * n_dot_l,
+    };
 
     HDRColor {
-        r: (diffuse_r + specular_r).max(0.0),
-        g: (diffuse_g + specular_g).max(0.0),
-        b: (diffuse_b + specular_b).max(0.0),
+        r: (diffuse.r + specular.r) * light_color.r,
+        g: (diffuse.g + specular.g) * light_color.g,
+        b: (diffuse.b + specular.b) * light_color.b,
     }
 }
