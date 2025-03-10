@@ -1,4 +1,8 @@
 {
+  "files.associations": {
+    "*.json": "jsonc" // XXX: prefix /assets
+    // "/assets/**/*.json": "jsonc"
+  },
   "json.schemas": [
     {
       "fileMatch": ["assets/**/*.json"],
@@ -16,7 +20,7 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[json][yaml][json5]": {
+  "[jsonc][yaml][json5]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

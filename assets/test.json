@@ -9,15 +9,18 @@
     "position": [0, -10, 0]
   },
   "objects": [
+    // floor
     {
       "type": "plane",
       "position": [0, 0, -5]
     },
+    // left red sphere
     {
       "type": "sphere",
       "position": [-3, 0, 0],
       "albedo": [1, 0.5, 0.5]
     },
+    // center green-gray CSG
     {
       "type": "difference",
       "a": {
@@ -34,6 +37,7 @@
         "c000": -0.25
       }
     },
+    // right blue cube
     {
       "type": "cube",
       "position": [3, 0, 0],

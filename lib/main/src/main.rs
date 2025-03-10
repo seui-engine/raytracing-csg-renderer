@@ -89,7 +89,7 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
             panic!("Unrecognized scene type")
         }
     } {
-        SceneType::Json => serde_json::from_str::<DeserializableScene>(&content_str)
+        SceneType::Json => serde_jsonc2::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene JSON")
             .into_scene(screen_aspect_ratio),
         SceneType::Yaml => serde_yaml::from_str::<DeserializableScene>(&content_str)
