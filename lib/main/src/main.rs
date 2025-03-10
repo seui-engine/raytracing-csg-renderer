@@ -51,7 +51,7 @@ pub fn save_ldr_image<P: AsRef<Path>>(
 }
 
 enum SceneType {
-    Json,
+    Jsonc,
     Yaml,
     Toml,
     Json5,
@@ -66,8 +66,8 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
 
     match match scene_type {
         None => {
-            if scene_file.ends_with(".json") {
-                SceneType::Json
+            if scene_file.ends_with(".json") || scene_file.ends_with(".jsonc") {
+                SceneType::Jsonc
             } else if scene_file.ends_with(".yaml") {
                 SceneType::Yaml
             } else if scene_file.ends_with(".toml") {
@@ -80,7 +80,7 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
                 panic!("Failed to recognize scene type")
             }
         }
-        Some(t) if t == "json" => SceneType::Json,
+        Some(t) if t == "json" || t == "jsonc" => SceneType::Jsonc,
         Some(t) if t == "yaml" => SceneType::Yaml,
         Some(t) if t == "toml" => SceneType::Toml,
         Some(t) if t == "json5" => SceneType::Json5,
@@ -89,7 +89,7 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
             panic!("Unrecognized scene type")
         }
     } {
-        SceneType::Json => serde_jsonc2::from_str::<DeserializableScene>(&content_str)
+        SceneType::Jsonc => serde_jsonc2::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene JSON")
             .into_scene(screen_aspect_ratio),
         SceneType::Yaml => serde_yaml::from_str::<DeserializableScene>(&content_str)
