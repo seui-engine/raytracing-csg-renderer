@@ -54,6 +54,8 @@ enum SceneType {
     Json,
     Yaml,
     Toml,
+    Json5,
+    Hjson,
 }
 
 fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio: f32) -> Scene {
@@ -70,6 +72,10 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
                 SceneType::Yaml
             } else if scene_file.ends_with(".toml") {
                 SceneType::Toml
+            } else if scene_file.ends_with(".json5") {
+                SceneType::Json5
+            } else if scene_file.ends_with(".hjson") {
+                SceneType::Hjson
             } else {
                 panic!("Failed to recognize scene type")
             }
@@ -77,6 +83,8 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
         Some(t) if t == "json" => SceneType::Json,
         Some(t) if t == "yaml" => SceneType::Yaml,
         Some(t) if t == "toml" => SceneType::Toml,
+        Some(t) if t == "json5" => SceneType::Json5,
+        Some(t) if t == "hjson" => SceneType::Hjson,
         _ => {
             panic!("Unrecognized scene type")
         }
@@ -89,6 +97,12 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
             .into_scene(screen_aspect_ratio),
         SceneType::Toml => toml::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene TOML")
+            .into_scene(screen_aspect_ratio),
+        SceneType::Json5 => json5::from_str::<DeserializableScene>(&content_str)
+            .expect("Failed to parse scene JSON5")
+            .into_scene(screen_aspect_ratio),
+        SceneType::Hjson => serde_hjson::from_str::<DeserializableScene>(&content_str)
+            .expect("Failed to parse scene HJSON")
             .into_scene(screen_aspect_ratio),
     }
 }

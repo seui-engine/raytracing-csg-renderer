@@ -5,6 +5,12 @@
       "url": "./lib/schema-generator/schema.json"
     }
   ],
+  "json5.schemas": [
+    {
+      "fileMatch": ["assets/**/*.json"],
+      "url": "./lib/schema-generator/schema.json"
+    }
+  ],
   "yaml.schemas": {
     "./lib/schema-generator/schema.json": "/assets/**/*.yaml"
   },
@@ -19,7 +25,7 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[json][yaml]": {
+  "[json][yaml][json5]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
