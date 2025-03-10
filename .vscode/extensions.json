@@ -5,6 +5,5 @@
         "EditorConfig.EditorConfig",
         "esbenp.prettier-vscode",
         "redhat.vscode-yaml",
-        "blueglassblock.better-json5",
     ],
 }

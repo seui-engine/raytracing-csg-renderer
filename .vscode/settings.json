@@ -5,17 +5,8 @@
       "url": "./lib/schema-generator/schema.json"
     }
   ],
-  "json5.schemas": [
-    {
-      "fileMatch": ["assets/**/*.json"],
-      "url": "./lib/schema-generator/schema.json"
-    }
-  ],
   "yaml.schemas": {
     "./lib/schema-generator/schema.json": "/assets/**/*.yaml"
-  },
-  "evenBetterToml.schema.associations": {
-    "./lib/schema-generator/schema.json": "file://assets/**/*.toml"
   },
   "[rust]": {
     "editor.formatOnSave": true,
