@@ -382,7 +382,7 @@ where
 {
     struct F32Visitor;
 
-    impl<'de> Visitor<'de> for F32Visitor {
+    impl Visitor<'_> for F32Visitor {
         type Value = f32;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -427,7 +427,7 @@ where
 {
     struct F32Visitor;
 
-    impl<'de> Visitor<'de> for F32Visitor {
+    impl Visitor<'_> for F32Visitor {
         type Value = f32;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
