@@ -4,5 +4,6 @@
         "tamasfe.even-better-toml",
         "EditorConfig.EditorConfig",
         "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
     ],
 }

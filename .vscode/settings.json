@@ -8,6 +8,9 @@
   "yaml.schemas": {
     "./lib/schema-generator/schema.json": "/assets/**/*.yaml"
   },
+  "evenBetterToml.schema.associations": {
+    "./lib/schema-generator/schema.json": "file://assets/**/*.toml"
+  },
   "[rust]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "rust-lang.rust-analyzer"

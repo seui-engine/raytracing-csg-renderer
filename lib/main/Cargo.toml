@@ -14,3 +14,4 @@ serde_yaml = "0.9.34"
 seui-engine-raytracing-csg-renderer-core = { version = "0.1.0", path = "../core" }
 seui-engine-raytracing-csg-renderer-scene = { version = "0.1.0", path = "../scene" }
 seui-engine-raytracing-csg-renderer-types = { version = "0.1.0", path = "../types" }
+toml = "0.8.20"

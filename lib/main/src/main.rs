@@ -53,6 +53,7 @@ pub fn save_ldr_image<P: AsRef<Path>>(
 enum SceneType {
     Json,
     Yaml,
+    Toml,
 }
 
 fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio: f32) -> Scene {
@@ -67,12 +68,15 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
                 SceneType::Json
             } else if scene_file.ends_with(".yaml") {
                 SceneType::Yaml
+            } else if scene_file.ends_with(".toml") {
+                SceneType::Toml
             } else {
                 panic!("Failed to recognize scene type")
             }
         }
         Some(t) if t == "json" => SceneType::Json,
         Some(t) if t == "yaml" => SceneType::Yaml,
+        Some(t) if t == "toml" => SceneType::Toml,
         _ => {
             panic!("Unrecognized scene type")
         }
@@ -82,6 +86,9 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
             .into_scene(screen_aspect_ratio),
         SceneType::Yaml => serde_yaml::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene YAML")
+            .into_scene(screen_aspect_ratio),
+        SceneType::Toml => toml::from_str::<DeserializableScene>(&content_str)
+            .expect("Failed to parse scene TOML")
             .into_scene(screen_aspect_ratio),
     }
 }

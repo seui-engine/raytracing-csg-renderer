@@ -1,0 +1,44 @@
+skyColor = [0.1, 0.11, 0.2]
+ambientLight = [0.1, 0.1, 0.1]
+
+[camera]
+type = "perspective"
+fov = 90
+fovMode.type = "cover"
+fovMode.aspectRatio = 1.7777777777
+position = [0, -10, 0]
+
+[[objects]]
+type = "plane"
+position = [0, 0, -5]
+
+[[objects]]
+type = "sphere"
+position = [-3, 0, 0]
+albedo = [1, 0.5, 0.5]
+
+[[objects]]
+type = "difference"
+
+[objects.a]
+type = "sphere"
+albedo = [0.5, 1, 0.5]
+
+[objects.b]
+type = "quadric"
+albedo = [0.5, 0.5, 0.5]
+inside = [0, 0, -1]
+c200 = 1
+c020 = 1
+c002 = -1
+c000 = -0.25
+
+[[objects]]
+type = "cube"
+position = [3, 0, 0]
+albedo = [0.5, 0.5, 1]
+
+[[lights]]
+type = "directional"
+direction = [-0.3, 0.1, -1]
+color = [0.5, 0.5, 0.5]
