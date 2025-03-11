@@ -56,12 +56,15 @@ impl RTObject for Sphere {
         }
 
         let sqrt_d = discriminant.sqrt();
-        let t2 = (-b + sqrt_d) / (2.0 * a);
+        let mut t1 = (-b - sqrt_d) / (2.0 * a);
+        let mut t2 = (-b + sqrt_d) / (2.0 * a);
+        if t1 > t2 {
+            (t1, t2) = (t2, t1);
+        }
+
         if t2 < 0.0 {
             return result; // No visible intersection
         }
-
-        let t1 = (-b - sqrt_d) / (2.0 * a);
         if t1.is_nan() {
             return result; // error
         }
