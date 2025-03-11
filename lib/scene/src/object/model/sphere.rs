@@ -4,15 +4,16 @@ use crate::{
 };
 
 use super::{
-    super::deserialize::{deserialize_ldr_color, deserialize_position},
+    super::super::deserialize::{deserialize_ldr_color, deserialize_position},
     util::one,
+    RTModel,
 };
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Hit, RTObject, Ray},
+    rt::{Hit, Ray},
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
@@ -36,7 +37,7 @@ pub struct Sphere {
     metallic: f32,
 }
 
-impl RTObject for Sphere {
+impl RTModel for Sphere {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut result = Vec::new();
 

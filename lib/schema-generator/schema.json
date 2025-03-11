@@ -113,7 +113,7 @@
         }
       ]
     },
-    "DeserializableRTObject": {
+    "DeserializableRTModel": {
       "oneOf": [
         {
           "type": "object",
@@ -124,10 +124,10 @@
           ],
           "properties": {
             "a": {
-              "$ref": "#/definitions/DeserializableRTObject"
+              "$ref": "#/definitions/DeserializableRTModel"
             },
             "b": {
-              "$ref": "#/definitions/DeserializableRTObject"
+              "$ref": "#/definitions/DeserializableRTModel"
             },
             "type": {
               "type": "string",
@@ -147,10 +147,10 @@
           ],
           "properties": {
             "a": {
-              "$ref": "#/definitions/DeserializableRTObject"
+              "$ref": "#/definitions/DeserializableRTModel"
             },
             "b": {
-              "$ref": "#/definitions/DeserializableRTObject"
+              "$ref": "#/definitions/DeserializableRTModel"
             },
             "type": {
               "type": "string",
@@ -170,10 +170,10 @@
           ],
           "properties": {
             "a": {
-              "$ref": "#/definitions/DeserializableRTObject"
+              "$ref": "#/definitions/DeserializableRTModel"
             },
             "b": {
-              "$ref": "#/definitions/DeserializableRTObject"
+              "$ref": "#/definitions/DeserializableRTModel"
             },
             "type": {
               "type": "string",
@@ -526,6 +526,441 @@
               ]
             }
           }
+        }
+      ]
+    },
+    "DeserializableRTObject": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
+          "properties": {
+            "a": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "b": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "union"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
+          "properties": {
+            "a": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "b": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "intersection"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "a",
+            "b",
+            "type"
+          ],
+          "properties": {
+            "a": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "b": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "difference"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "radius": {
+              "default": 1.0,
+              "type": "number",
+              "format": "float",
+              "minimum": 0.0
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "sphere"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "normal": {
+              "$ref": "#/definitions/Direction"
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "plane"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "scale": {
+              "$ref": "#/definitions/Scale"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "cube"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "c000": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c001": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c002": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c010": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c011": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c020": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c100": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c101": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c110": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c200": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "inside": {
+              "$ref": "#/definitions/Position"
+            },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "quadric"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "inside",
+            "type"
+          ],
+          "properties": {
+            "albedo": {
+              "$ref": "#/definitions/LDRColor"
+            },
+            "c000": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c001": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c002": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c003": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c010": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c011": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c012": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c020": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c021": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c030": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c100": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c101": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c102": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c110": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c111": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c120": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c200": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c201": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c210": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "c300": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float"
+            },
+            "inside": {
+              "$ref": "#/definitions/Position"
+            },
+            "metallic": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "position": {
+              "$ref": "#/definitions/Position"
+            },
+            "roughness": {
+              "default": 0.0,
+              "type": "number",
+              "format": "float",
+              "maximum": 1.0,
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "quadratic"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "model",
+            "type"
+          ],
+          "properties": {
+            "model": {
+              "$ref": "#/definitions/DeserializableRTModel"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "default"
+              ]
+            }
+          },
+          "additionalProperties": false
         }
       ]
     },

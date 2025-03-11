@@ -3,14 +3,17 @@ use crate::{
     json_schema::{LDRColorSchema, PositionSchema, Scale},
 };
 
-use super::super::deserialize::{deserialize_ldr_color, deserialize_position, deserialize_scale};
+use super::{
+    super::super::deserialize::{deserialize_ldr_color, deserialize_position, deserialize_scale},
+    RTModel,
+};
 
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Hit, RTObject, Ray},
+    rt::{Hit, Ray},
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
@@ -33,7 +36,7 @@ pub struct Cube {
     metallic: f32,
 }
 
-impl RTObject for Cube {
+impl RTModel for Cube {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut result = Vec::new();
 

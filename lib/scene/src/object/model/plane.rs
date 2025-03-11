@@ -3,15 +3,18 @@ use crate::{
     json_schema::{DirectionSchema, LDRColorSchema, PositionSchema},
 };
 
-use super::super::deserialize::{
-    deserialize_direction, deserialize_ldr_color, deserialize_position,
+use super::{
+    super::super::deserialize::{
+        deserialize_direction, deserialize_ldr_color, deserialize_position,
+    },
+    RTModel,
 };
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Hit, RTObject, Ray},
+    rt::{Hit, Ray},
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
@@ -39,7 +42,7 @@ pub struct Plane {
     metallic: f32,
 }
 
-impl RTObject for Plane {
+impl RTModel for Plane {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut result = Vec::new();
 
