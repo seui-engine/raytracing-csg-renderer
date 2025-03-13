@@ -216,6 +216,16 @@
               "maximum": 1.0,
               "minimum": 0.0
             },
+            "texture": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DeserializableTexture"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "type": {
               "type": "string",
               "enum": [
@@ -526,6 +536,33 @@
               ]
             }
           }
+        }
+      ]
+    },
+    "DeserializableTexture": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "path",
+            "type"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "smooth": {
+              "default": false,
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "plain"
+              ]
+            }
+          },
+          "additionalProperties": false
         }
       ]
     },

@@ -1,3 +1,5 @@
+use crate::{ImageCache, ImageLoader};
+
 use super::DeserializableRTObject;
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -11,10 +13,13 @@ pub struct DeserializableUnion {
 }
 
 impl DeserializableUnion {
-    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
+    pub fn into_rt_object<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Union {
-            a: self.a.into_rt_object(),
-            b: self.b.into_rt_object(),
+            a: self.a.into_rt_object(image_cache),
+            b: self.b.into_rt_object(image_cache),
         })
     }
 }
@@ -27,10 +32,13 @@ pub struct DeserializableIntersection {
 }
 
 impl DeserializableIntersection {
-    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
+    pub fn into_rt_object<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Intersection {
-            a: self.a.into_rt_object(),
-            b: self.b.into_rt_object(),
+            a: self.a.into_rt_object(image_cache),
+            b: self.b.into_rt_object(image_cache),
         })
     }
 }
@@ -43,10 +51,13 @@ pub struct DeserializableDifference {
 }
 
 impl DeserializableDifference {
-    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
+    pub fn into_rt_object<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTObject + Send + Sync> {
         Box::new(Difference {
-            a: self.a.into_rt_object(),
-            b: self.b.into_rt_object(),
+            a: self.a.into_rt_object(image_cache),
+            b: self.b.into_rt_object(image_cache),
         })
     }
 }

@@ -2,9 +2,14 @@ use clap::Parser;
 use image::{Rgb, RgbImage};
 use rayon::prelude::*;
 use seui_engine_raytracing_csg_renderer_core::{sample, types::rt::Scene};
-use seui_engine_raytracing_csg_renderer_scene::DeserializableScene;
+use seui_engine_raytracing_csg_renderer_scene::{DeserializableScene, Image, ImageLoader};
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
-use std::{fs::File, io::Read, path::Path};
+use std::{
+    fs::File,
+    io::Read,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 /// Command-line arguments parser
 #[derive(Parser, Debug)]
@@ -64,6 +69,8 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
     file.read_to_string(&mut content_str)
         .expect("Failed to read scene file");
 
+    let image_loader = ImageImageLoader::new(scene_file);
+
     match match scene_type {
         None => {
             if scene_file.ends_with(".json") || scene_file.ends_with(".jsonc") {
@@ -91,19 +98,19 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
     } {
         SceneType::Jsonc => serde_jsonc2::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene JSON")
-            .into_scene(screen_aspect_ratio),
+            .into_scene(screen_aspect_ratio, &image_loader),
         SceneType::Yaml => serde_yaml::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene YAML")
-            .into_scene(screen_aspect_ratio),
+            .into_scene(screen_aspect_ratio, &image_loader),
         SceneType::Toml => toml::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene TOML")
-            .into_scene(screen_aspect_ratio),
+            .into_scene(screen_aspect_ratio, &image_loader),
         SceneType::Json5 => json5::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene JSON5")
-            .into_scene(screen_aspect_ratio),
+            .into_scene(screen_aspect_ratio, &image_loader),
         SceneType::Hjson => serde_hjson::from_str::<DeserializableScene>(&content_str)
             .expect("Failed to parse scene HJSON")
-            .into_scene(screen_aspect_ratio),
+            .into_scene(screen_aspect_ratio, &image_loader),
     }
 }
 
@@ -171,5 +178,63 @@ fn main() {
     if let Err(e) = save_ldr_image(args.width, args.height, content, output_file) {
         eprintln!("Error saving image: {}", e);
         std::process::exit(1);
+    }
+}
+
+struct ImageImage {
+    image: RgbImage,
+}
+
+impl ImageImage {
+    fn new(path: &str) -> ImageImage {
+        let dyn_image = image::open(path).expect("Failed to load image");
+        let rgb_image = dyn_image.to_rgb8();
+        ImageImage { image: rgb_image }
+    }
+}
+
+impl Image for ImageImage {
+    fn width(&self) -> usize {
+        self.image.width() as usize
+    }
+
+    fn height(&self) -> usize {
+        self.image.height() as usize
+    }
+
+    fn get(&self, x: usize, y: usize) -> [f32; 3] {
+        if x >= self.width() || y >= self.height() {
+            panic!("Incorrect coord given");
+        }
+
+        let pixel: &Rgb<u8> = self.image.get_pixel(x as u32, y as u32);
+
+        [
+            pixel[0] as f32 / 255.0,
+            pixel[1] as f32 / 255.0,
+            pixel[2] as f32 / 255.0,
+        ]
+    }
+}
+
+struct ImageImageLoader {
+    scene_dir: PathBuf,
+}
+
+impl ImageImageLoader {
+    fn new<P: AsRef<Path>>(scene_path: P) -> Self {
+        let scene_dir = scene_path
+            .as_ref()
+            .parent()
+            .unwrap_or_else(|| Path::new(""))
+            .to_path_buf();
+        ImageImageLoader { scene_dir }
+    }
+}
+
+impl ImageLoader for ImageImageLoader {
+    fn load(&self, path: &str) -> Arc<dyn Image + Send + Sync> {
+        let full_path = self.scene_dir.join(path);
+        Arc::new(ImageImage::new(full_path.to_str().expect("Invalid path")))
     }
 }
