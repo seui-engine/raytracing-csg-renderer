@@ -1,4 +1,6 @@
 use super::{DeserializableRTModel, Hit, RTModel};
+use crate::{ImageCache, ImageLoader};
+
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::Ray;
@@ -11,10 +13,13 @@ pub struct DeserializableUnion {
 }
 
 impl DeserializableUnion {
-    pub fn into_rt_model(self) -> Box<dyn RTModel + Send + Sync> {
+    pub fn into_rt_model<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Union {
-            a: self.a.into_rt_model(),
-            b: self.b.into_rt_model(),
+            a: self.a.into_rt_model(image_cache),
+            b: self.b.into_rt_model(image_cache),
         })
     }
 }
@@ -27,10 +32,13 @@ pub struct DeserializableIntersection {
 }
 
 impl DeserializableIntersection {
-    pub fn into_rt_model(self) -> Box<dyn RTModel + Send + Sync> {
+    pub fn into_rt_model<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Intersection {
-            a: self.a.into_rt_model(),
-            b: self.b.into_rt_model(),
+            a: self.a.into_rt_model(image_cache),
+            b: self.b.into_rt_model(image_cache),
         })
     }
 }
@@ -43,10 +51,13 @@ pub struct DeserializableDifference {
 }
 
 impl DeserializableDifference {
-    pub fn into_rt_model(self) -> Box<dyn RTModel + Send + Sync> {
+    pub fn into_rt_model<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Difference {
-            a: self.a.into_rt_model(),
-            b: self.b.into_rt_model(),
+            a: self.a.into_rt_model(image_cache),
+            b: self.b.into_rt_model(image_cache),
         })
     }
 }

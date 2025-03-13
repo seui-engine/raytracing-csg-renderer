@@ -7,7 +7,9 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{math::Direction, rt::Ray};
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
-use sphere::Sphere;
+use sphere::DeserializableSphere;
+
+use crate::{ImageCache, ImageLoader};
 
 pub mod csg;
 pub mod cube;
@@ -37,7 +39,7 @@ pub enum DeserializableRTModel {
     Union(DeserializableUnion),
     Intersection(DeserializableIntersection),
     Difference(DeserializableDifference),
-    Sphere(Sphere),
+    Sphere(DeserializableSphere),
     Plane(Plane),
     Cube(Cube),
     Quadric(Quadric),
@@ -45,12 +47,15 @@ pub enum DeserializableRTModel {
 }
 
 impl DeserializableRTModel {
-    pub fn into_rt_model(self) -> Box<dyn RTModel + Send + Sync> {
+    pub fn into_rt_model<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTModel + Send + Sync> {
         match self {
-            DeserializableRTModel::Union(o) => o.into_rt_model(),
-            DeserializableRTModel::Intersection(o) => o.into_rt_model(),
-            DeserializableRTModel::Difference(o) => o.into_rt_model(),
-            DeserializableRTModel::Sphere(o) => Box::new(o),
+            DeserializableRTModel::Union(o) => o.into_rt_model(image_cache),
+            DeserializableRTModel::Intersection(o) => o.into_rt_model(image_cache),
+            DeserializableRTModel::Difference(o) => o.into_rt_model(image_cache),
+            DeserializableRTModel::Sphere(o) => o.into_rt_model(image_cache),
             DeserializableRTModel::Plane(o) => Box::new(o),
             DeserializableRTModel::Cube(o) => Box::new(o),
             DeserializableRTModel::Quadric(o) => Box::new(o),

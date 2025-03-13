@@ -4,12 +4,14 @@ use model::{
     plane::Plane,
     quadratic::Quadratic,
     quadric::Quadric,
-    sphere::Sphere,
+    sphere::DeserializableSphere,
     DeserializableRTModel, RTModel,
 };
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::{Hit, RTObject, Ray};
+
+use crate::{ImageCache, ImageLoader};
 
 pub mod model;
 
@@ -19,7 +21,7 @@ pub enum DeserializableRTObject {
     Union(DeserializableUnion),
     Intersection(DeserializableIntersection),
     Difference(DeserializableDifference),
-    Sphere(Sphere),
+    Sphere(DeserializableSphere),
     Plane(Plane),
     Cube(Cube),
     Quadric(Quadric),
@@ -28,21 +30,28 @@ pub enum DeserializableRTObject {
 }
 
 impl DeserializableRTObject {
-    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
+    pub fn into_rt_object<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTObject + Send + Sync> {
         match self {
-            DeserializableRTObject::Union(o) => Box::new(ModelRTObject::new(o.into_rt_model())),
+            DeserializableRTObject::Union(o) => {
+                Box::new(ModelRTObject::new(o.into_rt_model(image_cache)))
+            }
             DeserializableRTObject::Intersection(o) => {
-                Box::new(ModelRTObject::new(o.into_rt_model()))
+                Box::new(ModelRTObject::new(o.into_rt_model(image_cache)))
             }
             DeserializableRTObject::Difference(o) => {
-                Box::new(ModelRTObject::new(o.into_rt_model()))
+                Box::new(ModelRTObject::new(o.into_rt_model(image_cache)))
             }
-            DeserializableRTObject::Sphere(o) => Box::new(ModelRTObject::new(Box::new(o))),
+            DeserializableRTObject::Sphere(o) => {
+                Box::new(ModelRTObject::new(o.into_rt_model(image_cache)))
+            }
             DeserializableRTObject::Plane(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Cube(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Quadric(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Quadratic(o) => Box::new(ModelRTObject::new(Box::new(o))),
-            DeserializableRTObject::Default(o) => o.into_rt_object(),
+            DeserializableRTObject::Default(o) => o.into_rt_object(image_cache),
         }
     }
 }
@@ -77,7 +86,10 @@ pub struct DeserializableDefaultRTObject {
 }
 
 impl DeserializableDefaultRTObject {
-    pub fn into_rt_object(self) -> Box<dyn RTObject + Send + Sync> {
-        Box::new(ModelRTObject::new(self.model.into_rt_model()))
+    pub fn into_rt_object<T: ImageLoader>(
+        self,
+        image_cache: &mut ImageCache<T>,
+    ) -> Box<dyn RTObject + Send + Sync> {
+        Box::new(ModelRTObject::new(self.model.into_rt_model(image_cache)))
     }
 }
