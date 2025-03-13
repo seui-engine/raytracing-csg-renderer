@@ -1,7 +1,7 @@
-use super::{DeserializableRTModel, RTModel};
+use super::{DeserializableRTModel, Hit, RTModel};
 use schemars::JsonSchema;
 use serde::Deserialize;
-use seui_engine_raytracing_csg_renderer_core::types::rt::{Hit, Ray};
+use seui_engine_raytracing_csg_renderer_core::types::rt::Ray;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]

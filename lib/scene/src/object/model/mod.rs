@@ -5,7 +5,8 @@ use quadratic::Quadratic;
 use quadric::Quadric;
 use schemars::JsonSchema;
 use serde::Deserialize;
-use seui_engine_raytracing_csg_renderer_core::types::rt::{Hit, Ray};
+use seui_engine_raytracing_csg_renderer_core::types::{math::Direction, rt::Ray};
+use seui_engine_raytracing_csg_renderer_types::LDRColor;
 use sphere::Sphere;
 
 pub mod csg;
@@ -15,6 +16,16 @@ pub mod quadratic;
 pub mod quadric;
 pub mod sphere;
 pub mod util;
+
+#[derive(Clone, Debug)]
+pub struct Hit {
+    pub is_front_face: bool,
+    pub albedo: LDRColor,
+    pub normal: Direction,
+    pub distance: f32,
+    pub roughness: f32,
+    pub metallic: f32,
+}
 
 pub trait RTModel {
     fn test(&self, ray: Ray) -> Vec<Hit>;

@@ -59,7 +59,14 @@ impl ModelRTObject {
 
 impl RTObject for ModelRTObject {
     fn test(&self, ray: Ray) -> Option<Hit> {
-        self.model.test(ray).first().cloned()
+        self.model.test(ray).first().map(|hit| Hit {
+            distance: hit.distance,
+            albedo: hit.albedo,
+            normal: hit.normal,
+            is_front_face: hit.is_front_face,
+            roughness: hit.roughness,
+            metallic: hit.metallic,
+        })
     }
 }
 

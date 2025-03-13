@@ -7,14 +7,14 @@ use super::{
     super::super::deserialize::{
         deserialize_direction, deserialize_ldr_color, deserialize_position,
     },
-    RTModel,
+    Hit, RTModel,
 };
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Hit, Ray},
+    rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
