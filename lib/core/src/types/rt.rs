@@ -21,7 +21,7 @@ pub struct Hit {
 }
 
 pub trait RTObject {
-    fn test(&self, ray: Ray) -> Vec<Hit>;
+    fn test(&self, ray: Ray) -> Option<Hit>;
 }
 
 pub trait Light {
@@ -44,8 +44,8 @@ impl Scene {
     pub fn test(&self, ray: Ray) -> Option<Hit> {
         let mut result = None::<Hit>;
         for object in self.objects.iter() {
-            result = match (result, object.test(ray).first()) {
-                (None, current) => current.cloned(),
+            result = match (result, object.test(ray)) {
+                (None, current) => current,
                 (previous, None) => previous,
                 (Some(previous), Some(current)) => {
                     if previous.distance < current.distance {

@@ -3,7 +3,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Hit, RTObject, Ray},
+    rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
@@ -12,7 +12,10 @@ use crate::{
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
-use super::util::{enhance_normal, zero};
+use super::{
+    util::{enhance_normal, zero},
+    Hit, RTModel,
+};
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
@@ -293,7 +296,7 @@ impl Quadratic {
     }
 }
 
-impl RTObject for Quadratic {
+impl RTModel for Quadratic {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let (inside_direction, inside_length) = (ray.origin - self.inside).direction_and_length();
         let internal = self.internal_test(Ray {

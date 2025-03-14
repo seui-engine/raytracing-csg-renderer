@@ -1,25 +1,25 @@
+use super::{DeserializableRTModel, Hit, RTModel};
 use crate::{ImageCache, ImageLoader};
 
-use super::DeserializableRTObject;
 use schemars::JsonSchema;
 use serde::Deserialize;
-use seui_engine_raytracing_csg_renderer_core::types::rt::{Hit, RTObject, Ray};
+use seui_engine_raytracing_csg_renderer_core::types::rt::Ray;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableUnion {
-    a: Box<DeserializableRTObject>,
-    b: Box<DeserializableRTObject>,
+    a: Box<DeserializableRTModel>,
+    b: Box<DeserializableRTModel>,
 }
 
 impl DeserializableUnion {
-    pub fn into_rt_object<T: ImageLoader>(
+    pub fn into_rt_model<T: ImageLoader>(
         self,
         image_cache: &mut ImageCache<T>,
-    ) -> Box<dyn RTObject + Send + Sync> {
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Union {
-            a: self.a.into_rt_object(image_cache),
-            b: self.b.into_rt_object(image_cache),
+            a: self.a.into_rt_model(image_cache),
+            b: self.b.into_rt_model(image_cache),
         })
     }
 }
@@ -27,18 +27,18 @@ impl DeserializableUnion {
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableIntersection {
-    a: Box<DeserializableRTObject>,
-    b: Box<DeserializableRTObject>,
+    a: Box<DeserializableRTModel>,
+    b: Box<DeserializableRTModel>,
 }
 
 impl DeserializableIntersection {
-    pub fn into_rt_object<T: ImageLoader>(
+    pub fn into_rt_model<T: ImageLoader>(
         self,
         image_cache: &mut ImageCache<T>,
-    ) -> Box<dyn RTObject + Send + Sync> {
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Intersection {
-            a: self.a.into_rt_object(image_cache),
-            b: self.b.into_rt_object(image_cache),
+            a: self.a.into_rt_model(image_cache),
+            b: self.b.into_rt_model(image_cache),
         })
     }
 }
@@ -46,18 +46,18 @@ impl DeserializableIntersection {
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializableDifference {
-    a: Box<DeserializableRTObject>,
-    b: Box<DeserializableRTObject>,
+    a: Box<DeserializableRTModel>,
+    b: Box<DeserializableRTModel>,
 }
 
 impl DeserializableDifference {
-    pub fn into_rt_object<T: ImageLoader>(
+    pub fn into_rt_model<T: ImageLoader>(
         self,
         image_cache: &mut ImageCache<T>,
-    ) -> Box<dyn RTObject + Send + Sync> {
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Difference {
-            a: self.a.into_rt_object(image_cache),
-            b: self.b.into_rt_object(image_cache),
+            a: self.a.into_rt_model(image_cache),
+            b: self.b.into_rt_model(image_cache),
         })
     }
 }
@@ -79,11 +79,11 @@ fn remove_duplicate_hits(sorted: &mut Vec<Hit>) {
 }
 
 struct Union {
-    a: Box<dyn RTObject + Send + Sync>,
-    b: Box<dyn RTObject + Send + Sync>,
+    a: Box<dyn RTModel + Send + Sync>,
+    b: Box<dyn RTModel + Send + Sync>,
 }
 
-impl RTObject for Union {
+impl RTModel for Union {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut a_hits = self.a.test(ray);
         let mut b_hits = self.b.test(ray);
@@ -123,11 +123,11 @@ impl RTObject for Union {
 }
 
 struct Intersection {
-    a: Box<dyn RTObject + Send + Sync>,
-    b: Box<dyn RTObject + Send + Sync>,
+    a: Box<dyn RTModel + Send + Sync>,
+    b: Box<dyn RTModel + Send + Sync>,
 }
 
-impl RTObject for Intersection {
+impl RTModel for Intersection {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut a_hits = self.a.test(ray);
         if a_hits.is_empty() {
@@ -167,11 +167,11 @@ impl RTObject for Intersection {
 }
 
 struct Difference {
-    a: Box<dyn RTObject + Send + Sync>,
-    b: Box<dyn RTObject + Send + Sync>,
+    a: Box<dyn RTModel + Send + Sync>,
+    b: Box<dyn RTModel + Send + Sync>,
 }
 
-impl RTObject for Difference {
+impl RTModel for Difference {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut a_hits = self.a.test(ray);
         if a_hits.is_empty() {

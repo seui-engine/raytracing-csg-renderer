@@ -8,15 +8,16 @@ use crate::{
 };
 
 use super::{
-    super::deserialize::{deserialize_ldr_color, deserialize_position},
+    super::super::deserialize::{deserialize_ldr_color, deserialize_position},
     util::one,
+    Hit, RTModel,
 };
 use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position},
-    rt::{Hit, RTObject, Ray},
+    rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
@@ -43,10 +44,10 @@ pub struct DeserializableSphere {
 }
 
 impl DeserializableSphere {
-    pub fn into_rt_object<T: ImageLoader>(
+    pub fn into_rt_model<T: ImageLoader>(
         self,
         image_cache: &mut ImageCache<T>,
-    ) -> Box<dyn RTObject + Send + Sync> {
+    ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Sphere {
             radius: self.radius,
             position: self.position,
@@ -85,7 +86,7 @@ impl Sphere {
     }
 }
 
-impl RTObject for Sphere {
+impl RTModel for Sphere {
     fn test(&self, ray: Ray) -> Vec<Hit> {
         let mut result = Vec::new();
 
