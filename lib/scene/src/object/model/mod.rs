@@ -16,6 +16,7 @@ pub mod cube;
 pub mod plane;
 pub mod quadratic;
 pub mod quadric;
+pub mod quartic;
 pub mod sphere;
 pub mod util;
 
@@ -44,6 +45,7 @@ pub enum DeserializableRTModel {
     Cube(Cube),
     Quadric(Quadric),
     Quadratic(Quadratic),
+    Quartic(Quartic),
 }
 
 impl DeserializableRTModel {
@@ -60,6 +62,7 @@ impl DeserializableRTModel {
             DeserializableRTModel::Cube(o) => Box::new(o),
             DeserializableRTModel::Quadric(o) => Box::new(o),
             DeserializableRTModel::Quadratic(o) => Box::new(o),
+            DeserializableRTModel::Quartic(o) => Box::new(o),
         }
     }
 }
