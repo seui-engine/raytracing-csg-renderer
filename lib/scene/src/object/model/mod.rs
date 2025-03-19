@@ -3,6 +3,7 @@ use cube::Cube;
 use plane::Plane;
 use quadratic::Quadratic;
 use quadric::Quadric;
+use quartic::Quartic;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{math::Direction, rt::Ray};

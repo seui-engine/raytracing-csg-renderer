@@ -79,7 +79,7 @@ pub struct Quadratic {
     inside: Position,
 }
 
-pub fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
+fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
     if a.abs() <= 0.000001 {
         let mut roots = Vec::new();
         if b.abs() <= 0.000001 {

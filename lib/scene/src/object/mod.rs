@@ -4,6 +4,7 @@ use model::{
     plane::Plane,
     quadratic::Quadratic,
     quadric::Quadric,
+    quartic::Quartic,
     sphere::DeserializableSphere,
     DeserializableRTModel, RTModel,
 };
@@ -26,6 +27,7 @@ pub enum DeserializableRTObject {
     Cube(Cube),
     Quadric(Quadric),
     Quadratic(Quadratic),
+    Quartic(Quartic),
     Default(DeserializableDefaultRTObject),
 }
 
@@ -51,6 +53,7 @@ impl DeserializableRTObject {
             DeserializableRTObject::Cube(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Quadric(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Quadratic(o) => Box::new(ModelRTObject::new(Box::new(o))),
+            DeserializableRTObject::Quartic(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Default(o) => o.into_rt_object(image_cache),
         }
     }

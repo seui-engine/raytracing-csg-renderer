@@ -109,59 +109,135 @@ pub struct Quartic {
     inside: Position,
 }
 
-pub fn quartic_roots(a: f32, b: f32, c: f32, d: f32, e: f32) -> Vec<f32> {
-    if a.abs() <= 0.000001 {
-        if b.abs() <= 0.000001 {
-            let mut roots = Vec::new();
-            if c.abs() <= 0.000001 {
-                if d.abs() <= 0.000001 {
-                    return roots;
-                } else {
-                    roots.push(-e / d);
-                }
-            } else {
-                let discriminant = d.powi(2) - 4.0 * c * e;
-                if discriminant >= 0.0 {
-                    roots.push((-d + discriminant.sqrt()) / (2.0 * c));
-                    roots.push((-d - discriminant.sqrt()) / (2.0 * c));
+fn linear_roots(a: f32, b: f32) -> Vec<f32> {
+    if b.abs() <= 1e-6 {
+        vec![]
+    } else {
+        vec![-b / a]
+    }
+}
+
+fn quadratic_roots(a: f32, b: f32, c: f32) -> Vec<f32> {
+    if a.abs() <= 1e-6 {
+        return linear_roots(b, c);
+    }
+
+    let mut roots = Vec::new();
+
+    let discriminant = b * b - 4.0 * a * c;
+    if discriminant >= 0.0 {
+        roots.push((-b + discriminant.sqrt()) / (2.0 * a));
+        roots.push((-b - discriminant.sqrt()) / (2.0 * a));
+    }
+
+    roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+    roots
+}
+
+fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
+    if a.abs() <= 1e-6 {
+        return quadratic_roots(b, c, d);
+    }
+
+    let a1 = b / a;
+    let a2 = c / a;
+    let a3 = d / a;
+
+    let q = (3.0 * a2 - a1 * a1) / 9.0;
+    let r = (9.0 * a1 * a2 - 27.0 * a3 - 2.0 * a1 * a1 * a1) / 54.0;
+    let discriminant = q * q * q + r * r;
+    let a_div_3 = a1 / 3.0;
+
+    let mut roots = Vec::new();
+
+    if discriminant > 0.0 {
+        let s = (r + discriminant.sqrt()).cbrt();
+        let t = (r - discriminant.sqrt()).cbrt();
+        roots.push(s + t - a_div_3);
+    } else {
+        let theta = (r / (-q.powi(3)).sqrt()).acos();
+        if theta.is_nan() {
+            return roots;
+        }
+        let sqrt_q = (-q).sqrt();
+        roots.push(2.0 * sqrt_q * (theta / 3.0).cos() - a_div_3);
+        roots.push(2.0 * sqrt_q * ((theta + 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
+        roots.push(2.0 * sqrt_q * ((theta - 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
+    }
+
+    roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+    roots
+}
+
+fn quartic_roots(a: f32, b: f32, c: f32, d: f32, e: f32) -> Vec<f32> {
+    if a.abs() <= 1e-6 {
+        return cubic_roots(b, c, d, e);
+    }
+
+    let b = b / a;
+    let c = c / a;
+    let d = d / a;
+    let e = e / a;
+
+    let bb = b * b;
+    let p = -3.0 * bb / 8.0 + c;
+    let q = bb * b / 8.0 - b * c / 2.0 + d;
+    let r = -3.0 * bb * bb / 256.0 + bb * c / 16.0 - b * d / 4.0 + e;
+
+    let mut roots = Vec::new();
+
+    if q.abs() < 1e-6 {
+        let discriminant1 = p * p - 4.0 * r;
+        if discriminant1 >= 0.0 {
+            let y1 = (-p + discriminant1.sqrt()) / 2.0;
+            let y2 = (-p - discriminant1.sqrt()) / 2.0;
+
+            for y in [y1, y2].iter() {
+                if *y >= 0.0 {
+                    roots.push(y.sqrt() - b / 4.0);
+                    roots.push(-y.sqrt() - b / 4.0);
                 }
             }
-            roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+        }
+    } else {
+        let cubic_a = 1.0;
+        let cubic_b = -p / 2.0;
+        let cubic_c = -r;
+        let cubic_d = (p * r - q * q / 4.0) / 2.0;
+
+        let cubic_roots = cubic_roots(cubic_a, cubic_b, cubic_c, cubic_d);
+        if cubic_roots.is_empty() {
             return roots;
         }
 
-        let a1 = c / b;
-        let a2 = d / b;
-        let a3 = e / b;
+        let z = cubic_roots[0];
+        let u = (2.0 * z - p).sqrt();
+        let v = if u.abs() > 1e-6 { q / (2.0 * u) } else { 0.0 };
 
-        let q = (3.0 * a2 - a1 * a1) / 9.0;
-        let r = (9.0 * a1 * a2 - 27.0 * a3 - 2.0 * a1 * a1 * a1) / 54.0;
-        let discriminant = q * q * q + r * r;
-        let a_div_3 = a1 / 3.0;
+        let quadratic1_a = 1.0;
+        let quadratic1_b = u;
+        let quadratic1_c = z - v;
 
-        let mut roots = Vec::new();
+        let quadratic2_a = 1.0;
+        let quadratic2_b = -u;
+        let quadratic2_c = z + v;
 
-        if discriminant > 0.0 {
-            let s = (r + discriminant.sqrt()).cbrt();
-            let t = (r - discriminant.sqrt()).cbrt();
-            roots.push(s + t - a_div_3);
-        } else {
-            let theta = (r / (-q.powi(3)).sqrt()).acos();
-            if theta.is_nan() {
-                return roots;
+        for (qa, qb, qc) in [
+            (quadratic1_a, quadratic1_b, quadratic1_c),
+            (quadratic2_a, quadratic2_b, quadratic2_c),
+        ]
+        .iter()
+        {
+            let disc = qb * qb - 4.0 * qa * qc;
+            if disc >= 0.0 {
+                roots.push((-qb + disc.sqrt()) / (2.0 * qa) - b / 4.0);
+                roots.push((-qb - disc.sqrt()) / (2.0 * qa) - b / 4.0);
             }
-            let sqrt_q = (-q).sqrt();
-            roots.push(2.0 * sqrt_q * (theta / 3.0).cos() - a_div_3);
-            roots.push(2.0 * sqrt_q * ((theta + 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
-            roots.push(2.0 * sqrt_q * ((theta - 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
         }
-
-        roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
-        return roots;
     }
 
-    // TODO: implement it
-    vec![]
+    roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+    roots
 }
 
 impl Quartic {
@@ -194,142 +270,127 @@ impl Quartic {
             e += self.c004 * origin.z.powi(4);
             // c310
             a += self.c310 * ray.direction.x.powi(3) * ray.direction.y;
-            b += self.c310 * 3.0 * ray.direction.x.powi(3) * ray.origin.y;
-            b += self.c310 * ray.direction.x.powi(2) * ray.direction.y * ray.origin.x;
-            c += self.c310 * 3.0 * ray.direction.x.powi(2) * ray.origin.x * ray.origin.y;
-            c += self.c310 * 3.0 * ray.direction.x * ray.direction.y * ray.origin.x.powi(2);
-            d += self.c310 * 3.0 * ray.direction.x * ray.origin.x.powi(2) * ray.origin.y;
-            d += self.c310 * ray.direction.y * ray.origin.x.powi(3);
-            e += self.c310 * ray.origin.x.powi(3) * ray.origin.y;
+            b += self.c310 * 3.0 * ray.direction.x.powi(3) * origin.y;
+            b += self.c310 * ray.direction.x.powi(2) * ray.direction.y * origin.x;
+            c += self.c310 * 3.0 * ray.direction.x.powi(2) * origin.x * origin.y;
+            c += self.c310 * 3.0 * ray.direction.x * ray.direction.y * origin.x.powi(2);
+            d += self.c310 * 3.0 * ray.direction.x * origin.x.powi(2) * origin.y;
+            d += self.c310 * ray.direction.y * origin.x.powi(3);
+            e += self.c310 * origin.x.powi(3) * origin.y;
             // c301
             a += self.c301 * ray.direction.x.powi(3) * ray.direction.z;
-            b += self.c301 * 3.0 * ray.direction.x.powi(3) * ray.origin.z;
-            b += self.c301 * ray.direction.x.powi(2) * ray.direction.z * ray.origin.x;
-            c += self.c301 * 3.0 * ray.direction.x.powi(2) * ray.origin.x * ray.origin.z;
-            c += self.c301 * 3.0 * ray.direction.x * ray.direction.z * ray.origin.x.powi(2);
-            d += self.c301 * 3.0 * ray.direction.x * ray.origin.x.powi(2) * ray.origin.z;
-            d += self.c301 * ray.direction.z * ray.origin.x.powi(3);
-            e += self.c301 * ray.origin.x.powi(3) * ray.origin.z;
+            b += self.c301 * 3.0 * ray.direction.x.powi(3) * origin.z;
+            b += self.c301 * ray.direction.x.powi(2) * ray.direction.z * origin.x;
+            c += self.c301 * 3.0 * ray.direction.x.powi(2) * origin.x * origin.z;
+            c += self.c301 * 3.0 * ray.direction.x * ray.direction.z * origin.x.powi(2);
+            d += self.c301 * 3.0 * ray.direction.x * origin.x.powi(2) * origin.z;
+            d += self.c301 * ray.direction.z * origin.x.powi(3);
+            e += self.c301 * origin.x.powi(3) * origin.z;
             // c130
             a += self.c130 * ray.direction.y.powi(3) * ray.direction.x;
-            b += self.c130 * 3.0 * ray.direction.y.powi(3) * ray.origin.x;
-            b += self.c130 * ray.direction.y.powi(2) * ray.direction.x * ray.origin.y;
-            c += self.c130 * 3.0 * ray.direction.y.powi(2) * ray.origin.y * ray.origin.x;
-            c += self.c130 * 3.0 * ray.direction.y * ray.direction.x * ray.origin.y.powi(2);
-            d += self.c130 * 3.0 * ray.direction.y * ray.origin.y.powi(2) * ray.origin.x;
-            d += self.c130 * ray.direction.x * ray.origin.y.powi(3);
-            e += self.c130 * ray.origin.y.powi(3) * ray.origin.x;
+            b += self.c130 * 3.0 * ray.direction.y.powi(3) * origin.x;
+            b += self.c130 * ray.direction.y.powi(2) * ray.direction.x * origin.y;
+            c += self.c130 * 3.0 * ray.direction.y.powi(2) * origin.y * origin.x;
+            c += self.c130 * 3.0 * ray.direction.y * ray.direction.x * origin.y.powi(2);
+            d += self.c130 * 3.0 * ray.direction.y * origin.y.powi(2) * origin.x;
+            d += self.c130 * ray.direction.x * origin.y.powi(3);
+            e += self.c130 * origin.y.powi(3) * origin.x;
             // c031
             a += self.c031 * ray.direction.y.powi(3) * ray.direction.z;
-            b += self.c031 * 3.0 * ray.direction.y.powi(3) * ray.origin.z;
-            b += self.c031 * ray.direction.y.powi(2) * ray.direction.z * ray.origin.y;
-            c += self.c031 * 3.0 * ray.direction.y.powi(2) * ray.origin.y * ray.origin.z;
-            c += self.c031 * 3.0 * ray.direction.y * ray.direction.z * ray.origin.y.powi(2);
-            d += self.c031 * 3.0 * ray.direction.y * ray.origin.y.powi(2) * ray.origin.z;
-            d += self.c031 * ray.direction.z * ray.origin.y.powi(3);
-            e += self.c031 * ray.origin.y.powi(3) * ray.origin.z;
+            b += self.c031 * 3.0 * ray.direction.y.powi(3) * origin.z;
+            b += self.c031 * ray.direction.y.powi(2) * ray.direction.z * origin.y;
+            c += self.c031 * 3.0 * ray.direction.y.powi(2) * origin.y * origin.z;
+            c += self.c031 * 3.0 * ray.direction.y * ray.direction.z * origin.y.powi(2);
+            d += self.c031 * 3.0 * ray.direction.y * origin.y.powi(2) * origin.z;
+            d += self.c031 * ray.direction.z * origin.y.powi(3);
+            e += self.c031 * origin.y.powi(3) * origin.z;
             // c103
             a += self.c103 * ray.direction.z.powi(3) * ray.direction.x;
-            b += self.c103 * 3.0 * ray.direction.z.powi(3) * ray.origin.x;
-            b += self.c103 * ray.direction.z.powi(2) * ray.direction.x * ray.origin.z;
-            c += self.c103 * 3.0 * ray.direction.z.powi(2) * ray.origin.z * ray.origin.x;
-            c += self.c103 * 3.0 * ray.direction.z * ray.direction.x * ray.origin.z.powi(2);
-            d += self.c103 * 3.0 * ray.direction.z * ray.origin.z.powi(2) * ray.origin.x;
-            d += self.c103 * ray.direction.x * ray.origin.z.powi(3);
-            e += self.c103 * ray.origin.z.powi(3) * ray.origin.x;
+            b += self.c103 * 3.0 * ray.direction.z.powi(3) * origin.x;
+            b += self.c103 * ray.direction.z.powi(2) * ray.direction.x * origin.z;
+            c += self.c103 * 3.0 * ray.direction.z.powi(2) * origin.z * origin.x;
+            c += self.c103 * 3.0 * ray.direction.z * ray.direction.x * origin.z.powi(2);
+            d += self.c103 * 3.0 * ray.direction.z * origin.z.powi(2) * origin.x;
+            d += self.c103 * ray.direction.x * origin.z.powi(3);
+            e += self.c103 * origin.z.powi(3) * origin.x;
             // c013
             a += self.c013 * ray.direction.z.powi(3) * ray.direction.y;
-            b += self.c013 * 3.0 * ray.direction.z.powi(3) * ray.origin.y;
-            b += self.c013 * ray.direction.z.powi(2) * ray.direction.y * ray.origin.z;
-            c += self.c013 * 3.0 * ray.direction.z.powi(2) * ray.origin.z * ray.origin.y;
-            c += self.c013 * 3.0 * ray.direction.z * ray.direction.y * ray.origin.z.powi(2);
-            d += self.c013 * 3.0 * ray.direction.z * ray.origin.z.powi(2) * ray.origin.y;
-            d += self.c013 * ray.direction.y * ray.origin.z.powi(3);
-            e += self.c013 * ray.origin.z.powi(3) * ray.origin.y;
+            b += self.c013 * 3.0 * ray.direction.z.powi(3) * origin.y;
+            b += self.c013 * ray.direction.z.powi(2) * ray.direction.y * origin.z;
+            c += self.c013 * 3.0 * ray.direction.z.powi(2) * origin.z * origin.y;
+            c += self.c013 * 3.0 * ray.direction.z * ray.direction.y * origin.z.powi(2);
+            d += self.c013 * 3.0 * ray.direction.z * origin.z.powi(2) * origin.y;
+            d += self.c013 * ray.direction.y * origin.z.powi(3);
+            e += self.c013 * origin.z.powi(3) * origin.y;
             // c211
             a += self.c211 * ray.direction.x.powi(2) * ray.direction.y * ray.direction.z;
-            b += self.c211
-                * 2.0
-                * ray.direction.x
-                * ray.direction.y
-                * ray.direction.z
-                * ray.origin.x;
-            b += self.c211 * ray.direction.x.powi(2) * ray.direction.z * ray.origin.y;
-            b += self.c211 * ray.direction.x.powi(2) * ray.direction.y * ray.origin.z;
-            c += self.c211 * ray.direction.x.powi(2) * ray.origin.y * ray.origin.z;
-            c += self.c211 * 2.0 * ray.direction.x * ray.direction.y * ray.origin.x * ray.origin.z;
-            c += self.c211 * 2.0 * ray.direction.x * ray.direction.z * ray.origin.x * ray.origin.y;
-            c += self.c211 * ray.direction.y * ray.direction.z * ray.origin.x.powi(2);
-            d += self.c211 * 2.0 * ray.direction.x * ray.origin.x * ray.origin.y * ray.origin.z;
-            d += self.c211 * ray.direction.y * ray.origin.x.powi(2) * ray.origin.z;
-            d += self.c211 * ray.direction.z * ray.origin.x.powi(2) * ray.origin.y;
-            e += self.c211 * ray.origin.x.powi(2) * ray.origin.y + ray.origin.z;
+            b += self.c211 * 2.0 * ray.direction.x * ray.direction.y * ray.direction.z * origin.x;
+            b += self.c211 * ray.direction.x.powi(2) * ray.direction.z * origin.y;
+            b += self.c211 * ray.direction.x.powi(2) * ray.direction.y * origin.z;
+            c += self.c211 * ray.direction.x.powi(2) * origin.y * origin.z;
+            c += self.c211 * 2.0 * ray.direction.x * ray.direction.y * origin.x * origin.z;
+            c += self.c211 * 2.0 * ray.direction.x * ray.direction.z * origin.x * origin.y;
+            c += self.c211 * ray.direction.y * ray.direction.z * origin.x.powi(2);
+            d += self.c211 * 2.0 * ray.direction.x * origin.x * origin.y * origin.z;
+            d += self.c211 * ray.direction.y * origin.x.powi(2) * origin.z;
+            d += self.c211 * ray.direction.z * origin.x.powi(2) * origin.y;
+            e += self.c211 * origin.x.powi(2) * origin.y * origin.z;
             // c121
             a += self.c121 * ray.direction.y.powi(2) * ray.direction.x * ray.direction.z;
-            b += self.c121
-                * 2.0
-                * ray.direction.y
-                * ray.direction.x
-                * ray.direction.z
-                * ray.origin.y;
-            b += self.c121 * ray.direction.y.powi(2) * ray.direction.z * ray.origin.x;
-            b += self.c121 * ray.direction.y.powi(2) * ray.direction.x * ray.origin.z;
-            c += self.c121 * ray.direction.y.powi(2) * ray.origin.x * ray.origin.z;
-            c += self.c121 * 2.0 * ray.direction.y * ray.direction.x * ray.origin.y * ray.origin.z;
-            c += self.c121 * 2.0 * ray.direction.y * ray.direction.z * ray.origin.y * ray.origin.x;
-            c += self.c121 * ray.direction.x * ray.direction.z * ray.origin.y.powi(2);
-            d += self.c121 * 2.0 * ray.direction.y * ray.origin.y * ray.origin.x * ray.origin.z;
-            d += self.c121 * ray.direction.x * ray.origin.y.powi(2) * ray.origin.z;
-            d += self.c121 * ray.direction.z * ray.origin.y.powi(2) * ray.origin.x;
-            e += self.c121 * ray.origin.y.powi(2) * ray.origin.x + ray.origin.z;
+            b += self.c121 * 2.0 * ray.direction.y * ray.direction.x * ray.direction.z * origin.y;
+            b += self.c121 * ray.direction.y.powi(2) * ray.direction.z * origin.x;
+            b += self.c121 * ray.direction.y.powi(2) * ray.direction.x * origin.z;
+            c += self.c121 * ray.direction.y.powi(2) * origin.x * origin.z;
+            c += self.c121 * 2.0 * ray.direction.y * ray.direction.x * origin.y * origin.z;
+            c += self.c121 * 2.0 * ray.direction.y * ray.direction.z * origin.y * origin.x;
+            c += self.c121 * ray.direction.x * ray.direction.z * origin.y.powi(2);
+            d += self.c121 * 2.0 * ray.direction.y * origin.y * origin.x * origin.z;
+            d += self.c121 * ray.direction.x * origin.y.powi(2) * origin.z;
+            d += self.c121 * ray.direction.z * origin.y.powi(2) * origin.x;
+            e += self.c121 * origin.y.powi(2) * origin.x * origin.z;
             // c112
             a += self.c112 * ray.direction.z.powi(2) * ray.direction.x * ray.direction.y;
-            b += self.c112
-                * 2.0
-                * ray.direction.z
-                * ray.direction.x
-                * ray.direction.y
-                * ray.origin.z;
-            b += self.c112 * ray.direction.z.powi(2) * ray.direction.y * ray.origin.x;
-            b += self.c112 * ray.direction.z.powi(2) * ray.direction.x * ray.origin.y;
-            c += self.c112 * ray.direction.z.powi(2) * ray.origin.x * ray.origin.y;
-            c += self.c112 * 2.0 * ray.direction.z * ray.direction.x * ray.origin.z * ray.origin.y;
-            c += self.c112 * 2.0 * ray.direction.z * ray.direction.y * ray.origin.z * ray.origin.x;
-            c += self.c112 * ray.direction.x * ray.direction.y * ray.origin.z.powi(2);
-            d += self.c112 * 2.0 * ray.direction.z * ray.origin.z * ray.origin.x * ray.origin.y;
-            d += self.c112 * ray.direction.x * ray.origin.z.powi(2) * ray.origin.y;
-            d += self.c112 * ray.direction.y * ray.origin.z.powi(2) * ray.origin.x;
-            e += self.c112 * ray.origin.z.powi(2) * ray.origin.x + ray.origin.y;
+            b += self.c112 * 2.0 * ray.direction.z * ray.direction.x * ray.direction.y * origin.z;
+            b += self.c112 * ray.direction.z.powi(2) * ray.direction.y * origin.x;
+            b += self.c112 * ray.direction.z.powi(2) * ray.direction.x * origin.y;
+            c += self.c112 * ray.direction.z.powi(2) * origin.x * origin.y;
+            c += self.c112 * 2.0 * ray.direction.z * ray.direction.x * origin.z * origin.y;
+            c += self.c112 * 2.0 * ray.direction.z * ray.direction.y * origin.z * origin.x;
+            c += self.c112 * ray.direction.x * ray.direction.y * origin.z.powi(2);
+            d += self.c112 * 2.0 * ray.direction.z * origin.z * origin.x * origin.y;
+            d += self.c112 * ray.direction.x * origin.z.powi(2) * origin.y;
+            d += self.c112 * ray.direction.y * origin.z.powi(2) * origin.x;
+            e += self.c112 * origin.z.powi(2) * origin.x * origin.y;
             // c220
             a += self.c220 * ray.direction.x.powi(2) * ray.direction.y.powi(2);
-            b += self.c220 * 2.0 * ray.direction.x.powi(2) * ray.direction.y * ray.origin.y;
-            b += self.c220 * 2.0 * ray.direction.x * ray.direction.y.powi(2) * ray.origin.x;
-            c += self.c220 * ray.direction.x.powi(2) * ray.origin.y.powi(2);
-            c += self.c220 * 4.0 * ray.direction.x * ray.direction.y * ray.origin.x * ray.origin.y;
-            c += self.c220 * ray.direction.y.powi(2) * ray.origin.x.powi(2);
-            d += self.c220 * 2.0 * ray.direction.x * ray.origin.x * ray.origin.y.powi(2);
-            d += self.c220 * 2.0 * ray.direction.y * ray.origin.x.powi(2) * ray.origin.y;
-            e += self.c220 * ray.origin.x.powi(2) * ray.origin.y.powi(2);
+            b += self.c220 * 2.0 * ray.direction.x.powi(2) * ray.direction.y * origin.y;
+            b += self.c220 * 2.0 * ray.direction.x * ray.direction.y.powi(2) * origin.x;
+            c += self.c220 * ray.direction.x.powi(2) * origin.y.powi(2);
+            c += self.c220 * 4.0 * ray.direction.x * ray.direction.y * origin.x * origin.y;
+            c += self.c220 * ray.direction.y.powi(2) * origin.x.powi(2);
+            d += self.c220 * 2.0 * ray.direction.x * origin.x * origin.y.powi(2);
+            d += self.c220 * 2.0 * ray.direction.y * origin.x.powi(2) * origin.y;
+            e += self.c220 * origin.x.powi(2) * origin.y.powi(2);
             // c022
             a += self.c022 * ray.direction.z.powi(2) * ray.direction.y.powi(2);
-            b += self.c022 * 2.0 * ray.direction.z.powi(2) * ray.direction.y * ray.origin.y;
-            b += self.c022 * 2.0 * ray.direction.z * ray.direction.y.powi(2) * ray.origin.z;
-            c += self.c022 * ray.direction.z.powi(2) * ray.origin.y.powi(2);
-            c += self.c022 * 4.0 * ray.direction.z * ray.direction.y * ray.origin.z * ray.origin.y;
-            c += self.c022 * ray.direction.y.powi(2) * ray.origin.z.powi(2);
-            d += self.c022 * 2.0 * ray.direction.z * ray.origin.z * ray.origin.y.powi(2);
-            d += self.c022 * 2.0 * ray.direction.y * ray.origin.z.powi(2) * ray.origin.y;
-            e += self.c022 * ray.origin.z.powi(2) * ray.origin.y.powi(2);
+            b += self.c022 * 2.0 * ray.direction.z.powi(2) * ray.direction.y * origin.y;
+            b += self.c022 * 2.0 * ray.direction.z * ray.direction.y.powi(2) * origin.z;
+            c += self.c022 * ray.direction.z.powi(2) * origin.y.powi(2);
+            c += self.c022 * 4.0 * ray.direction.z * ray.direction.y * origin.z * origin.y;
+            c += self.c022 * ray.direction.y.powi(2) * origin.z.powi(2);
+            d += self.c022 * 2.0 * ray.direction.z * origin.z * origin.y.powi(2);
+            d += self.c022 * 2.0 * ray.direction.y * origin.z.powi(2) * origin.y;
+            e += self.c022 * origin.z.powi(2) * origin.y.powi(2);
             // c202
             a += self.c202 * ray.direction.z.powi(2) * ray.direction.x.powi(2);
-            b += self.c202 * 2.0 * ray.direction.z.powi(2) * ray.direction.x * ray.origin.x;
-            b += self.c202 * 2.0 * ray.direction.z * ray.direction.x.powi(2) * ray.origin.z;
-            c += self.c202 * ray.direction.z.powi(2) * ray.origin.x.powi(2);
-            c += self.c202 * 4.0 * ray.direction.z * ray.direction.x * ray.origin.z * ray.origin.x;
-            c += self.c202 * ray.direction.x.powi(2) * ray.origin.z.powi(2);
-            d += self.c202 * 2.0 * ray.direction.z * ray.origin.z * ray.origin.x.powi(2);
-            d += self.c202 * 2.0 * ray.direction.x * ray.origin.z.powi(2) * ray.origin.x;
-            e += self.c202 * ray.origin.z.powi(2) * ray.origin.x.powi(2);
+            b += self.c202 * 2.0 * ray.direction.z.powi(2) * ray.direction.x * origin.x;
+            b += self.c202 * 2.0 * ray.direction.z * ray.direction.x.powi(2) * origin.z;
+            c += self.c202 * ray.direction.z.powi(2) * origin.x.powi(2);
+            c += self.c202 * 4.0 * ray.direction.z * ray.direction.x * origin.z * origin.x;
+            c += self.c202 * ray.direction.x.powi(2) * origin.z.powi(2);
+            d += self.c202 * 2.0 * ray.direction.z * origin.z * origin.x.powi(2);
+            d += self.c202 * 2.0 * ray.direction.x * origin.z.powi(2) * origin.x;
+            e += self.c202 * origin.z.powi(2) * origin.x.powi(2);
             // c300
             b += self.c300 * ray.direction.x.powi(3);
             c += self.c300 * 3.0 * ray.direction.x.powi(2) * origin.x;
@@ -453,7 +514,68 @@ impl Quartic {
     }
 
     fn normal(&self, position: Position) -> Direction {
-        Direction::new(Vec3::new(0.0, 0.0, 0.0))
+        Direction::new(Vec3::new(
+            4.0 * self.c400 * position.x.powi(3)
+                + 3.0 * self.c310 * position.x.powi(2) * position.y
+                + 3.0 * self.c301 * position.x.powi(2) * position.z
+                + 3.0 * self.c300 * position.x.powi(2)
+                + 2.0 * self.c220 * position.x * position.y.powi(2)
+                + 2.0 * self.c202 * position.x * position.z.powi(2)
+                + 2.0 * self.c211 * position.x * position.y * position.z
+                + 2.0 * self.c210 * position.x * position.y
+                + 2.0 * self.c201 * position.x * position.z
+                + 2.0 * self.c200 * position.x
+                + self.c130 * position.y.powi(3)
+                + self.c103 * position.z.powi(3)
+                + self.c121 * position.y.powi(2) * position.z
+                + self.c112 * position.y * position.z.powi(2)
+                + self.c120 * position.y.powi(2)
+                + self.c102 * position.z.powi(2)
+                + self.c111 * position.y * position.z
+                + self.c110 * position.y
+                + self.c101 * position.z
+                + self.c100,
+            4.0 * self.c040 * position.y.powi(3)
+                + 3.0 * self.c130 * position.y.powi(2) * position.x
+                + 3.0 * self.c031 * position.y.powi(2) * position.z
+                + 3.0 * self.c030 * position.y.powi(2)
+                + 2.0 * self.c220 * position.y * position.x.powi(2)
+                + 2.0 * self.c022 * position.y * position.z.powi(2)
+                + 2.0 * self.c121 * position.y * position.x * position.z
+                + 2.0 * self.c120 * position.y * position.x
+                + 2.0 * self.c021 * position.y * position.z
+                + 2.0 * self.c020 * position.y
+                + self.c310 * position.x.powi(3)
+                + self.c013 * position.z.powi(3)
+                + self.c211 * position.x.powi(2) * position.z
+                + self.c112 * position.x * position.z.powi(2)
+                + self.c210 * position.x.powi(2)
+                + self.c012 * position.z.powi(2)
+                + self.c111 * position.x * position.z
+                + self.c110 * position.x
+                + self.c011 * position.z
+                + self.c010,
+            4.0 * self.c004 * position.z.powi(3)
+                + 3.0 * self.c013 * position.z.powi(2) * position.y
+                + 3.0 * self.c103 * position.z.powi(2) * position.x
+                + 3.0 * self.c003 * position.z.powi(2)
+                + 2.0 * self.c022 * position.z * position.y.powi(2)
+                + 2.0 * self.c202 * position.z * position.x.powi(2)
+                + 2.0 * self.c112 * position.z * position.y * position.x
+                + 2.0 * self.c012 * position.z * position.y
+                + 2.0 * self.c102 * position.z * position.x
+                + 2.0 * self.c002 * position.z
+                + self.c031 * position.y.powi(3)
+                + self.c301 * position.x.powi(3)
+                + self.c121 * position.y.powi(2) * position.x
+                + self.c211 * position.y * position.x.powi(2)
+                + self.c021 * position.y.powi(2)
+                + self.c201 * position.x.powi(2)
+                + self.c111 * position.y * position.x
+                + self.c011 * position.y
+                + self.c101 * position.x
+                + self.c001,
+        ))
     }
 }
 
