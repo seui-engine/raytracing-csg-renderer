@@ -7,11 +7,12 @@ use schemars::{
     },
     JsonSchema, SchemaGenerator,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 
 pub struct PositionSchema {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl JsonSchema for PositionSchema {
@@ -32,7 +33,7 @@ impl JsonSchema for PositionSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f64, y: f64, z: f64 }
+                    // Object format: { x: LongDouble, y: LongDouble, z: LongDouble }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -74,17 +75,17 @@ impl JsonSchema for PositionSchema {
 
 #[derive(Clone, Copy, Debug)]
 pub struct Scale {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl Default for Scale {
     fn default() -> Self {
         Self {
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
+            x: LongDouble::from_f64(1.0),
+            y: LongDouble::from_f64(1.0),
+            z: LongDouble::from_f64(1.0),
         }
     }
 }
@@ -107,7 +108,7 @@ impl JsonSchema for Scale {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f64, y: f64, z: f64 }
+                    // Object format: { x: LongDouble, y: LongDouble, z: LongDouble }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -148,9 +149,9 @@ impl JsonSchema for Scale {
 }
 
 pub struct DirectionSchema {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl JsonSchema for DirectionSchema {
@@ -171,7 +172,7 @@ impl JsonSchema for DirectionSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f64, y: f64, z: f64 }
+                    // Object format: { x: LongDouble, y: LongDouble, z: LongDouble }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -212,9 +213,9 @@ impl JsonSchema for DirectionSchema {
 }
 
 pub struct MoveSchema {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl JsonSchema for MoveSchema {
@@ -235,7 +236,7 @@ impl JsonSchema for MoveSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f64, y: f64, z: f64 }
+                    // Object format: { x: LongDouble, y: LongDouble, z: LongDouble }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -276,9 +277,9 @@ impl JsonSchema for MoveSchema {
 }
 
 pub struct HDRColorSchema {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl JsonSchema for HDRColorSchema {
@@ -299,7 +300,7 @@ impl JsonSchema for HDRColorSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f64, y: f64, z: f64 }
+                    // Object format: { x: LongDouble, y: LongDouble, z: LongDouble }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -340,9 +341,9 @@ impl JsonSchema for HDRColorSchema {
 }
 
 pub struct LDRColorSchema {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl JsonSchema for LDRColorSchema {
@@ -363,7 +364,7 @@ impl JsonSchema for LDRColorSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f64, y: f64, z: f64 }
+                    // Object format: { x: LongDouble, y: LongDouble, z: LongDouble }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {

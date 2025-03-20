@@ -18,6 +18,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position, Vec3},
     rt::Ray,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
@@ -48,22 +49,22 @@ impl DeserializableSphere {
         image_cache: &mut ImageCache<T>,
     ) -> Box<dyn RTModel + Send + Sync> {
         Box::new(Sphere {
-            radius: self.radius,
+            radius: LongDouble::from_f64(self.radius),
             position: self.position,
             albedo: self.albedo,
-            roughness: self.roughness,
-            metallic: self.metallic,
+            roughness: LongDouble::from_f64(self.roughness),
+            metallic: LongDouble::from_f64(self.metallic),
             texture: self.texture.map(|t| t.into_texture(image_cache)),
         })
     }
 }
 
 struct Sphere {
-    radius: f64,
+    radius: LongDouble,
     position: Position,
     albedo: LDRColor,
-    roughness: f64,
-    metallic: f64,
+    roughness: LongDouble,
+    metallic: LongDouble,
     texture: Option<Arc<dyn Texture + Send + Sync>>,
 }
 
@@ -72,11 +73,11 @@ impl Sphere {
         if let Some(texture) = &self.texture {
             let dir = Direction::new(*(position - self.position));
 
-            let theta = dir.x.atan2(dir.y);
+            let theta = LongDouble::from_f64(dir.x.to_f64().atan2(dir.y.to_f64()));
             let phi = dir.z.acos();
 
-            let u = (theta + std::f64::consts::PI) / (2.0 * std::f64::consts::PI);
-            let v = phi / std::f64::consts::PI;
+            let u = (theta + LongDouble::pi()) / (LongDouble::from_f64(2.0) * LongDouble::pi());
+            let v = phi / LongDouble::pi();
 
             texture.get(u, v)
         } else {
@@ -92,36 +93,40 @@ impl RTModel for Sphere {
         // Move the sphere to the origin for simplicity
         let origin: Position = (ray.origin - self.position).into();
 
-        let a = ray.direction.x.powi(2) + ray.direction.y.powi(2) + ray.direction.z.powi(2);
-        let b = 2.0
-            * (origin.x * ray.direction.x
-                + origin.y * ray.direction.y
-                + origin.z * ray.direction.z);
-        let c = origin.x.powi(2) + origin.y.powi(2) + origin.z.powi(2) - self.radius.powi(2);
-        let discriminant = b.powi(2) - 4.0 * a * c;
+        let p = ray.direction.x;
+        let q = ray.direction.y;
+        let r = ray.direction.z;
+        let u = origin.x;
+        let v = origin.y;
+        let w = origin.z;
 
-        if discriminant < 0.0 {
+        let a = p * p + q * q + r * r;
+        let b = LongDouble::from_f64(2.0) * (u * p + v * q + w * r);
+        let c = u * u + v * v + w * w - self.radius * self.radius;
+        let discriminant = b * b - LongDouble::from_f64(4.0) * a * c;
+
+        if discriminant < LongDouble::from_f64(0.0) {
             return result; // No intersection
         }
 
         let sqrt_d = discriminant.sqrt();
-        let mut t1 = (-b - sqrt_d) / (2.0 * a);
-        let mut t2 = (-b + sqrt_d) / (2.0 * a);
+        let mut t1 = (-b - sqrt_d) / (LongDouble::from_f64(2.0) * a);
+        let mut t2 = (-b + sqrt_d) / (LongDouble::from_f64(2.0) * a);
         if t1 > t2 {
             (t1, t2) = (t2, t1);
         }
 
-        if t2 < 0.0 {
+        if t2 < LongDouble::from_f64(0.0) {
             return result; // No visible intersection
         }
         if t1.is_nan() {
             return result; // error
         }
 
-        if t1 < 0.0 {
+        if t1 < LongDouble::from_f64(0.0) {
             // If t1 is negative, ray started inside the sphere
             result.push(Hit {
-                distance: 0.0,
+                distance: LongDouble::from_f64(0.0),
                 normal: -ray.direction, // Opposite direction
                 albedo: self.albedo,
                 is_front_face: true,
@@ -129,7 +134,7 @@ impl RTModel for Sphere {
                 metallic: self.metallic,
             });
         } else {
-            let normal: Vec3 = *(origin + ray.direction * t1) * 2.0;
+            let normal: Vec3 = *(origin + ray.direction * t1) * LongDouble::from_f64(2.0);
             result.push(Hit {
                 distance: t1,
                 normal: Direction::new(normal),
@@ -140,7 +145,7 @@ impl RTModel for Sphere {
             });
         }
 
-        let normal: Vec3 = *(origin + ray.direction * t2) * 2.0;
+        let normal: Vec3 = *(origin + ray.direction * t2) * LongDouble::from_f64(2.0);
         result.push(Hit {
             distance: t2,
             normal: Direction::new(normal),

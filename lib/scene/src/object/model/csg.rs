@@ -4,6 +4,7 @@ use crate::{ImageCache, ImageLoader};
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::Ray;
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -67,7 +68,7 @@ fn remove_duplicate_hits(sorted: &mut Vec<Hit>) {
     for hit in sorted.drain(..) {
         if let Some(last) = result.last() {
             if last.is_front_face != hit.is_front_face
-                && (last.distance - hit.distance).abs() < 0.001
+                && (last.distance - hit.distance).abs() < LongDouble::from_f64(1e-3)
             {
                 result.pop();
                 continue;

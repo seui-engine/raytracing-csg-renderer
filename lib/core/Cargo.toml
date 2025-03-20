@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+seui-engine-raytracing-csg-renderer-long-double = { version = "0.1.0", path = "../long-double" }
 seui-engine-raytracing-csg-renderer-types = { version = "0.1.0", path = "../types" }

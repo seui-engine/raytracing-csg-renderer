@@ -7,7 +7,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{
-    deserialize::{deserialize_ldr_color, deserialize_ldr_float, deserialize_position},
+    deserialize::{deserialize_ldr_color, deserialize_ldr_long_double, deserialize_position},
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
@@ -27,58 +27,58 @@ pub struct Quadratic {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: f64,
+    roughness: LongDouble,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: f64,
+    metallic: LongDouble,
 
     #[serde(default = "zero")]
-    c300: f64,
+    c300: LongDouble,
     #[serde(default = "zero")]
-    c030: f64,
+    c030: LongDouble,
     #[serde(default = "zero")]
-    c003: f64,
+    c003: LongDouble,
     #[serde(default = "zero")]
-    c210: f64,
+    c210: LongDouble,
     #[serde(default = "zero")]
-    c201: f64,
+    c201: LongDouble,
     #[serde(default = "zero")]
-    c120: f64,
+    c120: LongDouble,
     #[serde(default = "zero")]
-    c021: f64,
+    c021: LongDouble,
     #[serde(default = "zero")]
-    c102: f64,
+    c102: LongDouble,
     #[serde(default = "zero")]
-    c012: f64,
+    c012: LongDouble,
     #[serde(default = "zero")]
-    c111: f64,
+    c111: LongDouble,
     #[serde(default = "zero")]
-    c200: f64,
+    c200: LongDouble,
     #[serde(default = "zero")]
-    c020: f64,
+    c020: LongDouble,
     #[serde(default = "zero")]
-    c002: f64,
+    c002: LongDouble,
     #[serde(default = "zero")]
-    c110: f64,
+    c110: LongDouble,
     #[serde(default = "zero")]
-    c011: f64,
+    c011: LongDouble,
     #[serde(default = "zero")]
-    c101: f64,
+    c101: LongDouble,
     #[serde(default = "zero")]
-    c100: f64,
+    c100: LongDouble,
     #[serde(default = "zero")]
-    c010: f64,
+    c010: LongDouble,
     #[serde(default = "zero")]
-    c001: f64,
+    c001: LongDouble,
     #[serde(default = "zero")]
-    c000: f64,
+    c000: LongDouble,
 
     #[serde(deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     inside: Position,
 }
 
-fn cubic_roots(a: f64, b: f64, c: f64, d: f64) -> Vec<f64> {
+fn cubic_roots(a: LongDouble, b: LongDouble, c: LongDouble, d: LongDouble) -> Vec<LongDouble> {
     if a.abs() <= 0.000001 {
         let mut roots = Vec::new();
         if b.abs() <= 0.000001 {
@@ -120,8 +120,12 @@ fn cubic_roots(a: f64, b: f64, c: f64, d: f64) -> Vec<f64> {
         }
         let sqrt_q = (-q).sqrt();
         roots.push(2.0 * sqrt_q * (theta / 3.0).cos() - a_div_3);
-        roots.push(2.0 * sqrt_q * ((theta + 2.0 * std::f64::consts::PI) / 3.0).cos() - a_div_3);
-        roots.push(2.0 * sqrt_q * ((theta - 2.0 * std::f64::consts::PI) / 3.0).cos() - a_div_3);
+        roots.push(
+            2.0 * sqrt_q * ((theta + 2.0 * std::LongDouble::consts::PI) / 3.0).cos() - a_div_3,
+        );
+        roots.push(
+            2.0 * sqrt_q * ((theta - 2.0 * std::LongDouble::consts::PI) / 3.0).cos() - a_div_3,
+        );
     }
 
     roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
@@ -333,7 +337,7 @@ impl RTModel for Quadratic {
         }
         if is_front_face {
             result.push(Hit {
-                distance: f64::INFINITY,
+                distance: LongDouble::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,

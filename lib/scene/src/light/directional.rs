@@ -1,11 +1,10 @@
-use core::f64;
-
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position, Vec3},
     rt::Light,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::HDRColor;
 
 use crate::{
@@ -14,7 +13,11 @@ use crate::{
 };
 
 fn down() -> Direction {
-    Direction::new(-Vec3::Z)
+    Direction::new(Vec3::new(
+        LongDouble::from_f32(0.0),
+        LongDouble::from_f32(0.0),
+        LongDouble::from_f32(-1.0),
+    ))
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
@@ -29,7 +32,7 @@ pub struct DirectionalLight {
 }
 
 impl Light for DirectionalLight {
-    fn test(&self, _position: Position) -> Option<(HDRColor, Direction, f64)> {
-        Some((self.color, -self.direction, f64::INFINITY))
+    fn test(&self, _position: Position) -> Option<(HDRColor, Direction, LongDouble)> {
+        Some((self.color, -self.direction, LongDouble::infinity()))
     }
 }

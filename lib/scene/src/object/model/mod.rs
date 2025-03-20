@@ -7,6 +7,7 @@ use quartic::Quartic;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{math::Direction, rt::Ray};
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 use sphere::DeserializableSphere;
 
@@ -26,9 +27,9 @@ pub struct Hit {
     pub is_front_face: bool,
     pub albedo: LDRColor,
     pub normal: Direction,
-    pub distance: f64,
-    pub roughness: f64,
-    pub metallic: f64,
+    pub distance: LongDouble,
+    pub roughness: LongDouble,
+    pub metallic: LongDouble,
 }
 
 pub trait RTModel {

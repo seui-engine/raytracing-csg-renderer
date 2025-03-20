@@ -2,6 +2,7 @@ use perspective::DeserializablePerspectiveCamera;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::Camera;
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 
 pub mod perspective;
 
@@ -12,7 +13,7 @@ pub enum DeserializableCamera {
 }
 
 impl DeserializableCamera {
-    pub fn into_camera(self, screen_aspect_ratio: f64) -> Box<dyn Camera + Send + Sync> {
+    pub fn into_camera(self, screen_aspect_ratio: LongDouble) -> Box<dyn Camera + Send + Sync> {
         match self {
             DeserializableCamera::Perspective(c) => c.into_camera(screen_aspect_ratio),
         }

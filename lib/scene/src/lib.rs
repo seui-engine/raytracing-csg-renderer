@@ -8,6 +8,7 @@ use object::DeserializableRTObject;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::rt::Scene;
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::HDRColor;
 
 pub mod camera;
@@ -20,7 +21,7 @@ pub mod texture;
 pub trait Image {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
-    fn get(&self, x: usize, y: usize) -> [f64; 3];
+    fn get(&self, x: usize, y: usize) -> [LongDouble; 3];
 }
 
 pub trait ImageLoader {
@@ -42,7 +43,11 @@ pub struct DeserializableScene {
 }
 
 impl DeserializableScene {
-    pub fn into_scene<T: ImageLoader>(self, screen_aspect_ratio: f64, image_loader: &T) -> Scene {
+    pub fn into_scene<T: ImageLoader>(
+        self,
+        screen_aspect_ratio: LongDouble,
+        image_loader: &T,
+    ) -> Scene {
         let mut cache = ImageCache::new(image_loader);
         Scene {
             camera: self.camera.into_camera(screen_aspect_ratio),

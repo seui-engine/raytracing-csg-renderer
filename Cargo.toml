@@ -1,10 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
+    "lib/long-double",
+    "lib/types",
     "lib/core",
     "lib/main",
     "lib/scene",
     "lib/schema-generator",
-    "lib/types",
 ]
 default-members = ["lib/main"]

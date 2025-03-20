@@ -1,33 +1,27 @@
 use std::ops::{Add, Div, Mul};
 
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
+
 #[derive(Clone, Copy, Debug)]
 pub struct HDRColor {
-    pub r: f64,
-    pub g: f64,
-    pub b: f64,
+    pub r: LongDouble,
+    pub g: LongDouble,
+    pub b: LongDouble,
 }
 
 #[derive(Clone, Copy, Debug)]
 pub struct LDRColor {
-    pub r: f64,
-    pub g: f64,
-    pub b: f64,
-}
-
-impl HDRColor {
-    pub const BLACK: HDRColor = HDRColor {
-        r: 0.0,
-        g: 0.0,
-        b: 0.0,
-    };
+    pub r: LongDouble,
+    pub g: LongDouble,
+    pub b: LongDouble,
 }
 
 impl Default for LDRColor {
     fn default() -> Self {
         Self {
-            r: 1.0,
-            g: 1.0,
-            b: 1.0,
+            r: LongDouble::from_f64(1.0),
+            g: LongDouble::from_f64(1.0),
+            b: LongDouble::from_f64(1.0),
         }
     }
 }
@@ -35,19 +29,19 @@ impl Default for LDRColor {
 impl Default for HDRColor {
     fn default() -> Self {
         Self {
-            r: 1.0,
-            g: 1.0,
-            b: 1.0,
+            r: LongDouble::from_f64(1.0),
+            g: LongDouble::from_f64(1.0),
+            b: LongDouble::from_f64(1.0),
         }
     }
 }
 
 impl LDRColor {
-    pub fn new(r: f64, g: f64, b: f64) -> LDRColor {
+    pub fn new(r: LongDouble, g: LongDouble, b: LongDouble) -> LDRColor {
         LDRColor {
-            r: r.min(1.0),
-            g: g.min(1.0),
-            b: b.min(1.0),
+            r: r.min(LongDouble::from_f64(1.0)),
+            g: g.min(LongDouble::from_f64(1.0)),
+            b: b.min(LongDouble::from_f64(1.0)),
         }
     }
 }
@@ -100,10 +94,10 @@ impl Add for HDRColor {
     }
 }
 
-impl Mul<f64> for HDRColor {
+impl Mul<LongDouble> for HDRColor {
     type Output = HDRColor;
 
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: LongDouble) -> Self::Output {
         HDRColor {
             r: self.r * rhs,
             g: self.g * rhs,
@@ -112,10 +106,10 @@ impl Mul<f64> for HDRColor {
     }
 }
 
-impl Div<f64> for HDRColor {
+impl Div<LongDouble> for HDRColor {
     type Output = HDRColor;
 
-    fn div(self, rhs: f64) -> Self::Output {
+    fn div(self, rhs: LongDouble) -> Self::Output {
         HDRColor {
             r: self.r / rhs,
             g: self.g / rhs,

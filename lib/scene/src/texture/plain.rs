@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use schemars::JsonSchema;
 use serde::Deserialize;
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{Image, ImageCache, ImageLoader};
@@ -38,12 +39,12 @@ struct PlainNearestTexture {
 }
 
 impl Texture for PlainNearestTexture {
-    fn get(&self, u: f64, v: f64) -> LDRColor {
+    fn get(&self, u: LongDouble, v: LongDouble) -> LDRColor {
         let width = self.image.width();
         let height = self.image.height();
 
-        let x = (u * width as f64).round() as usize % width;
-        let y = (v * height as f64).round() as usize % height;
+        let x = (u * LongDouble::from_f64(width as f64)).to_f64().round() as usize % width;
+        let y = (v * LongDouble::from_f64(height as f64)).to_f64().round() as usize % height;
 
         let (r, g, b) = self.image.get(y, x).into();
 
@@ -56,18 +57,18 @@ struct PlainLinearTexture {
 }
 
 impl Texture for PlainLinearTexture {
-    fn get(&self, u: f64, v: f64) -> LDRColor {
-        let width = self.image.width() as f64;
-        let height = self.image.height() as f64;
+    fn get(&self, u: LongDouble, v: LongDouble) -> LDRColor {
+        let width = LongDouble::from_f64(self.image.width() as f64);
+        let height = LongDouble::from_f64(self.image.height() as f64);
 
-        let x = u * (width - 1.0);
-        let y = v * (height - 1.0);
+        let x = u * (width - LongDouble::from_f64(1.0));
+        let y = v * (height - LongDouble::from_f64(1.0));
 
-        let x0 = x.floor() as usize;
-        let y0 = y.floor() as usize;
+        let x0 = x.to_f64().floor() as usize;
+        let y0 = y.to_f64().floor() as usize;
 
-        let dx = x - x.floor();
-        let dy = y - y.floor();
+        let dx = x - LongDouble::from_f64(x.to_f64().floor());
+        let dy = y - LongDouble::from_f64(y.to_f64().floor());
 
         let x1 = (x0 + 1).min(self.image.width() - 1);
         let y1 = (y0 + 1).min(self.image.height() - 1);
@@ -85,6 +86,6 @@ impl Texture for PlainLinearTexture {
     }
 }
 
-fn lerp(a: f64, b: f64, t: f64) -> f64 {
-    a * (1.0 - t) + b * t
+fn lerp(a: LongDouble, b: LongDouble, t: LongDouble) -> LongDouble {
+    a * (LongDouble::from_f64(1.0) - t) + b * t
 }

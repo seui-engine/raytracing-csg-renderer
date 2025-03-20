@@ -1,6 +1,7 @@
 use serde::de::{self, MapAccess, SeqAccess, Visitor};
 use serde::Deserializer;
 use seui_engine_raytracing_csg_renderer_core::types::math::{Direction, Move, Position, Vec3};
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use std::fmt;
 
@@ -37,9 +38,9 @@ where
                 }
             }
 
-            let r = r.ok_or_else(|| de::Error::missing_field("r"))?;
-            let g = g.ok_or_else(|| de::Error::missing_field("g"))?;
-            let b = b.ok_or_else(|| de::Error::missing_field("b"))?;
+            let r = LongDouble::from_f64(r.ok_or_else(|| de::Error::missing_field("r"))?);
+            let g = LongDouble::from_f64(g.ok_or_else(|| de::Error::missing_field("g"))?);
+            let b = LongDouble::from_f64(b.ok_or_else(|| de::Error::missing_field("b"))?);
 
             Ok(HDRColor { r, g, b })
         }
@@ -49,18 +50,21 @@ where
         where
             A: SeqAccess<'de>,
         {
-            let r = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?
-                .max(0.0);
-            let g = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?
-                .max(0.0);
-            let b = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?
-                .max(0.0);
+            let r = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?
+                    .max(0.0),
+            );
+            let g = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?
+                    .max(0.0),
+            );
+            let b = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?
+                    .max(0.0),
+            );
 
             Ok(HDRColor { r, g, b })
         }
@@ -100,9 +104,9 @@ where
                 }
             }
 
-            let r = r.ok_or_else(|| de::Error::missing_field("r"))?;
-            let g = g.ok_or_else(|| de::Error::missing_field("g"))?;
-            let b = b.ok_or_else(|| de::Error::missing_field("b"))?;
+            let r = LongDouble::from_f64(r.ok_or_else(|| de::Error::missing_field("r"))?);
+            let g = LongDouble::from_f64(g.ok_or_else(|| de::Error::missing_field("g"))?);
+            let b = LongDouble::from_f64(b.ok_or_else(|| de::Error::missing_field("b"))?);
 
             Ok(LDRColor::new(r, g, b))
         }
@@ -112,18 +116,21 @@ where
         where
             A: SeqAccess<'de>,
         {
-            let r = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?
-                .clamp(0.0, 1.0);
-            let g = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?
-                .clamp(0.0, 1.0);
-            let b = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?
-                .clamp(0.0, 1.0);
+            let r = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?
+                    .clamp(0.0, 1.0),
+            );
+            let g = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?
+                    .clamp(0.0, 1.0),
+            );
+            let b = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?
+                    .clamp(0.0, 1.0),
+            );
 
             Ok(LDRColor::new(r, g, b))
         }
@@ -163,9 +170,9 @@ where
                 }
             }
 
-            let x = x.ok_or_else(|| de::Error::missing_field("x"))?;
-            let y = y.ok_or_else(|| de::Error::missing_field("y"))?;
-            let z = z.ok_or_else(|| de::Error::missing_field("z"))?;
+            let x = LongDouble::from_f64(x.ok_or_else(|| de::Error::missing_field("x"))?);
+            let y = LongDouble::from_f64(y.ok_or_else(|| de::Error::missing_field("y"))?);
+            let z = LongDouble::from_f64(z.ok_or_else(|| de::Error::missing_field("z"))?);
 
             Ok(Position::new(Vec3::new(x, y, z)))
         }
@@ -175,15 +182,18 @@ where
         where
             A: SeqAccess<'de>,
         {
-            let x = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-            let y = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-            let z = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+            let x = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?,
+            );
+            let y = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?,
+            );
+            let z = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?,
+            );
 
             Ok(Position::new(Vec3::new(x, y, z)))
         }
@@ -223,9 +233,9 @@ where
                 }
             }
 
-            let x = x.ok_or_else(|| de::Error::missing_field("x"))?;
-            let y = y.ok_or_else(|| de::Error::missing_field("y"))?;
-            let z = z.ok_or_else(|| de::Error::missing_field("z"))?;
+            let x = LongDouble::from_f64(x.ok_or_else(|| de::Error::missing_field("x"))?);
+            let y = LongDouble::from_f64(y.ok_or_else(|| de::Error::missing_field("y"))?);
+            let z = LongDouble::from_f64(z.ok_or_else(|| de::Error::missing_field("z"))?);
 
             Ok(Direction::new(Vec3::new(x, y, z)))
         }
@@ -235,15 +245,18 @@ where
         where
             A: SeqAccess<'de>,
         {
-            let x = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-            let y = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-            let z = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+            let x = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?,
+            );
+            let y = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?,
+            );
+            let z = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?,
+            );
 
             Ok(Direction::new(Vec3::new(x, y, z)))
         }
@@ -283,9 +296,9 @@ where
                 }
             }
 
-            let x = x.ok_or_else(|| de::Error::missing_field("x"))?;
-            let y = y.ok_or_else(|| de::Error::missing_field("y"))?;
-            let z = z.ok_or_else(|| de::Error::missing_field("z"))?;
+            let x = LongDouble::from_f64(x.ok_or_else(|| de::Error::missing_field("x"))?);
+            let y = LongDouble::from_f64(y.ok_or_else(|| de::Error::missing_field("y"))?);
+            let z = LongDouble::from_f64(z.ok_or_else(|| de::Error::missing_field("z"))?);
 
             Ok(Move::new(Vec3::new(x, y, z)))
         }
@@ -295,15 +308,18 @@ where
         where
             A: SeqAccess<'de>,
         {
-            let x = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-            let y = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-            let z = seq
-                .next_element()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+            let x = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?,
+            );
+            let y = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?,
+            );
+            let z = LongDouble::from_f64(
+                seq.next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?,
+            );
 
             Ok(Move::new(Vec3::new(x, y, z)))
         }
@@ -343,9 +359,9 @@ where
                 }
             }
 
-            let x = x.ok_or_else(|| de::Error::missing_field("x"))?;
-            let y = y.ok_or_else(|| de::Error::missing_field("y"))?;
-            let z = z.ok_or_else(|| de::Error::missing_field("z"))?;
+            let x = LongDouble::from_f64(x.ok_or_else(|| de::Error::missing_field("x"))?);
+            let y = LongDouble::from_f64(y.ok_or_else(|| de::Error::missing_field("y"))?);
+            let z = LongDouble::from_f64(z.ok_or_else(|| de::Error::missing_field("z"))?);
 
             Ok(Scale { x, y, z })
         }
@@ -355,18 +371,21 @@ where
         where
             A: SeqAccess<'de>,
         {
-            let x = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(0, &self))?
-                .max(0.0);
-            let y = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(1, &self))?
-                .max(0.0);
-            let z = seq
-                .next_element::<f64>()?
-                .ok_or_else(|| de::Error::invalid_length(2, &self))?
-                .max(0.0);
+            let x = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?
+                    .max(0.0),
+            );
+            let y = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?
+                    .max(0.0),
+            );
+            let z = LongDouble::from_f64(
+                seq.next_element::<f64>()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?
+                    .max(0.0),
+            );
 
             Ok(Scale { x, y, z })
         }

@@ -15,10 +15,15 @@ use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position, Vec3},
     rt::Ray,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 fn up() -> Direction {
-    Direction::new(Vec3::Z)
+    Direction::new(Vec3::new(
+        LongDouble::from_f64(0.0),
+        LongDouble::from_f64(0.0),
+        LongDouble::from_f64(1.0),
+    ))
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
@@ -47,68 +52,68 @@ impl RTModel for Plane {
 
         // Compute intersection distance t
         let denominator = self.normal.dot(ray.direction);
-        if denominator.abs() < 1e-6 {
+        if denominator.abs() < LongDouble::from_f64(1e-6) {
             return result; // Ray is parallel to the plane, no intersection
         }
 
         let t = -(ray.origin.dot(*self.normal) - self.position.dot(*self.normal)) / denominator;
 
-        if t < 0.0 {
+        if t < LongDouble::from_f64(0.0) {
             // The intersection is behind the ray's origin
-            if self.normal.dot(ray.direction) < 0.0 {
+            if self.normal.dot(ray.direction) < LongDouble::from_f64(0.0) {
                 result.push(Hit {
-                    distance: 0.0,
+                    distance: LongDouble::from_f64(0.0),
                     normal: -ray.direction,
                     albedo: self.albedo,
                     is_front_face: true,
-                    roughness: self.roughness,
-                    metallic: self.metallic,
+                    roughness: LongDouble::from_f64(self.roughness),
+                    metallic: LongDouble::from_f64(self.metallic),
                 });
                 result.push(Hit {
-                    distance: f64::INFINITY,
+                    distance: LongDouble::infinity(),
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
-                    roughness: self.roughness,
-                    metallic: self.metallic,
+                    roughness: LongDouble::from_f64(self.roughness),
+                    metallic: LongDouble::from_f64(self.metallic),
                 });
             }
             return result;
         }
 
-        if self.normal.dot(ray.direction) < 0.0 {
+        if self.normal.dot(ray.direction) < LongDouble::from_f64(0.0) {
             result.push(Hit {
                 distance: t,
                 normal: self.normal,
                 albedo: self.albedo,
                 is_front_face: true,
-                roughness: self.roughness,
-                metallic: self.metallic,
+                roughness: LongDouble::from_f64(self.roughness),
+                metallic: LongDouble::from_f64(self.metallic),
             });
             result.push(Hit {
-                distance: f64::INFINITY,
+                distance: LongDouble::infinity(),
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,
-                roughness: self.roughness,
-                metallic: self.metallic,
+                roughness: LongDouble::from_f64(self.roughness),
+                metallic: LongDouble::from_f64(self.metallic),
             });
         } else {
             result.push(Hit {
-                distance: 0.0,
+                distance: LongDouble::from_f64(0.0),
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face: true,
-                roughness: self.roughness,
-                metallic: self.metallic,
+                roughness: LongDouble::from_f64(self.roughness),
+                metallic: LongDouble::from_f64(self.metallic),
             });
             result.push(Hit {
                 distance: t,
                 normal: self.normal,
                 albedo: self.albedo,
                 is_front_face: false,
-                roughness: self.roughness,
-                metallic: self.metallic,
+                roughness: LongDouble::from_f64(self.roughness),
+                metallic: LongDouble::from_f64(self.metallic),
             });
         }
 

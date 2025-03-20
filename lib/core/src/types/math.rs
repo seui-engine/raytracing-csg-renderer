@@ -1,18 +1,20 @@
 use std::ops::{Add, Deref, Mul, Neg, Sub};
 
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
+
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Vec3 {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: LongDouble,
+    pub y: LongDouble,
+    pub z: LongDouble,
 }
 
 impl Vec3 {
-    pub const fn new(x: f64, y: f64, z: f64) -> Vec3 {
+    pub const fn new(x: LongDouble, y: LongDouble, z: LongDouble) -> Vec3 {
         Vec3 { x, y, z }
     }
 
-    pub fn dot(self, other: Vec3) -> f64 {
+    pub fn dot(self, other: Vec3) -> LongDouble {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
@@ -24,33 +26,32 @@ impl Vec3 {
         }
     }
 
-    pub fn length_square(self) -> f64 {
+    pub fn length_square(self) -> LongDouble {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
-    pub fn length(self) -> f64 {
+    pub fn length(self) -> LongDouble {
         self.length_square().sqrt()
     }
 
     pub fn normalize(self) -> Vec3 {
         let length = self.length();
-        if length.abs() < 1e-6 {
-            Vec3::X
+        if length.abs() < LongDouble::from_f64(1e-6) {
+            Vec3::new(
+                LongDouble::from_f64(1.0),
+                LongDouble::from_f64(0.0),
+                LongDouble::from_f64(0.0),
+            )
         } else {
             Vec3::new(self.x / length, self.y / length, self.z / length)
         }
     }
-
-    pub const X: Vec3 = Vec3::new(1.0, 0.0, 0.0);
-    pub const Y: Vec3 = Vec3::new(0.0, 1.0, 0.0);
-    pub const Z: Vec3 = Vec3::new(0.0, 0.0, 1.0);
-    pub const ZERO: Vec3 = Vec3::new(0.0, 0.0, 0.0);
 }
 
-impl Mul<f64> for Vec3 {
+impl Mul<LongDouble> for Vec3 {
     type Output = Vec3;
 
-    fn mul(self, rhs: f64) -> Vec3 {
+    fn mul(self, rhs: LongDouble) -> Vec3 {
         Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -59,7 +60,7 @@ impl Mul<f64> for Vec3 {
     }
 }
 
-impl Mul<Vec3> for f64 {
+impl Mul<Vec3> for LongDouble {
     type Output = Vec3;
 
     fn mul(self, rhs: Vec3) -> Vec3 {
@@ -143,7 +144,7 @@ impl Direction {
         Self(value.normalize())
     }
 
-    pub fn dot(self, rhs: Direction) -> f64 {
+    pub fn dot(self, rhs: Direction) -> LongDouble {
         (*self).dot(*rhs)
     }
 }
@@ -159,7 +160,7 @@ impl Move {
         Self(value)
     }
 
-    pub fn direction_and_length(self) -> (Direction, f64) {
+    pub fn direction_and_length(self) -> (Direction, LongDouble) {
         let length = self.length();
         (
             Direction(Vec3 {
@@ -234,10 +235,10 @@ impl Neg for Move {
     }
 }
 
-impl Mul<f64> for Direction {
+impl Mul<LongDouble> for Direction {
     type Output = Move;
 
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: LongDouble) -> Self::Output {
         Move(*self * rhs)
     }
 }

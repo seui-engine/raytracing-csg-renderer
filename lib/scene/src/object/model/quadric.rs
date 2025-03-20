@@ -7,7 +7,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{
-    deserialize::{deserialize_ldr_color, deserialize_ldr_float, deserialize_position},
+    deserialize::{deserialize_ldr_color, deserialize_ldr_long_double, deserialize_position},
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
@@ -27,31 +27,31 @@ pub struct Quadric {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: f64,
+    roughness: LongDouble,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: f64,
+    metallic: LongDouble,
 
     #[serde(default = "zero")]
-    c200: f64,
+    c200: LongDouble,
     #[serde(default = "zero")]
-    c020: f64,
+    c020: LongDouble,
     #[serde(default = "zero")]
-    c002: f64,
+    c002: LongDouble,
     #[serde(default = "zero")]
-    c110: f64,
+    c110: LongDouble,
     #[serde(default = "zero")]
-    c011: f64,
+    c011: LongDouble,
     #[serde(default = "zero")]
-    c101: f64,
+    c101: LongDouble,
     #[serde(default = "zero")]
-    c100: f64,
+    c100: LongDouble,
     #[serde(default = "zero")]
-    c010: f64,
+    c010: LongDouble,
     #[serde(default = "zero")]
-    c001: f64,
+    c001: LongDouble,
     #[serde(default = "zero")]
-    c000: f64,
+    c000: LongDouble,
 
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
@@ -139,7 +139,7 @@ impl Quadric {
                     metallic: self.metallic,
                 },
                 Hit {
-                    distance: f64::INFINITY,
+                    distance: LongDouble::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
@@ -222,7 +222,7 @@ impl RTModel for Quadric {
                     ..hit2
                 });
                 result.push(Hit {
-                    distance: f64::INFINITY,
+                    distance: LongDouble::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
@@ -249,7 +249,7 @@ impl RTModel for Quadric {
                 metallic: self.metallic,
             });
             result.push(Hit {
-                distance: f64::INFINITY,
+                distance: LongDouble::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,

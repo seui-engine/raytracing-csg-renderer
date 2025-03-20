@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 
 use super::math::{Direction, Position};
@@ -15,9 +16,9 @@ pub struct Hit {
     pub is_front_face: bool,
     pub albedo: LDRColor,
     pub normal: Direction,
-    pub distance: f64,
-    pub roughness: f64,
-    pub metallic: f64,
+    pub distance: LongDouble,
+    pub roughness: LongDouble,
+    pub metallic: LongDouble,
 }
 
 pub trait RTObject {
@@ -25,11 +26,11 @@ pub trait RTObject {
 }
 
 pub trait Light {
-    fn test(&self, position: Position) -> Option<(HDRColor, Direction, f64)>;
+    fn test(&self, position: Position) -> Option<(HDRColor, Direction, LongDouble)>;
 }
 
 pub trait Camera {
-    fn ray(&self, x: f64, y: f64) -> Ray;
+    fn ray(&self, x: LongDouble, y: LongDouble) -> Ray;
 }
 
 pub struct Scene {

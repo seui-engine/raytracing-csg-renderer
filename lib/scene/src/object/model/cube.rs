@@ -14,6 +14,7 @@ use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position, Vec3},
     rt::Ray,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
@@ -50,10 +51,10 @@ impl RTModel for Cube {
             self.position.z + self.scale.z,
         ));
 
-        let mut t_min = f64::NEG_INFINITY;
-        let mut t_max = f64::INFINITY;
-        let mut normal_min = Vec3::ZERO;
-        let mut normal_max = Vec3::ZERO;
+        let mut t_min = -LongDouble::infinity();
+        let mut t_max = LongDouble::infinity();
+        let mut normal_min = Vec3::default();
+        let mut normal_max = Vec3::default();
 
         for (i, (o, d, min, max)) in [
             (ray.origin.x, ray.direction.x, min.x, max.x),
@@ -63,30 +64,78 @@ impl RTModel for Cube {
         .iter()
         .enumerate()
         {
-            if *d != 0.0 {
-                let t1 = (min - o) / d;
-                let t2 = (max - o) / d;
+            if *d != LongDouble::from_f64(0.0) {
+                let t1 = (*min - *o) / *d;
+                let t2 = (*max - *o) / *d;
                 let (t1, t2, normal1, normal2) = if t1 < t2 {
                     (
                         t1,
                         t2,
-                        -Vec3::X * (i == 0) as i32 as f64
-                            - Vec3::Y * (i == 1) as i32 as f64
-                            - Vec3::Z * (i == 2) as i32 as f64,
-                        Vec3::X * (i == 0) as i32 as f64
-                            + Vec3::Y * (i == 1) as i32 as f64
-                            + Vec3::Z * (i == 2) as i32 as f64,
+                        -Vec3::new(
+                            LongDouble::from_f64(1.0),
+                            LongDouble::from_f64(0.0),
+                            LongDouble::from_f64(0.0),
+                        ) * LongDouble::from_f64((i == 0) as i32 as f64)
+                            - Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                                LongDouble::from_f64(0.0),
+                            ) * LongDouble::from_f64((i == 1) as i32 as f64)
+                            - Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                            ) * LongDouble::from_f64((i == 2) as i32 as f64),
+                        Vec3::new(
+                            LongDouble::from_f64(1.0),
+                            LongDouble::from_f64(0.0),
+                            LongDouble::from_f64(0.0),
+                        ) * LongDouble::from_f64((i == 0) as i32 as f64)
+                            + Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                                LongDouble::from_f64(0.0),
+                            ) * LongDouble::from_f64((i == 1) as i32 as f64)
+                            + Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                            ) * LongDouble::from_f64((i == 2) as i32 as f64),
                     )
                 } else {
                     (
                         t2,
                         t1,
-                        Vec3::X * (i == 0) as i32 as f64
-                            + Vec3::Y * (i == 1) as i32 as f64
-                            + Vec3::Z * (i == 2) as i32 as f64,
-                        -Vec3::X * (i == 0) as i32 as f64
-                            - Vec3::Y * (i == 1) as i32 as f64
-                            - Vec3::Z * (i == 2) as i32 as f64,
+                        Vec3::new(
+                            LongDouble::from_f64(1.0),
+                            LongDouble::from_f64(0.0),
+                            LongDouble::from_f64(0.0),
+                        ) * LongDouble::from_f64((i == 0) as i32 as f64)
+                            + Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                                LongDouble::from_f64(0.0),
+                            ) * LongDouble::from_f64((i == 1) as i32 as f64)
+                            + Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                            ) * LongDouble::from_f64((i == 2) as i32 as f64),
+                        -Vec3::new(
+                            LongDouble::from_f64(1.0),
+                            LongDouble::from_f64(0.0),
+                            LongDouble::from_f64(0.0),
+                        ) * LongDouble::from_f64((i == 0) as i32 as f64)
+                            - Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                                LongDouble::from_f64(0.0),
+                            ) * LongDouble::from_f64((i == 1) as i32 as f64)
+                            - Vec3::new(
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(0.0),
+                                LongDouble::from_f64(1.0),
+                            ) * LongDouble::from_f64((i == 2) as i32 as f64),
                     )
                 };
 
@@ -106,33 +155,33 @@ impl RTModel for Cube {
             }
         }
 
-        if t_min < 0.0 && t_max < 0.0 {
+        if t_min < LongDouble::from_f64(0.0) && t_max < LongDouble::from_f64(0.0) {
             return result;
         }
 
-        if t_min < 0.0 {
-            t_min = 0.0;
+        if t_min < LongDouble::from_f64(0.0) {
+            t_min = LongDouble::from_f64(0.0);
         }
 
         if t_min <= t_max {
-            if t_min >= 0.0 {
+            if t_min >= LongDouble::from_f64(0.0) {
                 result.push(Hit {
                     normal: Direction::new(normal_min),
                     distance: t_min,
                     is_front_face: true,
                     albedo: self.albedo,
-                    roughness: self.roughness,
-                    metallic: self.metallic,
+                    roughness: LongDouble::from_f64(self.roughness),
+                    metallic: LongDouble::from_f64(self.metallic),
                 });
             }
-            if t_max >= 0.0 {
+            if t_max >= LongDouble::from_f64(0.0) {
                 result.push(Hit {
                     normal: Direction::new(normal_max),
                     distance: t_max,
                     is_front_face: false,
                     albedo: self.albedo,
-                    roughness: self.roughness,
-                    metallic: self.metallic,
+                    roughness: LongDouble::from_f64(self.roughness),
+                    metallic: LongDouble::from_f64(self.metallic),
                 });
             }
         }

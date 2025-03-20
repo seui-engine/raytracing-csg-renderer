@@ -3,6 +3,7 @@ use std::sync::Arc;
 use plain::DeserializablePlainTexture;
 use schemars::JsonSchema;
 use serde::Deserialize;
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{ImageCache, ImageLoader};
@@ -10,7 +11,7 @@ use crate::{ImageCache, ImageLoader};
 pub mod plain;
 
 pub trait Texture {
-    fn get(&self, u: f64, v: f64) -> LDRColor;
+    fn get(&self, u: LongDouble, v: LongDouble) -> LDRColor;
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
