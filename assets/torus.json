@@ -1,0 +1,57 @@
+{
+  "camera": {
+    "type": "perspective",
+    "fov": 90,
+    "fovMode": {
+      "type": "cover",
+      "aspectRatio": 1.7777777777
+    },
+    "position": [0, -4, 2],
+    "direction": [0, 1, -0.5]
+  },
+  "objects": [
+    {
+      "type": "plane",
+      "position": [0, 0, -2]
+    },
+    {
+      "type": "quartic",
+      "albedo": [0.5, 0.5, 0.5], // Example albedo, adjust as needed
+
+      // Quartic terms
+      "c400": 1.0, // x^4
+      "c040": 1.0, // y^4
+      "c004": 1.0, // z^4
+
+      // Cubic terms (none in this case)
+
+      // Quadratic cross terms
+      "c220": 2.0, // x^2 y^2
+      "c202": 2.0, // x^2 z^2
+      "c022": 2.0, // y^2 z^2
+
+      // Quadratic terms
+      "c200": -2.5, // x^2
+      "c020": -2.5, // y^2
+      "c002": 1.5, // z^2
+
+      // Constant term
+      "c000": 0.5625, // constant
+
+      "inside": [1, 0, 0]
+    }
+  ],
+  "lights": [
+    {
+      "type": "point",
+      "position": [-3, 0, -3]
+    },
+    {
+      "type": "directional",
+      "direction": [-0.3, 0.1, -1],
+      "color": [0.5, 0.5, 0.5]
+    }
+  ],
+  "skyColor": [0.1, 0.11, 0.2],
+  "ambientLight": [0.1, 0.1, 0.1]
+}

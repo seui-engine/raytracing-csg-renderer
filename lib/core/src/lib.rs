@@ -1,6 +1,6 @@
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use types::{
-    math::{Direction, Vec3},
+    math::Direction,
     rt::{Ray, Scene},
 };
 
