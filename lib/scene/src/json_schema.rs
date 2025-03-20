@@ -9,9 +9,9 @@ use schemars::{
 };
 
 pub struct PositionSchema {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl JsonSchema for PositionSchema {
@@ -32,14 +32,14 @@ impl JsonSchema for PositionSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f32, y: f32, z: f32 }
+                    // Object format: { x: f64, y: f64, z: f64 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
                             properties: [
-                                ("x".to_string(), gen.subschema_for::<f32>()),
-                                ("y".to_string(), gen.subschema_for::<f32>()),
-                                ("z".to_string(), gen.subschema_for::<f32>()),
+                                ("x".to_string(), gen.subschema_for::<f64>()),
+                                ("y".to_string(), gen.subschema_for::<f64>()),
+                                ("z".to_string(), gen.subschema_for::<f64>()),
                             ]
                             .into_iter()
                             .collect(),
@@ -57,7 +57,7 @@ impl JsonSchema for PositionSchema {
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
                         array: Some(Box::new(ArrayValidation {
-                            items: Some(gen.subschema_for::<f32>().into()),
+                            items: Some(gen.subschema_for::<f64>().into()),
                             min_items: Some(3),
                             max_items: Some(3),
                             ..Default::default()
@@ -74,9 +74,9 @@ impl JsonSchema for PositionSchema {
 
 #[derive(Clone, Copy, Debug)]
 pub struct Scale {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl Default for Scale {
@@ -107,7 +107,7 @@ impl JsonSchema for Scale {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f32, y: f32, z: f32 }
+                    // Object format: { x: f64, y: f64, z: f64 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -148,9 +148,9 @@ impl JsonSchema for Scale {
 }
 
 pub struct DirectionSchema {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl JsonSchema for DirectionSchema {
@@ -171,14 +171,14 @@ impl JsonSchema for DirectionSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f32, y: f32, z: f32 }
+                    // Object format: { x: f64, y: f64, z: f64 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
                             properties: [
-                                ("x".to_string(), gen.subschema_for::<f32>()),
-                                ("y".to_string(), gen.subschema_for::<f32>()),
-                                ("z".to_string(), gen.subschema_for::<f32>()),
+                                ("x".to_string(), gen.subschema_for::<f64>()),
+                                ("y".to_string(), gen.subschema_for::<f64>()),
+                                ("z".to_string(), gen.subschema_for::<f64>()),
                             ]
                             .into_iter()
                             .collect(),
@@ -196,7 +196,7 @@ impl JsonSchema for DirectionSchema {
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
                         array: Some(Box::new(ArrayValidation {
-                            items: Some(gen.subschema_for::<f32>().into()),
+                            items: Some(gen.subschema_for::<f64>().into()),
                             min_items: Some(3),
                             max_items: Some(3),
                             ..Default::default()
@@ -212,9 +212,9 @@ impl JsonSchema for DirectionSchema {
 }
 
 pub struct MoveSchema {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl JsonSchema for MoveSchema {
@@ -235,14 +235,14 @@ impl JsonSchema for MoveSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f32, y: f32, z: f32 }
+                    // Object format: { x: f64, y: f64, z: f64 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
                             properties: [
-                                ("x".to_string(), gen.subschema_for::<f32>()),
-                                ("y".to_string(), gen.subschema_for::<f32>()),
-                                ("z".to_string(), gen.subschema_for::<f32>()),
+                                ("x".to_string(), gen.subschema_for::<f64>()),
+                                ("y".to_string(), gen.subschema_for::<f64>()),
+                                ("z".to_string(), gen.subschema_for::<f64>()),
                             ]
                             .into_iter()
                             .collect(),
@@ -260,7 +260,7 @@ impl JsonSchema for MoveSchema {
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Array.into()),
                         array: Some(Box::new(ArrayValidation {
-                            items: Some(gen.subschema_for::<f32>().into()),
+                            items: Some(gen.subschema_for::<f64>().into()),
                             min_items: Some(3),
                             max_items: Some(3),
                             ..Default::default()
@@ -276,9 +276,9 @@ impl JsonSchema for MoveSchema {
 }
 
 pub struct HDRColorSchema {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl JsonSchema for HDRColorSchema {
@@ -299,7 +299,7 @@ impl JsonSchema for HDRColorSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f32, y: f32, z: f32 }
+                    // Object format: { x: f64, y: f64, z: f64 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {
@@ -340,9 +340,9 @@ impl JsonSchema for HDRColorSchema {
 }
 
 pub struct LDRColorSchema {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl JsonSchema for LDRColorSchema {
@@ -363,7 +363,7 @@ impl JsonSchema for LDRColorSchema {
             instance_type: None, // We define multiple formats below
             subschemas: Some(Box::new(SubschemaValidation {
                 one_of: Some(vec![
-                    // Object format: { x: f32, y: f32, z: f32 }
+                    // Object format: { x: f64, y: f64, z: f64 }
                     Schema::Object(SchemaObject {
                         instance_type: Some(InstanceType::Object.into()),
                         object: Some(Box::new(ObjectValidation {

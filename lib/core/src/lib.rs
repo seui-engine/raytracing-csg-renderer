@@ -1,12 +1,12 @@
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use types::{
-    math::Direction,
+    math::{Direction, Vec3},
     rt::{Ray, Scene},
 };
 
 pub mod types;
 
-pub fn sample(scene: &Scene, x: f32, y: f32) -> HDRColor {
+pub fn sample(scene: &Scene, x: f64, y: f64) -> HDRColor {
     let ray = scene.camera.ray(x, y);
     if let Some(hit) = scene.test(ray) {
         let position = ray.origin + ray.direction * hit.distance + hit.normal * 1e-3;
@@ -21,7 +21,7 @@ pub fn sample(scene: &Scene, x: f32, y: f32) -> HDRColor {
                 let shadow_hit = scene.test(shadow_ray);
 
                 let is_shadowed = if distance.is_finite() {
-                    shadow_hit.map(|x| x.distance).unwrap_or(f32::INFINITY) < distance
+                    shadow_hit.map(|x| x.distance).unwrap_or(f64::INFINITY) < distance
                 } else {
                     shadow_hit.is_some()
                 };
@@ -50,26 +50,26 @@ fn brdf(
     surface_to_view: Direction,
     surface_to_light: Direction,
     surface_normal: Direction,
-    roughness: f32,
-    metallic: f32,
+    roughness: f64,
+    metallic: f64,
     albedo: LDRColor,
     light_color: HDRColor,
 ) -> HDRColor {
-    fn fresnel_schlick(cos_theta: f32, f0: f32) -> f32 {
+    fn fresnel_schlick(cos_theta: f64, f0: f64) -> f64 {
         let cos_theta = cos_theta.clamp(0.0, 1.0);
         f0 + (1.0 - f0) * (1.0 - cos_theta).powf(5.0)
     }
 
-    fn ggx_ndf(n: Direction, h: Direction, roughness: f32) -> f32 {
+    fn ggx_ndf(n: Direction, h: Direction, roughness: f64) -> f64 {
         let alpha = roughness * roughness;
         let alpha2 = alpha * alpha;
         let cos_n_h = n.dot(h).clamp(0.0, 1.0);
         let cos_n_h2 = cos_n_h * cos_n_h;
         let denom = cos_n_h2 * alpha2 + (1.0 - cos_n_h2);
-        alpha2 / (std::f32::consts::PI * denom * denom)
+        alpha2 / (std::f64::consts::PI * denom * denom)
     }
 
-    fn geometric_attenuation(n: Direction, v: Direction, l: Direction, roughness: f32) -> f32 {
+    fn geometric_attenuation(n: Direction, v: Direction, l: Direction, roughness: f64) -> f64 {
         let k = (roughness + 1.0) * (roughness + 1.0) / 8.0;
         let cos_n_v = n.dot(v).max(1e-5);
         let g_v = cos_n_v / (cos_n_v * (1.0 - k) + k);
@@ -82,9 +82,9 @@ fn brdf(
         v: Direction,
         l: Direction,
         n: Direction,
-        roughness: f32,
-        f0: f32,
-    ) -> f32 {
+        roughness: f64,
+        f0: f64,
+    ) -> f64 {
         let h = Direction::new(*v + *l);
         let d = ggx_ndf(n, h, roughness);
         let f = fresnel_schlick(h.dot(v).clamp(0.0, 1.0), f0);
@@ -131,9 +131,9 @@ fn brdf(
     };
 
     let diffuse = LDRColor {
-        r: (1.0 - fresnel.r) * (1.0 - metallic) * (albedo.r / std::f32::consts::PI) * n_dot_l,
-        g: (1.0 - fresnel.g) * (1.0 - metallic) * (albedo.g / std::f32::consts::PI) * n_dot_l,
-        b: (1.0 - fresnel.b) * (1.0 - metallic) * (albedo.b / std::f32::consts::PI) * n_dot_l,
+        r: (1.0 - fresnel.r) * (1.0 - metallic) * (albedo.r / std::f64::consts::PI) * n_dot_l,
+        g: (1.0 - fresnel.g) * (1.0 - metallic) * (albedo.g / std::f64::consts::PI) * n_dot_l,
+        b: (1.0 - fresnel.b) * (1.0 - metallic) * (albedo.b / std::f64::consts::PI) * n_dot_l,
     };
 
     HDRColor {

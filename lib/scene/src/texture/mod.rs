@@ -10,7 +10,7 @@ use crate::{ImageCache, ImageLoader};
 pub mod plain;
 
 pub trait Texture {
-    fn get(&self, u: f32, v: f32) -> LDRColor;
+    fn get(&self, u: f64, v: f64) -> LDRColor;
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]

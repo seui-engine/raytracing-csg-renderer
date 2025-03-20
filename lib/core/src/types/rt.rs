@@ -15,9 +15,9 @@ pub struct Hit {
     pub is_front_face: bool,
     pub albedo: LDRColor,
     pub normal: Direction,
-    pub distance: f32,
-    pub roughness: f32,
-    pub metallic: f32,
+    pub distance: f64,
+    pub roughness: f64,
+    pub metallic: f64,
 }
 
 pub trait RTObject {
@@ -25,11 +25,11 @@ pub trait RTObject {
 }
 
 pub trait Light {
-    fn test(&self, position: Position) -> Option<(HDRColor, Direction, f32)>;
+    fn test(&self, position: Position) -> Option<(HDRColor, Direction, f64)>;
 }
 
 pub trait Camera {
-    fn ray(&self, x: f32, y: f32) -> Ray;
+    fn ray(&self, x: f64, y: f64) -> Ray;
 }
 
 pub struct Scene {

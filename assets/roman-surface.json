@@ -6,7 +6,8 @@
       "type": "cover",
       "aspectRatio": 1.7777777777
     },
-    "position": [0, -10, 0]
+    "position": [0, -10, 2],
+    "direction": [0, 1, -0.2]
   },
   "objects": [
     {
@@ -23,6 +24,10 @@
     }
   ],
   "lights": [
+    {
+      "type": "point",
+      "position": [-3, 0, -3]
+    },
     {
       "type": "directional",
       "direction": [-0.3, 0.1, -1],

@@ -8,11 +8,10 @@ use super::{
     Hit, RTModel,
 };
 
-use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
-    math::{Direction, Position},
+    math::{Direction, Position, Vec3},
     rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
@@ -30,10 +29,10 @@ pub struct Cube {
     scale: Scale,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: f32,
+    roughness: f64,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: f32,
+    metallic: f64,
 }
 
 impl RTModel for Cube {
@@ -51,8 +50,8 @@ impl RTModel for Cube {
             self.position.z + self.scale.z,
         ));
 
-        let mut t_min = f32::NEG_INFINITY;
-        let mut t_max = f32::INFINITY;
+        let mut t_min = f64::NEG_INFINITY;
+        let mut t_max = f64::INFINITY;
         let mut normal_min = Vec3::ZERO;
         let mut normal_max = Vec3::ZERO;
 
@@ -71,23 +70,23 @@ impl RTModel for Cube {
                     (
                         t1,
                         t2,
-                        -Vec3::X * (i == 0) as i32 as f32
-                            - Vec3::Y * (i == 1) as i32 as f32
-                            - Vec3::Z * (i == 2) as i32 as f32,
-                        Vec3::X * (i == 0) as i32 as f32
-                            + Vec3::Y * (i == 1) as i32 as f32
-                            + Vec3::Z * (i == 2) as i32 as f32,
+                        -Vec3::X * (i == 0) as i32 as f64
+                            - Vec3::Y * (i == 1) as i32 as f64
+                            - Vec3::Z * (i == 2) as i32 as f64,
+                        Vec3::X * (i == 0) as i32 as f64
+                            + Vec3::Y * (i == 1) as i32 as f64
+                            + Vec3::Z * (i == 2) as i32 as f64,
                     )
                 } else {
                     (
                         t2,
                         t1,
-                        Vec3::X * (i == 0) as i32 as f32
-                            + Vec3::Y * (i == 1) as i32 as f32
-                            + Vec3::Z * (i == 2) as i32 as f32,
-                        -Vec3::X * (i == 0) as i32 as f32
-                            - Vec3::Y * (i == 1) as i32 as f32
-                            - Vec3::Z * (i == 2) as i32 as f32,
+                        Vec3::X * (i == 0) as i32 as f64
+                            + Vec3::Y * (i == 1) as i32 as f64
+                            + Vec3::Z * (i == 2) as i32 as f64,
+                        -Vec3::X * (i == 0) as i32 as f64
+                            - Vec3::Y * (i == 1) as i32 as f64
+                            - Vec3::Z * (i == 2) as i32 as f64,
                     )
                 };
 

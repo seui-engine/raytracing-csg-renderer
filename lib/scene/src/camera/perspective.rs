@@ -1,8 +1,7 @@
-use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
-    math::{Direction, Position},
+    math::{Direction, Position, Vec3},
     rt::{Camera, Ray},
 };
 
@@ -14,7 +13,7 @@ use crate::{
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct AspectRatio {
-    aspect_ratio: f32,
+    aspect_ratio: f64,
 }
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
@@ -33,7 +32,7 @@ fn forward() -> Direction {
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct DeserializablePerspectiveCamera {
-    fov: f32,
+    fov: f64,
     fov_mode: FovMode,
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
@@ -44,7 +43,7 @@ pub struct DeserializablePerspectiveCamera {
 }
 
 impl DeserializablePerspectiveCamera {
-    pub fn into_camera(self, screen_aspect_ratio: f32) -> Box<dyn Camera + Send + Sync> {
+    pub fn into_camera(self, screen_aspect_ratio: f64) -> Box<dyn Camera + Send + Sync> {
         let (tan_half_fov_x, tan_half_fov_y) = match self.fov_mode {
             FovMode::X => {
                 let tan_half_fov_x = (self.fov.to_radians() / 2.0).tan();
@@ -84,8 +83,8 @@ impl DeserializablePerspectiveCamera {
 }
 
 struct PerspectiveCamera {
-    tan_half_fov_x: f32,
-    tan_half_fov_y: f32,
+    tan_half_fov_x: f64,
+    tan_half_fov_y: f64,
     position: Position,
     direction: Direction,
     right: Vec3,
@@ -93,7 +92,7 @@ struct PerspectiveCamera {
 }
 
 impl Camera for PerspectiveCamera {
-    fn ray(&self, x: f32, y: f32) -> Ray {
+    fn ray(&self, x: f64, y: f64) -> Ray {
         let dir_x = (2.0 * x - 1.0) * self.tan_half_fov_x;
         let dir_z = (1.0 - 2.0 * y) * self.tan_half_fov_y;
 

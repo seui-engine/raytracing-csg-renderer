@@ -1,8 +1,7 @@
-use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
-    math::{Direction, Position},
+    math::{Direction, Position, Vec3},
     rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
@@ -28,88 +27,88 @@ pub struct Quartic {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: f32,
+    roughness: f64,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: f32,
+    metallic: f64,
 
     #[serde(default = "zero")]
-    c400: f32,
+    c400: f64,
     #[serde(default = "zero")]
-    c040: f32,
+    c040: f64,
     #[serde(default = "zero")]
-    c004: f32,
+    c004: f64,
     #[serde(default = "zero")]
-    c310: f32,
+    c310: f64,
     #[serde(default = "zero")]
-    c301: f32,
+    c301: f64,
     #[serde(default = "zero")]
-    c130: f32,
+    c130: f64,
     #[serde(default = "zero")]
-    c031: f32,
+    c031: f64,
     #[serde(default = "zero")]
-    c103: f32,
+    c103: f64,
     #[serde(default = "zero")]
-    c013: f32,
+    c013: f64,
     #[serde(default = "zero")]
-    c211: f32,
+    c211: f64,
     #[serde(default = "zero")]
-    c121: f32,
+    c121: f64,
     #[serde(default = "zero")]
-    c112: f32,
+    c112: f64,
     #[serde(default = "zero")]
-    c220: f32,
+    c220: f64,
     #[serde(default = "zero")]
-    c022: f32,
+    c022: f64,
     #[serde(default = "zero")]
-    c202: f32,
+    c202: f64,
     #[serde(default = "zero")]
-    c300: f32,
+    c300: f64,
     #[serde(default = "zero")]
-    c030: f32,
+    c030: f64,
     #[serde(default = "zero")]
-    c003: f32,
+    c003: f64,
     #[serde(default = "zero")]
-    c210: f32,
+    c210: f64,
     #[serde(default = "zero")]
-    c201: f32,
+    c201: f64,
     #[serde(default = "zero")]
-    c120: f32,
+    c120: f64,
     #[serde(default = "zero")]
-    c021: f32,
+    c021: f64,
     #[serde(default = "zero")]
-    c102: f32,
+    c102: f64,
     #[serde(default = "zero")]
-    c012: f32,
+    c012: f64,
     #[serde(default = "zero")]
-    c111: f32,
+    c111: f64,
     #[serde(default = "zero")]
-    c200: f32,
+    c200: f64,
     #[serde(default = "zero")]
-    c020: f32,
+    c020: f64,
     #[serde(default = "zero")]
-    c002: f32,
+    c002: f64,
     #[serde(default = "zero")]
-    c110: f32,
+    c110: f64,
     #[serde(default = "zero")]
-    c011: f32,
+    c011: f64,
     #[serde(default = "zero")]
-    c101: f32,
+    c101: f64,
     #[serde(default = "zero")]
-    c100: f32,
+    c100: f64,
     #[serde(default = "zero")]
-    c010: f32,
+    c010: f64,
     #[serde(default = "zero")]
-    c001: f32,
+    c001: f64,
     #[serde(default = "zero")]
-    c000: f32,
+    c000: f64,
 
     #[serde(deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     inside: Position,
 }
 
-fn linear_roots(a: f32, b: f32) -> Vec<f32> {
+fn linear_roots(a: f64, b: f64) -> Vec<f64> {
     if b.abs() <= 1e-6 {
         vec![]
     } else {
@@ -117,7 +116,7 @@ fn linear_roots(a: f32, b: f32) -> Vec<f32> {
     }
 }
 
-fn quadratic_roots(a: f32, b: f32, c: f32) -> Vec<f32> {
+fn quadratic_roots(a: f64, b: f64, c: f64) -> Vec<f64> {
     if a.abs() <= 1e-6 {
         return linear_roots(b, c);
     }
@@ -134,7 +133,7 @@ fn quadratic_roots(a: f32, b: f32, c: f32) -> Vec<f32> {
     roots
 }
 
-fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
+fn cubic_roots(a: f64, b: f64, c: f64, d: f64) -> Vec<f64> {
     if a.abs() <= 1e-6 {
         return quadratic_roots(b, c, d);
     }
@@ -161,15 +160,15 @@ fn cubic_roots(a: f32, b: f32, c: f32, d: f32) -> Vec<f32> {
         }
         let sqrt_q = (-q).sqrt();
         roots.push(2.0 * sqrt_q * (theta / 3.0).cos() - a_div_3);
-        roots.push(2.0 * sqrt_q * ((theta + 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
-        roots.push(2.0 * sqrt_q * ((theta - 2.0 * std::f32::consts::PI) / 3.0).cos() - a_div_3);
+        roots.push(2.0 * sqrt_q * ((theta + 2.0 * std::f64::consts::PI) / 3.0).cos() - a_div_3);
+        roots.push(2.0 * sqrt_q * ((theta - 2.0 * std::f64::consts::PI) / 3.0).cos() - a_div_3);
     }
 
     roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
     roots
 }
 
-fn quartic_roots(a: f32, b: f32, c: f32, d: f32, e: f32) -> Vec<f32> {
+fn quartic_roots(a: f64, b: f64, c: f64, d: f64, e: f64) -> Vec<f64> {
     if a.abs() <= 1e-6 {
         return cubic_roots(b, c, d, e);
     }
@@ -617,7 +616,7 @@ impl RTModel for Quartic {
         }
         if is_front_face {
             result.push(Hit {
-                distance: f32::INFINITY,
+                distance: f64::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,

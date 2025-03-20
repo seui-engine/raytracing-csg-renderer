@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-glam = "0.30.0"
 schemars = { version = "0.8.22", features = ["derive"] }
 serde = { version = "1.0.218", features = ["derive"] }
 seui-engine-raytracing-csg-renderer-core = { version = "0.1.0", path = "../core" }

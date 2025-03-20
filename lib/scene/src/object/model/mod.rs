@@ -26,9 +26,9 @@ pub struct Hit {
     pub is_front_face: bool,
     pub albedo: LDRColor,
     pub normal: Direction,
-    pub distance: f32,
-    pub roughness: f32,
-    pub metallic: f32,
+    pub distance: f64,
+    pub roughness: f64,
+    pub metallic: f64,
 }
 
 pub trait RTModel {

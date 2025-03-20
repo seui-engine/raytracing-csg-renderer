@@ -9,11 +9,10 @@ use super::{
     },
     Hit, RTModel,
 };
-use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
-    math::{Direction, Position},
+    math::{Direction, Position, Vec3},
     rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
@@ -36,10 +35,10 @@ pub struct Plane {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: f32,
+    roughness: f64,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: f32,
+    metallic: f64,
 }
 
 impl RTModel for Plane {
@@ -66,7 +65,7 @@ impl RTModel for Plane {
                     metallic: self.metallic,
                 });
                 result.push(Hit {
-                    distance: f32::INFINITY,
+                    distance: f64::INFINITY,
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
@@ -87,7 +86,7 @@ impl RTModel for Plane {
                 metallic: self.metallic,
             });
             result.push(Hit {
-                distance: f32::INFINITY,
+                distance: f64::INFINITY,
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,

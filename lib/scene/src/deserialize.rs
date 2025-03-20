@@ -1,7 +1,6 @@
-use glam::Vec3;
 use serde::de::{self, MapAccess, SeqAccess, Visitor};
 use serde::Deserializer;
-use seui_engine_raytracing_csg_renderer_core::types::math::{Direction, Move, Position};
+use seui_engine_raytracing_csg_renderer_core::types::math::{Direction, Move, Position, Vec3};
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use std::fmt;
 
@@ -31,9 +30,9 @@ where
 
             while let Some(key) = map.next_key::<String>()? {
                 match key.as_str() {
-                    "r" => r = Some(map.next_value::<f32>()?.max(0.0)),
-                    "g" => g = Some(map.next_value::<f32>()?.max(0.0)),
-                    "b" => b = Some(map.next_value::<f32>()?.max(0.0)),
+                    "r" => r = Some(map.next_value::<f64>()?.max(0.0)),
+                    "g" => g = Some(map.next_value::<f64>()?.max(0.0)),
+                    "b" => b = Some(map.next_value::<f64>()?.max(0.0)),
                     _ => return Err(de::Error::unknown_field(&key, &["r", "g", "b"])),
                 }
             }
@@ -51,15 +50,15 @@ where
             A: SeqAccess<'de>,
         {
             let r = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(0, &self))?
                 .max(0.0);
             let g = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(1, &self))?
                 .max(0.0);
             let b = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(2, &self))?
                 .max(0.0);
 
@@ -94,9 +93,9 @@ where
 
             while let Some(key) = map.next_key::<String>()? {
                 match key.as_str() {
-                    "r" => r = Some(map.next_value::<f32>()?.clamp(0.0, 1.0)),
-                    "g" => g = Some(map.next_value::<f32>()?.clamp(0.0, 1.0)),
-                    "b" => b = Some(map.next_value::<f32>()?.clamp(0.0, 1.0)),
+                    "r" => r = Some(map.next_value::<f64>()?.clamp(0.0, 1.0)),
+                    "g" => g = Some(map.next_value::<f64>()?.clamp(0.0, 1.0)),
+                    "b" => b = Some(map.next_value::<f64>()?.clamp(0.0, 1.0)),
                     _ => return Err(de::Error::unknown_field(&key, &["r", "g", "b"])),
                 }
             }
@@ -114,15 +113,15 @@ where
             A: SeqAccess<'de>,
         {
             let r = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(0, &self))?
                 .clamp(0.0, 1.0);
             let g = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(1, &self))?
                 .clamp(0.0, 1.0);
             let b = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(2, &self))?
                 .clamp(0.0, 1.0);
 
@@ -337,9 +336,9 @@ where
 
             while let Some(key) = map.next_key::<String>()? {
                 match key.as_str() {
-                    "x" => x = Some(map.next_value::<f32>()?.max(0.0)),
-                    "y" => y = Some(map.next_value::<f32>()?.max(0.0)),
-                    "z" => z = Some(map.next_value::<f32>()?.max(0.0)),
+                    "x" => x = Some(map.next_value::<f64>()?.max(0.0)),
+                    "y" => y = Some(map.next_value::<f64>()?.max(0.0)),
+                    "z" => z = Some(map.next_value::<f64>()?.max(0.0)),
                     _ => return Err(de::Error::unknown_field(&key, &["x", "y", "z"])),
                 }
             }
@@ -357,15 +356,15 @@ where
             A: SeqAccess<'de>,
         {
             let x = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(0, &self))?
                 .max(0.0);
             let y = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(1, &self))?
                 .max(0.0);
             let z = seq
-                .next_element::<f32>()?
+                .next_element::<f64>()?
                 .ok_or_else(|| de::Error::invalid_length(2, &self))?
                 .max(0.0);
 
@@ -376,92 +375,92 @@ where
     deserializer.deserialize_any(Vec3Visitor)
 }
 
-pub fn deserialize_nonnegative_float<'de, D>(deserializer: D) -> Result<f32, D::Error>
+pub fn deserialize_nonnegative_float<'de, D>(deserializer: D) -> Result<f64, D::Error>
 where
     D: Deserializer<'de>,
 {
-    struct F32Visitor;
+    struct F64Visitor;
 
-    impl Visitor<'_> for F32Visitor {
-        type Value = f32;
+    impl Visitor<'_> for F64Visitor {
+        type Value = f64;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
             formatter.write_str("a number between 0 and 1")
         }
 
-        fn visit_f32<E>(self, value: f32) -> Result<f32, E>
+        fn visit_f32<E>(self, value: f32) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok(value.max(0.0))
+            Ok(value.max(0.0) as f64)
         }
 
-        fn visit_f64<E>(self, value: f64) -> Result<f32, E>
+        fn visit_f64<E>(self, value: f64) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok((value as f32).max(0.0))
+            Ok((value).max(0.0))
         }
 
-        fn visit_i64<E>(self, value: i64) -> Result<f32, E>
+        fn visit_i64<E>(self, value: i64) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok((value as f32).max(0.0))
+            Ok((value as f64).max(0.0))
         }
 
-        fn visit_u64<E>(self, value: u64) -> Result<f32, E>
+        fn visit_u64<E>(self, value: u64) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok((value as f32).max(0.0))
+            Ok((value as f64).max(0.0))
         }
     }
 
-    deserializer.deserialize_any(F32Visitor)
+    deserializer.deserialize_any(F64Visitor)
 }
 
-pub fn deserialize_ldr_float<'de, D>(deserializer: D) -> Result<f32, D::Error>
+pub fn deserialize_ldr_float<'de, D>(deserializer: D) -> Result<f64, D::Error>
 where
     D: Deserializer<'de>,
 {
-    struct F32Visitor;
+    struct F64Visitor;
 
-    impl Visitor<'_> for F32Visitor {
-        type Value = f32;
+    impl Visitor<'_> for F64Visitor {
+        type Value = f64;
 
         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
             formatter.write_str("a number between 0 and 1")
         }
 
-        fn visit_f32<E>(self, value: f32) -> Result<f32, E>
+        fn visit_f32<E>(self, value: f32) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok(value.clamp(0.0, 1.0))
+            Ok(value.max(0.0) as f64)
         }
 
-        fn visit_f64<E>(self, value: f64) -> Result<f32, E>
+        fn visit_f64<E>(self, value: f64) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok((value as f32).clamp(0.0, 1.0))
+            Ok((value).max(0.0))
         }
 
-        fn visit_i64<E>(self, value: i64) -> Result<f32, E>
+        fn visit_i64<E>(self, value: i64) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok((value as f32).clamp(0.0, 1.0))
+            Ok((value as f64).clamp(0.0, 1.0))
         }
 
-        fn visit_u64<E>(self, value: u64) -> Result<f32, E>
+        fn visit_u64<E>(self, value: u64) -> Result<f64, E>
         where
             E: de::Error,
         {
-            Ok((value as f32).clamp(0.0, 1.0))
+            Ok((value as f64).clamp(0.0, 1.0))
         }
     }
 
-    deserializer.deserialize_any(F32Visitor)
+    deserializer.deserialize_any(F64Visitor)
 }

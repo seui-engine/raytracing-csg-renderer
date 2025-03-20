@@ -12,10 +12,10 @@ pub fn enhance_normal(
     }
 }
 
-pub fn one() -> f32 {
+pub fn one() -> f64 {
     1.0
 }
 
-pub fn zero() -> f32 {
+pub fn zero() -> f64 {
     0.0
 }

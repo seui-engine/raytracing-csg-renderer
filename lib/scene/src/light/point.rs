@@ -23,7 +23,7 @@ pub struct PointLight {
 }
 
 impl Light for PointLight {
-    fn test(&self, position: Position) -> Option<(HDRColor, Direction, f32)> {
+    fn test(&self, position: Position) -> Option<(HDRColor, Direction, f64)> {
         // Compute the vector from the ray's origin to the light's position
         let to_light = self.position - position;
         let (direction, distance) = to_light.direction_and_length();

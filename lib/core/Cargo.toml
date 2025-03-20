@@ -4,5 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-glam = "0.30.0"
 seui-engine-raytracing-csg-renderer-types = { version = "0.1.0", path = "../types" }

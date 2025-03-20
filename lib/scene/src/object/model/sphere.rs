@@ -12,11 +12,10 @@ use super::{
     util::one,
     Hit, RTModel,
 };
-use glam::Vec3;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{
-    math::{Direction, Position},
+    math::{Direction, Position, Vec3},
     rt::Ray,
 };
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
@@ -26,7 +25,7 @@ use seui_engine_raytracing_csg_renderer_types::LDRColor;
 pub struct DeserializableSphere {
     #[serde(default = "one", deserialize_with = "deserialize_nonnegative_float")]
     #[schemars(range(min = 0))]
-    radius: f32,
+    radius: f64,
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
@@ -35,10 +34,10 @@ pub struct DeserializableSphere {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: f32,
+    roughness: f64,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: f32,
+    metallic: f64,
     #[serde(default)]
     texture: Option<DeserializableTexture>,
 }
@@ -60,11 +59,11 @@ impl DeserializableSphere {
 }
 
 struct Sphere {
-    radius: f32,
+    radius: f64,
     position: Position,
     albedo: LDRColor,
-    roughness: f32,
-    metallic: f32,
+    roughness: f64,
+    metallic: f64,
     texture: Option<Arc<dyn Texture + Send + Sync>>,
 }
 
@@ -76,8 +75,8 @@ impl Sphere {
             let theta = dir.x.atan2(dir.y);
             let phi = dir.z.acos();
 
-            let u = (theta + std::f32::consts::PI) / (2.0 * std::f32::consts::PI);
-            let v = phi / std::f32::consts::PI;
+            let u = (theta + std::f64::consts::PI) / (2.0 * std::f64::consts::PI);
+            let v = phi / std::f64::consts::PI;
 
             texture.get(u, v)
         } else {

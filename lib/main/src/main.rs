@@ -63,7 +63,7 @@ enum SceneType {
     Hjson,
 }
 
-fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio: f32) -> Scene {
+fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio: f64) -> Scene {
     let mut file = File::open(scene_file).expect("Failed to open scene file");
     let mut content_str = String::new();
     file.read_to_string(&mut content_str)
@@ -115,8 +115,8 @@ fn load_scene(scene_file: &str, scene_type: &Option<String>, screen_aspect_ratio
 }
 
 fn tmp_hdr_to_ldr(color: HDRColor) -> LDRColor {
-    const GAMMA: f32 = 2.2;
-    const EXPOSURE: f32 = 1.0;
+    const GAMMA: f64 = 2.2;
+    const EXPOSURE: f64 = 1.0;
 
     let r = 1.0 - (-color.r * EXPOSURE).exp();
     let g = 1.0 - (-color.g * EXPOSURE).exp();
@@ -144,11 +144,11 @@ fn main() {
     let scene = load_scene(
         &args.scene,
         &args.scene_type,
-        args.width as f32 / args.height as f32,
+        args.width as f64 / args.height as f64,
     );
 
     let ss_factor = args.super_sampling;
-    let inv_ss_factor = 1.0 / (ss_factor * ss_factor) as f32;
+    let inv_ss_factor = 1.0 / (ss_factor * ss_factor) as f64;
 
     let content: Vec<Vec<LDRColor>> = (0..args.height)
         .into_par_iter()
@@ -162,10 +162,10 @@ fn main() {
                     };
                     for sy in 0..ss_factor {
                         for sx in 0..ss_factor {
-                            let sample_x = (x as f32 + sx as f32 / ss_factor as f32)
-                                / (args.width as f32 - 1.0);
-                            let sample_y = (y as f32 + sy as f32 / ss_factor as f32)
-                                / (args.height as f32 - 1.0);
+                            let sample_x = (x as f64 + sx as f64 / ss_factor as f64)
+                                / (args.width as f64 - 1.0);
+                            let sample_y = (y as f64 + sy as f64 / ss_factor as f64)
+                                / (args.height as f64 - 1.0);
                             color = color + sample(&scene, sample_x, sample_y);
                         }
                     }
@@ -202,7 +202,7 @@ impl Image for ImageImage {
         self.image.height() as usize
     }
 
-    fn get(&self, x: usize, y: usize) -> [f32; 3] {
+    fn get(&self, x: usize, y: usize) -> [f64; 3] {
         if x >= self.width() || y >= self.height() {
             panic!("Incorrect coord given");
         }
@@ -210,9 +210,9 @@ impl Image for ImageImage {
         let pixel: &Rgb<u8> = self.image.get_pixel(x as u32, y as u32);
 
         [
-            pixel[0] as f32 / 255.0,
-            pixel[1] as f32 / 255.0,
-            pixel[2] as f32 / 255.0,
+            pixel[0] as f64 / 255.0,
+            pixel[1] as f64 / 255.0,
+            pixel[2] as f64 / 255.0,
         ]
     }
 }

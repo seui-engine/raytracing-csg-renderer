@@ -20,7 +20,7 @@ pub mod texture;
 pub trait Image {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
-    fn get(&self, x: usize, y: usize) -> [f32; 3];
+    fn get(&self, x: usize, y: usize) -> [f64; 3];
 }
 
 pub trait ImageLoader {
@@ -42,7 +42,7 @@ pub struct DeserializableScene {
 }
 
 impl DeserializableScene {
-    pub fn into_scene<T: ImageLoader>(self, screen_aspect_ratio: f32, image_loader: &T) -> Scene {
+    pub fn into_scene<T: ImageLoader>(self, screen_aspect_ratio: f64, image_loader: &T) -> Scene {
         let mut cache = ImageCache::new(image_loader);
         Scene {
             camera: self.camera.into_camera(screen_aspect_ratio),

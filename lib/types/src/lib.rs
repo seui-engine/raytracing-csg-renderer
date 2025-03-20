@@ -2,16 +2,16 @@ use std::ops::{Add, Div, Mul};
 
 #[derive(Clone, Copy, Debug)]
 pub struct HDRColor {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
 }
 
 #[derive(Clone, Copy, Debug)]
 pub struct LDRColor {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
 }
 
 impl HDRColor {
@@ -43,7 +43,7 @@ impl Default for HDRColor {
 }
 
 impl LDRColor {
-    pub fn new(r: f32, g: f32, b: f32) -> LDRColor {
+    pub fn new(r: f64, g: f64, b: f64) -> LDRColor {
         LDRColor {
             r: r.min(1.0),
             g: g.min(1.0),
@@ -100,10 +100,10 @@ impl Add for HDRColor {
     }
 }
 
-impl Mul<f32> for HDRColor {
+impl Mul<f64> for HDRColor {
     type Output = HDRColor;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         HDRColor {
             r: self.r * rhs,
             g: self.g * rhs,
@@ -112,10 +112,10 @@ impl Mul<f32> for HDRColor {
     }
 }
 
-impl Div<f32> for HDRColor {
+impl Div<f64> for HDRColor {
     type Output = HDRColor;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         HDRColor {
             r: self.r / rhs,
             g: self.g / rhs,

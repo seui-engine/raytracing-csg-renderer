@@ -38,12 +38,12 @@ struct PlainNearestTexture {
 }
 
 impl Texture for PlainNearestTexture {
-    fn get(&self, u: f32, v: f32) -> LDRColor {
+    fn get(&self, u: f64, v: f64) -> LDRColor {
         let width = self.image.width();
         let height = self.image.height();
 
-        let x = (u * width as f32).round() as usize % width;
-        let y = (v * height as f32).round() as usize % height;
+        let x = (u * width as f64).round() as usize % width;
+        let y = (v * height as f64).round() as usize % height;
 
         let (r, g, b) = self.image.get(y, x).into();
 
@@ -56,9 +56,9 @@ struct PlainLinearTexture {
 }
 
 impl Texture for PlainLinearTexture {
-    fn get(&self, u: f32, v: f32) -> LDRColor {
-        let width = self.image.width() as f32;
-        let height = self.image.height() as f32;
+    fn get(&self, u: f64, v: f64) -> LDRColor {
+        let width = self.image.width() as f64;
+        let height = self.image.height() as f64;
 
         let x = u * (width - 1.0);
         let y = v * (height - 1.0);
@@ -85,6 +85,6 @@ impl Texture for PlainLinearTexture {
     }
 }
 
-fn lerp(a: f32, b: f32, t: f32) -> f32 {
+fn lerp(a: f64, b: f64, t: f64) -> f64 {
     a * (1.0 - t) + b * t
 }
