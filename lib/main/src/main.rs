@@ -22,7 +22,7 @@ use std::{
 struct Args {
     scene: String,
     output: String,
-    #[arg(short, long)]
+    #[arg(short = 'N', long)]
     no_output_png_suffix: bool,
     #[arg(short = 'W', long, default_value_t = 1920)]
     width: usize,
@@ -34,6 +34,10 @@ struct Args {
     threads: usize,
     #[arg(short, long, default_value_t = 1)]
     super_sampling: usize,
+    #[arg(short, long, default_value_t = false)]
+    normal: bool,
+    #[arg(short, long, default_value_t = false)]
+    depth: bool,
 }
 
 pub fn save_ldr_image<P: AsRef<Path>>(
@@ -190,7 +194,34 @@ fn main() {
                                     / LongDouble::from_f64(ss_factor as f64))
                                 / (LongDouble::from_f64(args.height as f64)
                                     - LongDouble::from_f64(1.0));
-                            color = color + sample(&scene, sample_x, sample_y);
+                            color = color
+                                + match (args.normal, args.depth) {
+                                    (false, false) => sample(&scene, sample_x, sample_y),
+                                    _ => {
+                                        let ray = scene.camera.ray(sample_x, sample_y);
+                                        if let Some(hit) = scene.test(ray) {
+                                            let mut r = LongDouble::from_f64(1.0);
+                                            let mut g = LongDouble::from_f64(1.0);
+                                            let mut b = LongDouble::from_f64(1.0);
+                                            if args.normal {
+                                                r = hit.normal.x * LongDouble::from_f64(0.5)
+                                                    + LongDouble::from_f64(0.5);
+                                                g = hit.normal.y * LongDouble::from_f64(0.5)
+                                                    + LongDouble::from_f64(0.5);
+                                                b = hit.normal.z * LongDouble::from_f64(0.5)
+                                                    + LongDouble::from_f64(0.5);
+                                            }
+                                            if args.depth {
+                                                r /= hit.distance.sqrt();
+                                                g /= hit.distance.sqrt();
+                                                b /= hit.distance.sqrt();
+                                            }
+                                            HDRColor { r, g, b }
+                                        } else {
+                                            HDRColor::default()
+                                        }
+                                    }
+                                };
                         }
                     }
                     tmp_hdr_to_ldr(color * inv_ss_factor)
