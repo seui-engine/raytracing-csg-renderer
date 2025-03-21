@@ -4,10 +4,11 @@ use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position, Vec3},
     rt::Ray,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{
-    deserialize::{deserialize_ldr_color, deserialize_ldr_long_double, deserialize_position},
+    deserialize::{deserialize_ldr_color, deserialize_ldr_float, deserialize_position},
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
@@ -18,7 +19,7 @@ use super::{
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
-pub struct Quadric {
+pub struct DeserializableQuadric {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
@@ -27,34 +28,78 @@ pub struct Quadric {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: LongDouble,
+    roughness: f64,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: LongDouble,
+    metallic: f64,
 
     #[serde(default = "zero")]
-    c200: LongDouble,
+    c200: f64,
     #[serde(default = "zero")]
-    c020: LongDouble,
+    c020: f64,
     #[serde(default = "zero")]
-    c002: LongDouble,
+    c002: f64,
     #[serde(default = "zero")]
-    c110: LongDouble,
+    c110: f64,
     #[serde(default = "zero")]
-    c011: LongDouble,
+    c011: f64,
     #[serde(default = "zero")]
-    c101: LongDouble,
+    c101: f64,
     #[serde(default = "zero")]
-    c100: LongDouble,
+    c100: f64,
     #[serde(default = "zero")]
-    c010: LongDouble,
+    c010: f64,
     #[serde(default = "zero")]
-    c001: LongDouble,
+    c001: f64,
     #[serde(default = "zero")]
-    c000: LongDouble,
+    c000: f64,
 
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
+    inside: Position,
+}
+
+impl DeserializableQuadric {
+    pub fn into_rt_model(self) -> Box<dyn RTModel + Send + Sync> {
+        Box::new(Quadric {
+            position: self.position,
+            albedo: self.albedo,
+            roughness: LongDouble::from_f64(self.roughness),
+            metallic: LongDouble::from_f64(self.metallic),
+
+            c200: LongDouble::from_f64(self.c200),
+            c020: LongDouble::from_f64(self.c020),
+            c002: LongDouble::from_f64(self.c002),
+            c110: LongDouble::from_f64(self.c110),
+            c011: LongDouble::from_f64(self.c011),
+            c101: LongDouble::from_f64(self.c101),
+            c100: LongDouble::from_f64(self.c100),
+            c010: LongDouble::from_f64(self.c010),
+            c001: LongDouble::from_f64(self.c001),
+            c000: LongDouble::from_f64(self.c000),
+
+            inside: self.inside,
+        })
+    }
+}
+
+struct Quadric {
+    position: Position,
+    albedo: LDRColor,
+    roughness: LongDouble,
+    metallic: LongDouble,
+
+    c200: LongDouble,
+    c020: LongDouble,
+    c002: LongDouble,
+    c110: LongDouble,
+    c011: LongDouble,
+    c101: LongDouble,
+    c100: LongDouble,
+    c010: LongDouble,
+    c001: LongDouble,
+    c000: LongDouble,
+
     inside: Position,
 }
 
@@ -64,71 +109,77 @@ impl Quadric {
         let origin: Position = (ray.origin - self.position).into();
 
         let (a, b, c) = {
-            let mut a = 0.0;
-            let mut b = 0.0;
-            let mut c = 0.0;
+            let p = ray.direction.x;
+            let q = ray.direction.y;
+            let r = ray.direction.z;
+            let u = origin.x;
+            let v = origin.y;
+            let w = origin.z;
+            let mut a = LongDouble::from_f64(0.0);
+            let mut b = LongDouble::from_f64(0.0);
+            let mut c = LongDouble::from_f64(0.0);
             // c200
-            a += self.c200 * ray.direction.x.powi(2);
-            b += self.c200 * 2.0 * ray.direction.x * origin.x;
-            c += self.c200 * origin.x.powi(2);
+            a += self.c200 * p * p;
+            b += self.c200 * LongDouble::from_f64(2.0) * p * u;
+            c += self.c200 * u * u;
             // c020
-            a += self.c020 * ray.direction.y.powi(2);
-            b += self.c020 * 2.0 * ray.direction.y * origin.y;
-            c += self.c020 * origin.y.powi(2);
+            a += self.c020 * q * q;
+            b += self.c020 * LongDouble::from_f64(2.0) * q * v;
+            c += self.c020 * v * v;
             // c002
-            a += self.c002 * ray.direction.z.powi(2);
-            b += self.c002 * 2.0 * ray.direction.z * origin.z;
-            c += self.c002 * origin.z.powi(2);
+            a += self.c002 * r * r;
+            b += self.c002 * LongDouble::from_f64(2.0) * r * w;
+            c += self.c002 * w * w;
             // c110
-            a += self.c110 * ray.direction.x * ray.direction.y;
-            b += self.c110 * ray.direction.x * origin.y;
-            b += self.c110 * origin.x * ray.direction.y;
-            c += self.c110 * origin.x * origin.y;
+            a += self.c110 * p * q;
+            b += self.c110 * p * v;
+            b += self.c110 * u * q;
+            c += self.c110 * u * v;
             // c011
-            a += self.c011 * ray.direction.y * ray.direction.z;
-            b += self.c011 * ray.direction.y * origin.z;
-            b += self.c011 * origin.y * ray.direction.z;
-            c += self.c011 * origin.y * origin.z;
+            a += self.c011 * q * r;
+            b += self.c011 * q * w;
+            b += self.c011 * v * r;
+            c += self.c011 * v * w;
             // c101
-            a += self.c101 * ray.direction.x * ray.direction.z;
-            b += self.c101 * ray.direction.x * origin.z;
-            b += self.c101 * origin.x * ray.direction.z;
-            c += self.c101 * origin.x * origin.z;
+            a += self.c101 * p * r;
+            b += self.c101 * p * w;
+            b += self.c101 * u * r;
+            c += self.c101 * u * w;
             // c100
-            b += self.c100 * ray.direction.x;
-            c += self.c100 * origin.x;
+            b += self.c100 * p;
+            c += self.c100 * u;
             // c010
-            b += self.c010 * ray.direction.y;
-            c += self.c010 * origin.y;
+            b += self.c010 * q;
+            c += self.c010 * v;
             // c001
-            b += self.c001 * ray.direction.z;
-            c += self.c001 * origin.z;
+            b += self.c001 * r;
+            c += self.c001 * w;
             // c000
             c += self.c000;
             // done
             (a, b, c)
         };
 
-        let discriminant = b.powi(2) - 4.0 * a * c;
-        if discriminant < 0.0 {
+        let discriminant = b * b - LongDouble::from_f64(4.0) * a * c;
+        if discriminant < LongDouble::from_f64(0.0) {
             return None;
         }
 
         let sqrt_d = discriminant.sqrt();
         let (t1, t2) = {
-            let t1 = (-b - sqrt_d) / (2.0 * a);
-            let t2 = (-b + sqrt_d) / (2.0 * a);
+            let t1 = (-b - sqrt_d) / (LongDouble::from_f64(2.0) * a);
+            let t2 = (-b + sqrt_d) / (LongDouble::from_f64(2.0) * a);
             if t1 < t2 {
                 (t1, t2)
             } else {
                 (t2, t1)
             }
         };
-        if t2 < 0.0 {
+        if t2 < LongDouble::from_f64(0.0) {
             return None;
         }
 
-        if t1 < 0.0 {
+        if t1 < LongDouble::from_f64(0.0) {
             Some((
                 Hit {
                     distance: t2,
@@ -139,7 +190,7 @@ impl Quadric {
                     metallic: self.metallic,
                 },
                 Hit {
-                    distance: LongDouble::INFINITY,
+                    distance: LongDouble::infinity(),
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
@@ -171,15 +222,15 @@ impl Quadric {
 
     fn normal(&self, position: Position) -> Direction {
         Direction::new(Vec3::new(
-            2.0 * self.c200 * position.x
+            LongDouble::from_f64(2.0) * self.c200 * position.x
                 + self.c110 * position.y
                 + self.c101 * position.z
                 + self.c100,
-            2.0 * self.c020 * position.y
+            LongDouble::from_f64(2.0) * self.c020 * position.y
                 + self.c110 * position.x
                 + self.c011 * position.z
                 + self.c010,
-            2.0 * self.c002 * position.z
+            LongDouble::from_f64(2.0) * self.c002 * position.z
                 + self.c011 * position.y
                 + self.c101 * position.x
                 + self.c001,
@@ -204,7 +255,7 @@ impl RTModel for Quadric {
         if let Some((hit1, hit2)) = self.internal_test(ray) {
             if inside {
                 result.push(Hit {
-                    distance: 0.0,
+                    distance: LongDouble::from_f64(0.0),
                     normal: -ray.direction,
                     albedo: self.albedo,
                     is_front_face: true,
@@ -222,7 +273,7 @@ impl RTModel for Quadric {
                     ..hit2
                 });
                 result.push(Hit {
-                    distance: LongDouble::INFINITY,
+                    distance: LongDouble::infinity(),
                     normal: ray.direction,
                     albedo: self.albedo,
                     is_front_face: false,
@@ -241,7 +292,7 @@ impl RTModel for Quadric {
             }
         } else if inside {
             result.push(Hit {
-                distance: 0.0,
+                distance: LongDouble::from_f64(0.0),
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face: true,
@@ -249,7 +300,7 @@ impl RTModel for Quadric {
                 metallic: self.metallic,
             });
             result.push(Hit {
-                distance: LongDouble::INFINITY,
+                distance: LongDouble::infinity(),
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,

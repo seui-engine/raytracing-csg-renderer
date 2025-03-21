@@ -2,6 +2,7 @@ use clap::Parser;
 use image::{Rgb, RgbImage};
 use rayon::prelude::*;
 use seui_engine_raytracing_csg_renderer_core::{sample, types::rt::Scene};
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_scene::{DeserializableScene, Image, ImageLoader};
 use seui_engine_raytracing_csg_renderer_types::{HDRColor, LDRColor};
 use std::{
@@ -45,9 +46,21 @@ pub fn save_ldr_image<P: AsRef<Path>>(
 
     for (y, row) in content.iter().enumerate() {
         for (x, pixel) in row.iter().enumerate() {
-            let r = (pixel.r.clamp(0.0, 1.0) * 255.0).to_f64() as u8;
-            let g = (pixel.g.clamp(0.0, 1.0) * 255.0).to_f64() as u8;
-            let b = (pixel.b.clamp(0.0, 1.0) * 255.0).to_f64() as u8;
+            let r = (pixel
+                .r
+                .clamp(LongDouble::from_f64(0.0), LongDouble::from_f64(1.0))
+                * LongDouble::from_f64(255.0))
+            .to_f64() as u8;
+            let g = (pixel
+                .g
+                .clamp(LongDouble::from_f64(0.0), LongDouble::from_f64(1.0))
+                * LongDouble::from_f64(255.0))
+            .to_f64() as u8;
+            let b = (pixel
+                .b
+                .clamp(LongDouble::from_f64(0.0), LongDouble::from_f64(1.0))
+                * LongDouble::from_f64(255.0))
+            .to_f64() as u8;
             img.put_pixel(x as u32, y as u32, Rgb([r, g, b]));
         }
     }
@@ -119,17 +132,17 @@ fn load_scene(
 }
 
 fn tmp_hdr_to_ldr(color: HDRColor) -> LDRColor {
-    const GAMMA: LongDouble = 2.2;
-    const EXPOSURE: LongDouble = 1.0;
+    let gamma = LongDouble::from_f64(2.2);
+    let exposure = LongDouble::from_f64(1.0);
 
-    let r = 1.0 - (-color.r * EXPOSURE).exp();
-    let g = 1.0 - (-color.g * EXPOSURE).exp();
-    let b = 1.0 - (-color.b * EXPOSURE).exp();
+    let r = LongDouble::from_f64(1.0) - (-color.r * exposure).exp();
+    let g = LongDouble::from_f64(1.0) - (-color.g * exposure).exp();
+    let b = LongDouble::from_f64(1.0) - (-color.b * exposure).exp();
 
     LDRColor {
-        r: r.powf(1.0 / GAMMA),
-        g: g.powf(1.0 / GAMMA),
-        b: b.powf(1.0 / GAMMA),
+        r: r.pow(LongDouble::from_f64(1.0) / gamma),
+        g: g.pow(LongDouble::from_f64(1.0) / gamma),
+        b: b.pow(LongDouble::from_f64(1.0) / gamma),
     }
 }
 
@@ -148,11 +161,12 @@ fn main() {
     let scene = load_scene(
         &args.scene,
         &args.scene_type,
-        args.width as LongDouble / args.height as LongDouble,
+        LongDouble::from_f64(args.width as f64) / LongDouble::from_f64(args.height as f64),
     );
 
     let ss_factor = args.super_sampling;
-    let inv_ss_factor = 1.0 / (ss_factor * ss_factor) as LongDouble;
+    let inv_ss_factor =
+        LongDouble::from_f64(1.0) / LongDouble::from_f64((ss_factor * ss_factor) as f64);
 
     let content: Vec<Vec<LDRColor>> = (0..args.height)
         .into_par_iter()
@@ -160,18 +174,22 @@ fn main() {
             (0..args.width)
                 .map(|x| {
                     let mut color = HDRColor {
-                        r: 0.0,
-                        g: 0.0,
-                        b: 0.0,
+                        r: LongDouble::from_f64(0.0),
+                        g: LongDouble::from_f64(0.0),
+                        b: LongDouble::from_f64(0.0),
                     };
                     for sy in 0..ss_factor {
                         for sx in 0..ss_factor {
-                            let sample_x = (x as LongDouble
-                                + sx as LongDouble / ss_factor as LongDouble)
-                                / (args.width as LongDouble - 1.0);
-                            let sample_y = (y as LongDouble
-                                + sy as LongDouble / ss_factor as LongDouble)
-                                / (args.height as LongDouble - 1.0);
+                            let sample_x = (LongDouble::from_f64(x as f64)
+                                + LongDouble::from_f64(sx as f64)
+                                    / LongDouble::from_f64(ss_factor as f64))
+                                / (LongDouble::from_f64(args.width as f64)
+                                    - LongDouble::from_f64(1.0));
+                            let sample_y = (LongDouble::from_f64(y as f64)
+                                + LongDouble::from_f64(sy as f64)
+                                    / LongDouble::from_f64(ss_factor as f64))
+                                / (LongDouble::from_f64(args.height as f64)
+                                    - LongDouble::from_f64(1.0));
                             color = color + sample(&scene, sample_x, sample_y);
                         }
                     }
@@ -216,9 +234,9 @@ impl Image for ImageImage {
         let pixel: &Rgb<u8> = self.image.get_pixel(x as u32, y as u32);
 
         [
-            pixel[0] as LongDouble / 255.0,
-            pixel[1] as LongDouble / 255.0,
-            pixel[2] as LongDouble / 255.0,
+            LongDouble::from_f64(pixel[0] as f64) / LongDouble::from_f64(255.0),
+            LongDouble::from_f64(pixel[1] as f64) / LongDouble::from_f64(255.0),
+            LongDouble::from_f64(pixel[2] as f64) / LongDouble::from_f64(255.0),
         ]
     }
 }

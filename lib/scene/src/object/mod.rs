@@ -2,9 +2,9 @@ use model::{
     csg::{DeserializableDifference, DeserializableIntersection, DeserializableUnion},
     cube::Cube,
     plane::Plane,
-    quadratic::Quadratic,
-    quadric::Quadric,
-    quartic::Quartic,
+    quadratic::DeserializableQuadratic,
+    quadric::DeserializableQuadric,
+    quartic::DeserializableQuartic,
     sphere::DeserializableSphere,
     DeserializableRTModel, RTModel,
 };
@@ -25,9 +25,9 @@ pub enum DeserializableRTObject {
     Sphere(DeserializableSphere),
     Plane(Plane),
     Cube(Cube),
-    Quadric(Quadric),
-    Quadratic(Quadratic),
-    Quartic(Quartic),
+    Quadric(DeserializableQuadric),
+    Quadratic(DeserializableQuadratic),
+    Quartic(DeserializableQuartic),
     Default(DeserializableDefaultRTObject),
 }
 
@@ -51,9 +51,9 @@ impl DeserializableRTObject {
             }
             DeserializableRTObject::Plane(o) => Box::new(ModelRTObject::new(Box::new(o))),
             DeserializableRTObject::Cube(o) => Box::new(ModelRTObject::new(Box::new(o))),
-            DeserializableRTObject::Quadric(o) => Box::new(ModelRTObject::new(Box::new(o))),
-            DeserializableRTObject::Quadratic(o) => Box::new(ModelRTObject::new(Box::new(o))),
-            DeserializableRTObject::Quartic(o) => Box::new(ModelRTObject::new(Box::new(o))),
+            DeserializableRTObject::Quadric(o) => Box::new(ModelRTObject::new(o.into_rt_model())),
+            DeserializableRTObject::Quadratic(o) => Box::new(ModelRTObject::new(o.into_rt_model())),
+            DeserializableRTObject::Quartic(o) => Box::new(ModelRTObject::new(o.into_rt_model())),
             DeserializableRTObject::Default(o) => o.into_rt_object(image_cache),
         }
     }

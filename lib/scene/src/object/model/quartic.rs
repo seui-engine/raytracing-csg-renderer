@@ -4,10 +4,11 @@ use seui_engine_raytracing_csg_renderer_core::types::{
     math::{Direction, Position, Vec3},
     rt::Ray,
 };
+use seui_engine_raytracing_csg_renderer_long_double::LongDouble;
 use seui_engine_raytracing_csg_renderer_types::LDRColor;
 
 use crate::{
-    deserialize::{deserialize_ldr_color, deserialize_ldr_long_double, deserialize_position},
+    deserialize::{deserialize_ldr_color, deserialize_ldr_float, deserialize_position},
     json_schema::{LDRColorSchema, PositionSchema},
 };
 
@@ -18,7 +19,7 @@ use super::{
 
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
-pub struct Quartic {
+pub struct DeserializableQuartic {
     #[serde(default, deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     position: Position,
@@ -27,89 +28,183 @@ pub struct Quartic {
     albedo: LDRColor,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    roughness: LongDouble,
+    roughness: f64,
     #[serde(default, deserialize_with = "deserialize_ldr_float")]
     #[schemars(range(min = 0, max = 1))]
-    metallic: LongDouble,
+    metallic: f64,
 
     #[serde(default = "zero")]
-    c400: LongDouble,
+    c400: f64,
     #[serde(default = "zero")]
-    c040: LongDouble,
+    c040: f64,
     #[serde(default = "zero")]
-    c004: LongDouble,
+    c004: f64,
     #[serde(default = "zero")]
-    c310: LongDouble,
+    c310: f64,
     #[serde(default = "zero")]
-    c301: LongDouble,
+    c301: f64,
     #[serde(default = "zero")]
-    c130: LongDouble,
+    c130: f64,
     #[serde(default = "zero")]
-    c031: LongDouble,
+    c031: f64,
     #[serde(default = "zero")]
-    c103: LongDouble,
+    c103: f64,
     #[serde(default = "zero")]
-    c013: LongDouble,
+    c013: f64,
     #[serde(default = "zero")]
-    c211: LongDouble,
+    c211: f64,
     #[serde(default = "zero")]
-    c121: LongDouble,
+    c121: f64,
     #[serde(default = "zero")]
-    c112: LongDouble,
+    c112: f64,
     #[serde(default = "zero")]
-    c220: LongDouble,
+    c220: f64,
     #[serde(default = "zero")]
-    c022: LongDouble,
+    c022: f64,
     #[serde(default = "zero")]
-    c202: LongDouble,
+    c202: f64,
     #[serde(default = "zero")]
-    c300: LongDouble,
+    c300: f64,
     #[serde(default = "zero")]
-    c030: LongDouble,
+    c030: f64,
     #[serde(default = "zero")]
-    c003: LongDouble,
+    c003: f64,
     #[serde(default = "zero")]
-    c210: LongDouble,
+    c210: f64,
     #[serde(default = "zero")]
-    c201: LongDouble,
+    c201: f64,
     #[serde(default = "zero")]
-    c120: LongDouble,
+    c120: f64,
     #[serde(default = "zero")]
-    c021: LongDouble,
+    c021: f64,
     #[serde(default = "zero")]
-    c102: LongDouble,
+    c102: f64,
     #[serde(default = "zero")]
-    c012: LongDouble,
+    c012: f64,
     #[serde(default = "zero")]
-    c111: LongDouble,
+    c111: f64,
     #[serde(default = "zero")]
-    c200: LongDouble,
+    c200: f64,
     #[serde(default = "zero")]
-    c020: LongDouble,
+    c020: f64,
     #[serde(default = "zero")]
-    c002: LongDouble,
+    c002: f64,
     #[serde(default = "zero")]
-    c110: LongDouble,
+    c110: f64,
     #[serde(default = "zero")]
-    c011: LongDouble,
+    c011: f64,
     #[serde(default = "zero")]
-    c101: LongDouble,
+    c101: f64,
     #[serde(default = "zero")]
-    c100: LongDouble,
+    c100: f64,
     #[serde(default = "zero")]
-    c010: LongDouble,
+    c010: f64,
     #[serde(default = "zero")]
-    c001: LongDouble,
+    c001: f64,
     #[serde(default = "zero")]
-    c000: LongDouble,
+    c000: f64,
 
     #[serde(deserialize_with = "deserialize_position")]
     #[schemars(with = "PositionSchema")]
     inside: Position,
 }
 
+impl DeserializableQuartic {
+    pub fn into_rt_model(self) -> Box<dyn RTModel + Send + Sync> {
+        Box::new(Quartic {
+            position: self.position,
+            albedo: self.albedo,
+            roughness: LongDouble::from_f64(self.roughness),
+            metallic: LongDouble::from_f64(self.metallic),
+
+            c400: LongDouble::from_f64(self.c400),
+            c040: LongDouble::from_f64(self.c040),
+            c004: LongDouble::from_f64(self.c004),
+            c310: LongDouble::from_f64(self.c310),
+            c301: LongDouble::from_f64(self.c301),
+            c130: LongDouble::from_f64(self.c130),
+            c031: LongDouble::from_f64(self.c031),
+            c103: LongDouble::from_f64(self.c103),
+            c013: LongDouble::from_f64(self.c013),
+            c211: LongDouble::from_f64(self.c211),
+            c121: LongDouble::from_f64(self.c121),
+            c112: LongDouble::from_f64(self.c112),
+            c220: LongDouble::from_f64(self.c220),
+            c022: LongDouble::from_f64(self.c022),
+            c202: LongDouble::from_f64(self.c202),
+            c300: LongDouble::from_f64(self.c300),
+            c030: LongDouble::from_f64(self.c030),
+            c003: LongDouble::from_f64(self.c003),
+            c210: LongDouble::from_f64(self.c210),
+            c201: LongDouble::from_f64(self.c201),
+            c120: LongDouble::from_f64(self.c120),
+            c021: LongDouble::from_f64(self.c021),
+            c102: LongDouble::from_f64(self.c102),
+            c012: LongDouble::from_f64(self.c012),
+            c111: LongDouble::from_f64(self.c111),
+            c200: LongDouble::from_f64(self.c200),
+            c020: LongDouble::from_f64(self.c020),
+            c002: LongDouble::from_f64(self.c002),
+            c110: LongDouble::from_f64(self.c110),
+            c011: LongDouble::from_f64(self.c011),
+            c101: LongDouble::from_f64(self.c101),
+            c100: LongDouble::from_f64(self.c100),
+            c010: LongDouble::from_f64(self.c010),
+            c001: LongDouble::from_f64(self.c001),
+            c000: LongDouble::from_f64(self.c000),
+
+            inside: self.inside,
+        })
+    }
+}
+
+pub struct Quartic {
+    position: Position,
+    albedo: LDRColor,
+    roughness: LongDouble,
+    metallic: LongDouble,
+
+    c400: LongDouble,
+    c040: LongDouble,
+    c004: LongDouble,
+    c310: LongDouble,
+    c301: LongDouble,
+    c130: LongDouble,
+    c031: LongDouble,
+    c103: LongDouble,
+    c013: LongDouble,
+    c211: LongDouble,
+    c121: LongDouble,
+    c112: LongDouble,
+    c220: LongDouble,
+    c022: LongDouble,
+    c202: LongDouble,
+    c300: LongDouble,
+    c030: LongDouble,
+    c003: LongDouble,
+    c210: LongDouble,
+    c201: LongDouble,
+    c120: LongDouble,
+    c021: LongDouble,
+    c102: LongDouble,
+    c012: LongDouble,
+    c111: LongDouble,
+    c200: LongDouble,
+    c020: LongDouble,
+    c002: LongDouble,
+    c110: LongDouble,
+    c011: LongDouble,
+    c101: LongDouble,
+    c100: LongDouble,
+    c010: LongDouble,
+    c001: LongDouble,
+    c000: LongDouble,
+
+    inside: Position,
+}
+
 fn linear_roots(a: LongDouble, b: LongDouble) -> Vec<LongDouble> {
-    if b.abs() <= 1e-6 {
+    if b.abs() <= LongDouble::from_f64(1e-6) {
         vec![]
     } else {
         vec![-b / a]
@@ -117,16 +212,16 @@ fn linear_roots(a: LongDouble, b: LongDouble) -> Vec<LongDouble> {
 }
 
 fn quadratic_roots(a: LongDouble, b: LongDouble, c: LongDouble) -> Vec<LongDouble> {
-    if a.abs() <= 1e-6 {
+    if a.abs() <= LongDouble::from_f64(1e-6) {
         return linear_roots(b, c);
     }
 
     let mut roots = Vec::new();
 
-    let discriminant = b * b - 4.0 * a * c;
-    if discriminant >= 0.0 {
-        roots.push((-b + discriminant.sqrt()) / (2.0 * a));
-        roots.push((-b - discriminant.sqrt()) / (2.0 * a));
+    let discriminant = b * b - LongDouble::from_f64(4.0) * a * c;
+    if discriminant >= LongDouble::from_f64(0.0) {
+        roots.push((-b + discriminant.sqrt()) / (LongDouble::from_f64(2.0) * a));
+        roots.push((-b - discriminant.sqrt()) / (LongDouble::from_f64(2.0) * a));
     }
 
     roots.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
@@ -134,7 +229,7 @@ fn quadratic_roots(a: LongDouble, b: LongDouble, c: LongDouble) -> Vec<LongDoubl
 }
 
 fn cubic_roots(a: LongDouble, b: LongDouble, c: LongDouble, d: LongDouble) -> Vec<LongDouble> {
-    if a.abs() <= 1e-6 {
+    if a.abs() <= LongDouble::from_f64(1e-6) {
         return quadratic_roots(b, c, d);
     }
 
@@ -142,29 +237,45 @@ fn cubic_roots(a: LongDouble, b: LongDouble, c: LongDouble, d: LongDouble) -> Ve
     let a2 = c / a;
     let a3 = d / a;
 
-    let q = (3.0 * a2 - a1 * a1) / 9.0;
-    let r = (9.0 * a1 * a2 - 27.0 * a3 - 2.0 * a1 * a1 * a1) / 54.0;
+    let q = (LongDouble::from_f64(3.0) * a2 - a1 * a1) / LongDouble::from_f64(9.0);
+    let r = (LongDouble::from_f64(9.0) * a1 * a2
+        - LongDouble::from_f64(27.0) * a3
+        - LongDouble::from_f64(2.0) * a1 * a1 * a1)
+        / LongDouble::from_f64(54.0);
     let discriminant = q * q * q + r * r;
-    let a_div_3 = a1 / 3.0;
+    let a_div_3 = a1 / LongDouble::from_f64(3.0);
 
     let mut roots = Vec::new();
 
-    if discriminant > 0.0 {
+    if discriminant > LongDouble::from_f64(0.0) {
         let s = (r + discriminant.sqrt()).cbrt();
         let t = (r - discriminant.sqrt()).cbrt();
         roots.push(s + t - a_div_3);
     } else {
-        let theta = (r / (-q.powi(3)).sqrt()).acos();
+        let theta = (r / (-q * q * q).sqrt()).acos();
         if theta.is_nan() {
             return roots;
         }
         let sqrt_q = (-q).sqrt();
-        roots.push(2.0 * sqrt_q * (theta / 3.0).cos() - a_div_3);
         roots.push(
-            2.0 * sqrt_q * ((theta + 2.0 * std::LongDouble::consts::PI) / 3.0).cos() - a_div_3,
+            LongDouble::from_f64(2.0) * sqrt_q * (theta / LongDouble::from_f64(3.0)).cos()
+                - a_div_3,
         );
         roots.push(
-            2.0 * sqrt_q * ((theta - 2.0 * std::LongDouble::consts::PI) / 3.0).cos() - a_div_3,
+            LongDouble::from_f64(2.0)
+                * sqrt_q
+                * ((theta + LongDouble::from_f64(2.0) * LongDouble::pi())
+                    / LongDouble::from_f64(3.0))
+                .cos()
+                - a_div_3,
+        );
+        roots.push(
+            LongDouble::from_f64(2.0)
+                * sqrt_q
+                * ((theta - LongDouble::from_f64(2.0) * LongDouble::pi())
+                    / LongDouble::from_f64(3.0))
+                .cos()
+                - a_div_3,
         );
     }
 
@@ -179,7 +290,7 @@ fn quartic_roots(
     d: LongDouble,
     e: LongDouble,
 ) -> Vec<LongDouble> {
-    if a.abs() <= 1e-6 {
+    if a.abs() <= LongDouble::from_f64(1e-6) {
         return cubic_roots(b, c, d, e);
     }
 
@@ -189,30 +300,33 @@ fn quartic_roots(
     let e = e / a;
 
     let bb = b * b;
-    let p = -3.0 * bb / 8.0 + c;
-    let q = bb * b / 8.0 - b * c / 2.0 + d;
-    let r = -3.0 * bb * bb / 256.0 + bb * c / 16.0 - b * d / 4.0 + e;
+    let p = -LongDouble::from_f64(3.0) * bb / LongDouble::from_f64(8.0) + c;
+    let q = bb * b / LongDouble::from_f64(8.0) - b * c / LongDouble::from_f64(2.0) + d;
+    let r = -LongDouble::from_f64(3.0) * bb * bb / LongDouble::from_f64(256.0)
+        + bb * c / LongDouble::from_f64(16.0)
+        - b * d / LongDouble::from_f64(4.0)
+        + e;
 
     let mut roots = Vec::new();
 
-    if q.abs() < 1e-6 {
-        let discriminant1 = p * p - 4.0 * r;
-        if discriminant1 >= 0.0 {
-            let y1 = (-p + discriminant1.sqrt()) / 2.0;
-            let y2 = (-p - discriminant1.sqrt()) / 2.0;
+    if q.abs() < LongDouble::from_f64(1e-6) {
+        let discriminant1 = p * p - LongDouble::from_f64(4.0) * r;
+        if discriminant1 >= LongDouble::from_f64(0.0) {
+            let y1 = (-p + discriminant1.sqrt()) / LongDouble::from_f64(2.0);
+            let y2 = (-p - discriminant1.sqrt()) / LongDouble::from_f64(2.0);
 
             for y in [y1, y2].iter() {
-                if *y >= 0.0 {
-                    roots.push(y.sqrt() - b / 4.0);
-                    roots.push(-y.sqrt() - b / 4.0);
+                if *y >= LongDouble::from_f64(0.0) {
+                    roots.push(y.sqrt() - b / LongDouble::from_f64(4.0));
+                    roots.push(-y.sqrt() - b / LongDouble::from_f64(4.0));
                 }
             }
         }
     } else {
-        let cubic_a = 1.0;
-        let cubic_b = -p / 2.0;
+        let cubic_a = LongDouble::from_f64(1.0);
+        let cubic_b = -p / LongDouble::from_f64(2.0);
         let cubic_c = -r;
-        let cubic_d = (p * r - q * q / 4.0) / 2.0;
+        let cubic_d = (p * r - q * q / LongDouble::from_f64(4.0)) / LongDouble::from_f64(2.0);
 
         let cubic_roots = cubic_roots(cubic_a, cubic_b, cubic_c, cubic_d);
         if cubic_roots.is_empty() {
@@ -220,14 +334,18 @@ fn quartic_roots(
         }
 
         let z = cubic_roots[0];
-        let u = (2.0 * z - p).sqrt();
-        let v = if u.abs() > 1e-6 { q / (2.0 * u) } else { 0.0 };
+        let u = (LongDouble::from_f64(2.0) * z - p).sqrt();
+        let v = if u.abs() > LongDouble::from_f64(1e-6) {
+            q / (LongDouble::from_f64(2.0) * u)
+        } else {
+            LongDouble::from_f64(0.0)
+        };
 
-        let quadratic1_a = 1.0;
+        let quadratic1_a = LongDouble::from_f64(1.0);
         let quadratic1_b = u;
         let quadratic1_c = z - v;
 
-        let quadratic2_a = 1.0;
+        let quadratic2_a = LongDouble::from_f64(1.0);
         let quadratic2_b = -u;
         let quadratic2_c = z + v;
 
@@ -235,12 +353,18 @@ fn quartic_roots(
             (quadratic1_a, quadratic1_b, quadratic1_c),
             (quadratic2_a, quadratic2_b, quadratic2_c),
         ]
-        .iter()
+        .into_iter()
         {
-            let disc = qb * qb - 4.0 * qa * qc;
-            if disc >= 0.0 {
-                roots.push((-qb + disc.sqrt()) / (2.0 * qa) - b / 4.0);
-                roots.push((-qb - disc.sqrt()) / (2.0 * qa) - b / 4.0);
+            let disc = qb * qb - LongDouble::from_f64(4.0) * qa * qc;
+            if disc >= LongDouble::from_f64(0.0) {
+                roots.push(
+                    (-qb + disc.sqrt()) / (LongDouble::from_f64(2.0) * qa)
+                        - b / LongDouble::from_f64(4.0),
+                );
+                roots.push(
+                    (-qb - disc.sqrt()) / (LongDouble::from_f64(2.0) * qa)
+                        - b / LongDouble::from_f64(4.0),
+                );
             }
         }
     }
@@ -254,254 +378,260 @@ impl Quartic {
         let origin: Position = (ray.origin - self.position).into();
 
         let (a, b, c, d, e) = {
-            let mut a = 0.0;
-            let mut b = 0.0;
-            let mut c = 0.0;
-            let mut d = 0.0;
-            let mut e = 0.0;
+            let p = ray.direction.x;
+            let q = ray.direction.y;
+            let r = ray.direction.z;
+            let u = origin.x;
+            let v = origin.y;
+            let w = origin.z;
+            let mut a = LongDouble::from_f64(0.0);
+            let mut b = LongDouble::from_f64(0.0);
+            let mut c = LongDouble::from_f64(0.0);
+            let mut d = LongDouble::from_f64(0.0);
+            let mut e = LongDouble::from_f64(0.0);
             // c400
-            a += self.c400 * ray.direction.x.powi(4);
-            b += self.c400 * 4.0 * ray.direction.x.powi(3) * origin.x;
-            c += self.c400 * 6.0 * ray.direction.x.powi(2) * origin.x.powi(2);
-            d += self.c400 * 4.0 * ray.direction.x * origin.x.powi(3);
-            e += self.c400 * origin.x.powi(4);
+            a += self.c400 * p * p * p * p;
+            b += self.c400 * LongDouble::from_f64(4.0) * p * p * p * u;
+            c += self.c400 * LongDouble::from_f64(6.0) * p * p * u * u;
+            d += self.c400 * LongDouble::from_f64(4.0) * p * u * u * u;
+            e += self.c400 * u * u * u * u;
             // c040
-            a += self.c040 * ray.direction.y.powi(4);
-            b += self.c040 * 4.0 * ray.direction.y.powi(3) * origin.y;
-            c += self.c040 * 6.0 * ray.direction.y.powi(2) * origin.y.powi(2);
-            d += self.c040 * 4.0 * ray.direction.y * origin.y.powi(3);
-            e += self.c040 * origin.y.powi(4);
+            a += self.c040 * q * q * q * q;
+            b += self.c040 * LongDouble::from_f64(4.0) * q * q * q * v;
+            c += self.c040 * LongDouble::from_f64(6.0) * q * q * v * v;
+            d += self.c040 * LongDouble::from_f64(4.0) * q * v * v * v;
+            e += self.c040 * v * v * v * v;
             // c004
-            a += self.c004 * ray.direction.z.powi(4);
-            b += self.c004 * 4.0 * ray.direction.z.powi(3) * origin.z;
-            c += self.c004 * 6.0 * ray.direction.z.powi(2) * origin.z.powi(2);
-            d += self.c004 * 4.0 * ray.direction.z * origin.z.powi(3);
-            e += self.c004 * origin.z.powi(4);
+            a += self.c004 * r * r * r * r;
+            b += self.c004 * LongDouble::from_f64(4.0) * r * r * r * w;
+            c += self.c004 * LongDouble::from_f64(6.0) * r * r * w * w;
+            d += self.c004 * LongDouble::from_f64(4.0) * r * w * w * w;
+            e += self.c004 * w * w * w * w;
             // c310
-            a += self.c310 * ray.direction.x.powi(3) * ray.direction.y;
-            b += self.c310 * 3.0 * ray.direction.x.powi(3) * origin.y;
-            b += self.c310 * ray.direction.x.powi(2) * ray.direction.y * origin.x;
-            c += self.c310 * 3.0 * ray.direction.x.powi(2) * origin.x * origin.y;
-            c += self.c310 * 3.0 * ray.direction.x * ray.direction.y * origin.x.powi(2);
-            d += self.c310 * 3.0 * ray.direction.x * origin.x.powi(2) * origin.y;
-            d += self.c310 * ray.direction.y * origin.x.powi(3);
-            e += self.c310 * origin.x.powi(3) * origin.y;
+            a += self.c310 * p * p * p * q;
+            b += self.c310 * LongDouble::from_f64(3.0) * p * p * p * v;
+            b += self.c310 * p * p * q * u;
+            c += self.c310 * LongDouble::from_f64(3.0) * p * p * u * v;
+            c += self.c310 * LongDouble::from_f64(3.0) * p * q * u * u;
+            d += self.c310 * LongDouble::from_f64(3.0) * p * u * u * v;
+            d += self.c310 * q * u * u * u;
+            e += self.c310 * u * u * u * v;
             // c301
-            a += self.c301 * ray.direction.x.powi(3) * ray.direction.z;
-            b += self.c301 * 3.0 * ray.direction.x.powi(3) * origin.z;
-            b += self.c301 * ray.direction.x.powi(2) * ray.direction.z * origin.x;
-            c += self.c301 * 3.0 * ray.direction.x.powi(2) * origin.x * origin.z;
-            c += self.c301 * 3.0 * ray.direction.x * ray.direction.z * origin.x.powi(2);
-            d += self.c301 * 3.0 * ray.direction.x * origin.x.powi(2) * origin.z;
-            d += self.c301 * ray.direction.z * origin.x.powi(3);
-            e += self.c301 * origin.x.powi(3) * origin.z;
+            a += self.c301 * p * p * p * r;
+            b += self.c301 * LongDouble::from_f64(3.0) * p * p * p * w;
+            b += self.c301 * p * p * r * u;
+            c += self.c301 * LongDouble::from_f64(3.0) * p * p * u * w;
+            c += self.c301 * LongDouble::from_f64(3.0) * p * r * u * u;
+            d += self.c301 * LongDouble::from_f64(3.0) * p * u * u * w;
+            d += self.c301 * r * u * u * u;
+            e += self.c301 * u * u * u * w;
             // c130
-            a += self.c130 * ray.direction.y.powi(3) * ray.direction.x;
-            b += self.c130 * 3.0 * ray.direction.y.powi(3) * origin.x;
-            b += self.c130 * ray.direction.y.powi(2) * ray.direction.x * origin.y;
-            c += self.c130 * 3.0 * ray.direction.y.powi(2) * origin.y * origin.x;
-            c += self.c130 * 3.0 * ray.direction.y * ray.direction.x * origin.y.powi(2);
-            d += self.c130 * 3.0 * ray.direction.y * origin.y.powi(2) * origin.x;
-            d += self.c130 * ray.direction.x * origin.y.powi(3);
-            e += self.c130 * origin.y.powi(3) * origin.x;
+            a += self.c130 * q * q * q * p;
+            b += self.c130 * LongDouble::from_f64(3.0) * q * q * q * u;
+            b += self.c130 * q * q * p * v;
+            c += self.c130 * LongDouble::from_f64(3.0) * q * q * v * u;
+            c += self.c130 * LongDouble::from_f64(3.0) * q * p * v * v;
+            d += self.c130 * LongDouble::from_f64(3.0) * q * v * v * u;
+            d += self.c130 * p * v * v * v;
+            e += self.c130 * v * v * v * u;
             // c031
-            a += self.c031 * ray.direction.y.powi(3) * ray.direction.z;
-            b += self.c031 * 3.0 * ray.direction.y.powi(3) * origin.z;
-            b += self.c031 * ray.direction.y.powi(2) * ray.direction.z * origin.y;
-            c += self.c031 * 3.0 * ray.direction.y.powi(2) * origin.y * origin.z;
-            c += self.c031 * 3.0 * ray.direction.y * ray.direction.z * origin.y.powi(2);
-            d += self.c031 * 3.0 * ray.direction.y * origin.y.powi(2) * origin.z;
-            d += self.c031 * ray.direction.z * origin.y.powi(3);
-            e += self.c031 * origin.y.powi(3) * origin.z;
+            a += self.c031 * q * q * q * r;
+            b += self.c031 * LongDouble::from_f64(3.0) * q * q * q * w;
+            b += self.c031 * q * q * r * v;
+            c += self.c031 * LongDouble::from_f64(3.0) * q * q * v * w;
+            c += self.c031 * LongDouble::from_f64(3.0) * q * r * v * v;
+            d += self.c031 * LongDouble::from_f64(3.0) * q * v * v * w;
+            d += self.c031 * r * v * v * v;
+            e += self.c031 * v * v * v * w;
             // c103
-            a += self.c103 * ray.direction.z.powi(3) * ray.direction.x;
-            b += self.c103 * 3.0 * ray.direction.z.powi(3) * origin.x;
-            b += self.c103 * ray.direction.z.powi(2) * ray.direction.x * origin.z;
-            c += self.c103 * 3.0 * ray.direction.z.powi(2) * origin.z * origin.x;
-            c += self.c103 * 3.0 * ray.direction.z * ray.direction.x * origin.z.powi(2);
-            d += self.c103 * 3.0 * ray.direction.z * origin.z.powi(2) * origin.x;
-            d += self.c103 * ray.direction.x * origin.z.powi(3);
-            e += self.c103 * origin.z.powi(3) * origin.x;
+            a += self.c103 * r * r * r * p;
+            b += self.c103 * LongDouble::from_f64(3.0) * r * r * r * u;
+            b += self.c103 * r * r * p * w;
+            c += self.c103 * LongDouble::from_f64(3.0) * r * r * w * u;
+            c += self.c103 * LongDouble::from_f64(3.0) * r * p * w * w;
+            d += self.c103 * LongDouble::from_f64(3.0) * r * w * w * u;
+            d += self.c103 * p * w * w * w;
+            e += self.c103 * w * w * w * u;
             // c013
-            a += self.c013 * ray.direction.z.powi(3) * ray.direction.y;
-            b += self.c013 * 3.0 * ray.direction.z.powi(3) * origin.y;
-            b += self.c013 * ray.direction.z.powi(2) * ray.direction.y * origin.z;
-            c += self.c013 * 3.0 * ray.direction.z.powi(2) * origin.z * origin.y;
-            c += self.c013 * 3.0 * ray.direction.z * ray.direction.y * origin.z.powi(2);
-            d += self.c013 * 3.0 * ray.direction.z * origin.z.powi(2) * origin.y;
-            d += self.c013 * ray.direction.y * origin.z.powi(3);
-            e += self.c013 * origin.z.powi(3) * origin.y;
+            a += self.c013 * r * r * r * q;
+            b += self.c013 * LongDouble::from_f64(3.0) * r * r * r * v;
+            b += self.c013 * r * r * q * w;
+            c += self.c013 * LongDouble::from_f64(3.0) * r * r * w * v;
+            c += self.c013 * LongDouble::from_f64(3.0) * r * q * w * w;
+            d += self.c013 * LongDouble::from_f64(3.0) * r * w * w * v;
+            d += self.c013 * q * w * w * w;
+            e += self.c013 * w * w * w * v;
             // c211
-            a += self.c211 * ray.direction.x.powi(2) * ray.direction.y * ray.direction.z;
-            b += self.c211 * 2.0 * ray.direction.x * ray.direction.y * ray.direction.z * origin.x;
-            b += self.c211 * ray.direction.x.powi(2) * ray.direction.z * origin.y;
-            b += self.c211 * ray.direction.x.powi(2) * ray.direction.y * origin.z;
-            c += self.c211 * ray.direction.x.powi(2) * origin.y * origin.z;
-            c += self.c211 * 2.0 * ray.direction.x * ray.direction.y * origin.x * origin.z;
-            c += self.c211 * 2.0 * ray.direction.x * ray.direction.z * origin.x * origin.y;
-            c += self.c211 * ray.direction.y * ray.direction.z * origin.x.powi(2);
-            d += self.c211 * 2.0 * ray.direction.x * origin.x * origin.y * origin.z;
-            d += self.c211 * ray.direction.y * origin.x.powi(2) * origin.z;
-            d += self.c211 * ray.direction.z * origin.x.powi(2) * origin.y;
-            e += self.c211 * origin.x.powi(2) * origin.y * origin.z;
+            a += self.c211 * p * p * q * r;
+            b += self.c211 * LongDouble::from_f64(2.0) * p * q * r * u;
+            b += self.c211 * p * p * r * v;
+            b += self.c211 * p * p * q * w;
+            c += self.c211 * p * p * v * w;
+            c += self.c211 * LongDouble::from_f64(2.0) * p * q * u * w;
+            c += self.c211 * LongDouble::from_f64(2.0) * p * r * u * v;
+            c += self.c211 * q * r * u * u;
+            d += self.c211 * LongDouble::from_f64(2.0) * p * u * v * w;
+            d += self.c211 * q * u * u * w;
+            d += self.c211 * r * u * u * v;
+            e += self.c211 * u * u * v * w;
             // c121
-            a += self.c121 * ray.direction.y.powi(2) * ray.direction.x * ray.direction.z;
-            b += self.c121 * 2.0 * ray.direction.y * ray.direction.x * ray.direction.z * origin.y;
-            b += self.c121 * ray.direction.y.powi(2) * ray.direction.z * origin.x;
-            b += self.c121 * ray.direction.y.powi(2) * ray.direction.x * origin.z;
-            c += self.c121 * ray.direction.y.powi(2) * origin.x * origin.z;
-            c += self.c121 * 2.0 * ray.direction.y * ray.direction.x * origin.y * origin.z;
-            c += self.c121 * 2.0 * ray.direction.y * ray.direction.z * origin.y * origin.x;
-            c += self.c121 * ray.direction.x * ray.direction.z * origin.y.powi(2);
-            d += self.c121 * 2.0 * ray.direction.y * origin.y * origin.x * origin.z;
-            d += self.c121 * ray.direction.x * origin.y.powi(2) * origin.z;
-            d += self.c121 * ray.direction.z * origin.y.powi(2) * origin.x;
-            e += self.c121 * origin.y.powi(2) * origin.x * origin.z;
+            a += self.c121 * q * q * p * r;
+            b += self.c121 * LongDouble::from_f64(2.0) * q * p * r * v;
+            b += self.c121 * q * q * r * u;
+            b += self.c121 * q * q * p * w;
+            c += self.c121 * q * q * u * w;
+            c += self.c121 * LongDouble::from_f64(2.0) * q * p * v * w;
+            c += self.c121 * LongDouble::from_f64(2.0) * q * r * v * u;
+            c += self.c121 * p * r * v * v;
+            d += self.c121 * LongDouble::from_f64(2.0) * q * v * u * w;
+            d += self.c121 * p * v * v * w;
+            d += self.c121 * r * v * v * u;
+            e += self.c121 * v * v * u * w;
             // c112
-            a += self.c112 * ray.direction.z.powi(2) * ray.direction.x * ray.direction.y;
-            b += self.c112 * 2.0 * ray.direction.z * ray.direction.x * ray.direction.y * origin.z;
-            b += self.c112 * ray.direction.z.powi(2) * ray.direction.y * origin.x;
-            b += self.c112 * ray.direction.z.powi(2) * ray.direction.x * origin.y;
-            c += self.c112 * ray.direction.z.powi(2) * origin.x * origin.y;
-            c += self.c112 * 2.0 * ray.direction.z * ray.direction.x * origin.z * origin.y;
-            c += self.c112 * 2.0 * ray.direction.z * ray.direction.y * origin.z * origin.x;
-            c += self.c112 * ray.direction.x * ray.direction.y * origin.z.powi(2);
-            d += self.c112 * 2.0 * ray.direction.z * origin.z * origin.x * origin.y;
-            d += self.c112 * ray.direction.x * origin.z.powi(2) * origin.y;
-            d += self.c112 * ray.direction.y * origin.z.powi(2) * origin.x;
-            e += self.c112 * origin.z.powi(2) * origin.x * origin.y;
+            a += self.c112 * r * r * p * q;
+            b += self.c112 * LongDouble::from_f64(2.0) * r * p * q * w;
+            b += self.c112 * r * r * q * u;
+            b += self.c112 * r * r * p * v;
+            c += self.c112 * r * r * u * v;
+            c += self.c112 * LongDouble::from_f64(2.0) * r * p * w * v;
+            c += self.c112 * LongDouble::from_f64(2.0) * r * q * w * u;
+            c += self.c112 * p * q * w * w;
+            d += self.c112 * LongDouble::from_f64(2.0) * r * w * u * v;
+            d += self.c112 * p * w * w * v;
+            d += self.c112 * q * w * w * u;
+            e += self.c112 * w * w * u * v;
             // c220
-            a += self.c220 * ray.direction.x.powi(2) * ray.direction.y.powi(2);
-            b += self.c220 * 2.0 * ray.direction.x.powi(2) * ray.direction.y * origin.y;
-            b += self.c220 * 2.0 * ray.direction.x * ray.direction.y.powi(2) * origin.x;
-            c += self.c220 * ray.direction.x.powi(2) * origin.y.powi(2);
-            c += self.c220 * 4.0 * ray.direction.x * ray.direction.y * origin.x * origin.y;
-            c += self.c220 * ray.direction.y.powi(2) * origin.x.powi(2);
-            d += self.c220 * 2.0 * ray.direction.x * origin.x * origin.y.powi(2);
-            d += self.c220 * 2.0 * ray.direction.y * origin.x.powi(2) * origin.y;
-            e += self.c220 * origin.x.powi(2) * origin.y.powi(2);
+            a += self.c220 * p * p * q * q;
+            b += self.c220 * LongDouble::from_f64(2.0) * p * p * q * v;
+            b += self.c220 * LongDouble::from_f64(2.0) * p * q * q * u;
+            c += self.c220 * p * p * v * v;
+            c += self.c220 * LongDouble::from_f64(4.0) * p * q * u * v;
+            c += self.c220 * q * q * u * u;
+            d += self.c220 * LongDouble::from_f64(2.0) * p * u * v * v;
+            d += self.c220 * LongDouble::from_f64(2.0) * q * u * u * v;
+            e += self.c220 * u * u * v * v;
             // c022
-            a += self.c022 * ray.direction.z.powi(2) * ray.direction.y.powi(2);
-            b += self.c022 * 2.0 * ray.direction.z.powi(2) * ray.direction.y * origin.y;
-            b += self.c022 * 2.0 * ray.direction.z * ray.direction.y.powi(2) * origin.z;
-            c += self.c022 * ray.direction.z.powi(2) * origin.y.powi(2);
-            c += self.c022 * 4.0 * ray.direction.z * ray.direction.y * origin.z * origin.y;
-            c += self.c022 * ray.direction.y.powi(2) * origin.z.powi(2);
-            d += self.c022 * 2.0 * ray.direction.z * origin.z * origin.y.powi(2);
-            d += self.c022 * 2.0 * ray.direction.y * origin.z.powi(2) * origin.y;
-            e += self.c022 * origin.z.powi(2) * origin.y.powi(2);
+            a += self.c022 * r * r * q * q;
+            b += self.c022 * LongDouble::from_f64(2.0) * r * r * q * v;
+            b += self.c022 * LongDouble::from_f64(2.0) * r * q * q * w;
+            c += self.c022 * r * r * v * v;
+            c += self.c022 * LongDouble::from_f64(4.0) * r * q * w * v;
+            c += self.c022 * q * q * w * w;
+            d += self.c022 * LongDouble::from_f64(2.0) * r * w * v * v;
+            d += self.c022 * LongDouble::from_f64(2.0) * q * w * w * v;
+            e += self.c022 * w * w * v * v;
             // c202
-            a += self.c202 * ray.direction.z.powi(2) * ray.direction.x.powi(2);
-            b += self.c202 * 2.0 * ray.direction.z.powi(2) * ray.direction.x * origin.x;
-            b += self.c202 * 2.0 * ray.direction.z * ray.direction.x.powi(2) * origin.z;
-            c += self.c202 * ray.direction.z.powi(2) * origin.x.powi(2);
-            c += self.c202 * 4.0 * ray.direction.z * ray.direction.x * origin.z * origin.x;
-            c += self.c202 * ray.direction.x.powi(2) * origin.z.powi(2);
-            d += self.c202 * 2.0 * ray.direction.z * origin.z * origin.x.powi(2);
-            d += self.c202 * 2.0 * ray.direction.x * origin.z.powi(2) * origin.x;
-            e += self.c202 * origin.z.powi(2) * origin.x.powi(2);
+            a += self.c202 * r * r * p * p;
+            b += self.c202 * LongDouble::from_f64(2.0) * r * r * p * u;
+            b += self.c202 * LongDouble::from_f64(2.0) * r * p * p * w;
+            c += self.c202 * r * r * u * u;
+            c += self.c202 * LongDouble::from_f64(4.0) * r * p * w * u;
+            c += self.c202 * p * p * w * w;
+            d += self.c202 * LongDouble::from_f64(2.0) * r * w * u * u;
+            d += self.c202 * LongDouble::from_f64(2.0) * p * w * w * u;
+            e += self.c202 * w * w * u * u;
             // c300
-            b += self.c300 * ray.direction.x.powi(3);
-            c += self.c300 * 3.0 * ray.direction.x.powi(2) * origin.x;
-            d += self.c300 * 3.0 * ray.direction.x * origin.x.powi(2);
-            e += self.c300 * origin.x.powi(3);
+            b += self.c300 * p * p * p;
+            c += self.c300 * LongDouble::from_f64(3.0) * p * p * u;
+            d += self.c300 * LongDouble::from_f64(3.0) * p * u * u;
+            e += self.c300 * u * u * u;
             // c030
-            b += self.c030 * ray.direction.y.powi(3);
-            c += self.c030 * 3.0 * ray.direction.y.powi(2) * origin.y;
-            d += self.c030 * 3.0 * ray.direction.y * origin.y.powi(2);
-            e += self.c030 * origin.y.powi(3);
+            b += self.c030 * q * q * q;
+            c += self.c030 * LongDouble::from_f64(3.0) * q * q * v;
+            d += self.c030 * LongDouble::from_f64(3.0) * q * v * v;
+            e += self.c030 * v * v * v;
             // c003
-            b += self.c003 * ray.direction.z.powi(3);
-            c += self.c003 * 3.0 * ray.direction.z.powi(2) * origin.z;
-            d += self.c003 * 3.0 * ray.direction.z * origin.z.powi(2);
-            e += self.c003 * origin.z.powi(3);
+            b += self.c003 * r * r * r;
+            c += self.c003 * LongDouble::from_f64(3.0) * r * r * w;
+            d += self.c003 * LongDouble::from_f64(3.0) * r * w * w;
+            e += self.c003 * w * w * w;
             // c210
-            b += self.c210 * ray.direction.x.powi(2) * ray.direction.y;
-            c += self.c210 * ray.direction.x.powi(2) * origin.y;
-            c += self.c210 * 2.0 * ray.direction.x * ray.direction.y * origin.x;
-            d += self.c210 * 2.0 * ray.direction.x * origin.x * origin.y;
-            d += self.c210 * ray.direction.y * origin.x.powi(2);
-            e += self.c210 * origin.x.powi(2) * origin.y;
+            b += self.c210 * p * p * q;
+            c += self.c210 * p * p * v;
+            c += self.c210 * LongDouble::from_f64(2.0) * p * q * u;
+            d += self.c210 * LongDouble::from_f64(2.0) * p * u * v;
+            d += self.c210 * q * u * u;
+            e += self.c210 * u * u * v;
             // c201
-            b += self.c201 * ray.direction.x.powi(2) * ray.direction.z;
-            c += self.c201 * ray.direction.x.powi(2) * origin.z;
-            c += self.c201 * 2.0 * ray.direction.x * ray.direction.z * origin.x;
-            d += self.c201 * 2.0 * ray.direction.x * origin.x * origin.z;
-            d += self.c201 * ray.direction.z * origin.x.powi(2);
-            e += self.c201 * origin.x.powi(2) * origin.z;
+            b += self.c201 * p * p * r;
+            c += self.c201 * p * p * w;
+            c += self.c201 * LongDouble::from_f64(2.0) * p * r * u;
+            d += self.c201 * LongDouble::from_f64(2.0) * p * u * w;
+            d += self.c201 * r * u * u;
+            e += self.c201 * u * u * w;
             // c120
-            b += self.c120 * ray.direction.y.powi(2) * ray.direction.x;
-            c += self.c120 * ray.direction.y.powi(2) * origin.x;
-            c += self.c120 * 2.0 * ray.direction.y * ray.direction.x * origin.y;
-            d += self.c120 * 2.0 * ray.direction.y * origin.y * origin.x;
-            d += self.c120 * ray.direction.x * origin.y.powi(2);
-            e += self.c120 * origin.y.powi(2) * origin.x;
+            b += self.c120 * q * q * p;
+            c += self.c120 * q * q * u;
+            c += self.c120 * LongDouble::from_f64(2.0) * q * p * v;
+            d += self.c120 * LongDouble::from_f64(2.0) * q * v * u;
+            d += self.c120 * p * v * v;
+            e += self.c120 * v * v * u;
             // c021
-            b += self.c021 * ray.direction.y.powi(2) * ray.direction.z;
-            c += self.c021 * ray.direction.y.powi(2) * origin.z;
-            c += self.c021 * 2.0 * ray.direction.y * ray.direction.z * origin.y;
-            d += self.c021 * 2.0 * ray.direction.y * origin.y * origin.z;
-            d += self.c021 * ray.direction.z * origin.y.powi(2);
-            e += self.c021 * origin.y.powi(2) * origin.z;
+            b += self.c021 * q * q * r;
+            c += self.c021 * q * q * w;
+            c += self.c021 * LongDouble::from_f64(2.0) * q * r * v;
+            d += self.c021 * LongDouble::from_f64(2.0) * q * v * w;
+            d += self.c021 * r * v * v;
+            e += self.c021 * v * v * w;
             // c102
-            b += self.c102 * ray.direction.z.powi(2) * ray.direction.x;
-            c += self.c102 * ray.direction.z.powi(2) * origin.x;
-            c += self.c102 * 2.0 * ray.direction.z * ray.direction.x * origin.z;
-            d += self.c102 * 2.0 * ray.direction.z * origin.z * origin.x;
-            d += self.c102 * ray.direction.x * origin.z.powi(2);
-            e += self.c102 * origin.z.powi(2) * origin.x;
+            b += self.c102 * r * r * p;
+            c += self.c102 * r * r * u;
+            c += self.c102 * LongDouble::from_f64(2.0) * r * p * w;
+            d += self.c102 * LongDouble::from_f64(2.0) * r * w * u;
+            d += self.c102 * p * w * w;
+            e += self.c102 * w * w * u;
             // c012
-            b += self.c012 * ray.direction.z.powi(2) * ray.direction.y;
-            c += self.c012 * ray.direction.z.powi(2) * origin.y;
-            c += self.c012 * 2.0 * ray.direction.z * ray.direction.y * origin.z;
-            d += self.c012 * 2.0 * ray.direction.z * origin.z * origin.y;
-            d += self.c012 * ray.direction.y * origin.z.powi(2);
-            e += self.c012 * origin.z.powi(2) * origin.y;
+            b += self.c012 * r * r * q;
+            c += self.c012 * r * r * v;
+            c += self.c012 * LongDouble::from_f64(2.0) * r * q * w;
+            d += self.c012 * LongDouble::from_f64(2.0) * r * w * v;
+            d += self.c012 * q * w * w;
+            e += self.c012 * w * w * v;
             // c111
-            b += self.c111 * ray.direction.x * ray.direction.y * ray.direction.z;
-            c += self.c111 * ray.direction.x * ray.direction.y * origin.z;
-            c += self.c111 * ray.direction.x * origin.y * ray.direction.z;
-            c += self.c111 * origin.x * ray.direction.y * ray.direction.z;
-            d += self.c111 * ray.direction.x * origin.y * origin.z;
-            d += self.c111 * origin.x * ray.direction.y * origin.z;
-            d += self.c111 * origin.x * origin.y * ray.direction.z;
-            e += self.c111 * origin.x * origin.y * origin.z;
+            b += self.c111 * p * q * r;
+            c += self.c111 * p * q * w;
+            c += self.c111 * p * v * r;
+            c += self.c111 * u * q * r;
+            d += self.c111 * p * v * w;
+            d += self.c111 * u * q * w;
+            d += self.c111 * u * v * r;
+            e += self.c111 * u * v * w;
             // c200
-            c += self.c200 * ray.direction.x.powi(2);
-            d += self.c200 * 2.0 * ray.direction.x * origin.x;
-            e += self.c200 * origin.x.powi(2);
+            c += self.c200 * p * p;
+            d += self.c200 * LongDouble::from_f64(2.0) * p * u;
+            e += self.c200 * u * u;
             // c020
-            c += self.c020 * ray.direction.y.powi(2);
-            d += self.c020 * 2.0 * ray.direction.y * origin.y;
-            e += self.c020 * origin.y.powi(2);
+            c += self.c020 * q * q;
+            d += self.c020 * LongDouble::from_f64(2.0) * q * v;
+            e += self.c020 * v * v;
             // c002
-            c += self.c002 * ray.direction.z.powi(2);
-            d += self.c002 * 2.0 * ray.direction.z * origin.z;
-            e += self.c002 * origin.z.powi(2);
+            c += self.c002 * r * r;
+            d += self.c002 * LongDouble::from_f64(2.0) * r * w;
+            e += self.c002 * w * w;
             // c110
-            c += self.c110 * ray.direction.x * ray.direction.y;
-            d += self.c110 * ray.direction.x * origin.y;
-            d += self.c110 * origin.x * ray.direction.y;
-            e += self.c110 * origin.x * origin.y;
+            c += self.c110 * p * q;
+            d += self.c110 * p * v;
+            d += self.c110 * u * q;
+            e += self.c110 * u * v;
             // c011
-            c += self.c011 * ray.direction.y * ray.direction.z;
-            d += self.c011 * ray.direction.y * origin.z;
-            d += self.c011 * origin.y * ray.direction.z;
-            e += self.c011 * origin.y * origin.z;
+            c += self.c011 * q * r;
+            d += self.c011 * q * w;
+            d += self.c011 * v * r;
+            e += self.c011 * v * w;
             // c101
-            c += self.c101 * ray.direction.x * ray.direction.z;
-            d += self.c101 * ray.direction.x * origin.z;
-            d += self.c101 * origin.x * ray.direction.z;
-            e += self.c101 * origin.x * origin.z;
+            c += self.c101 * p * r;
+            d += self.c101 * p * w;
+            d += self.c101 * u * r;
+            e += self.c101 * u * w;
             // c100
-            d += self.c100 * ray.direction.x;
-            e += self.c100 * origin.x;
+            d += self.c100 * p;
+            e += self.c100 * u;
             // c010
-            d += self.c010 * ray.direction.y;
-            e += self.c010 * origin.y;
+            d += self.c010 * q;
+            e += self.c010 * v;
             // c001
-            d += self.c001 * ray.direction.z;
-            e += self.c001 * origin.z;
+            d += self.c001 * r;
+            e += self.c001 * w;
             // c000
             e += self.c000;
             // done
@@ -510,7 +640,7 @@ impl Quartic {
 
         quartic_roots(a, b, c, d, e)
             .into_iter()
-            .filter(|t| *t >= 0.0)
+            .filter(|t| *t >= LongDouble::from_f64(0.0))
             .map(|distance| Hit {
                 distance,
                 normal: self.normal(origin + ray.direction * distance),
@@ -523,66 +653,69 @@ impl Quartic {
     }
 
     fn normal(&self, position: Position) -> Direction {
+        let x = position.x;
+        let y = position.y;
+        let z = position.z;
         Direction::new(Vec3::new(
-            4.0 * self.c400 * position.x.powi(3)
-                + 3.0 * self.c310 * position.x.powi(2) * position.y
-                + 3.0 * self.c301 * position.x.powi(2) * position.z
-                + 3.0 * self.c300 * position.x.powi(2)
-                + 2.0 * self.c220 * position.x * position.y.powi(2)
-                + 2.0 * self.c202 * position.x * position.z.powi(2)
-                + 2.0 * self.c211 * position.x * position.y * position.z
-                + 2.0 * self.c210 * position.x * position.y
-                + 2.0 * self.c201 * position.x * position.z
-                + 2.0 * self.c200 * position.x
-                + self.c130 * position.y.powi(3)
-                + self.c103 * position.z.powi(3)
-                + self.c121 * position.y.powi(2) * position.z
-                + self.c112 * position.y * position.z.powi(2)
-                + self.c120 * position.y.powi(2)
-                + self.c102 * position.z.powi(2)
-                + self.c111 * position.y * position.z
-                + self.c110 * position.y
-                + self.c101 * position.z
+            LongDouble::from_f64(4.0) * self.c400 * x * x * x
+                + LongDouble::from_f64(3.0) * self.c310 * x * x * y
+                + LongDouble::from_f64(3.0) * self.c301 * x * x * z
+                + LongDouble::from_f64(3.0) * self.c300 * x * x
+                + LongDouble::from_f64(2.0) * self.c220 * x * y * y
+                + LongDouble::from_f64(2.0) * self.c202 * x * z * z
+                + LongDouble::from_f64(2.0) * self.c211 * x * y * z
+                + LongDouble::from_f64(2.0) * self.c210 * x * y
+                + LongDouble::from_f64(2.0) * self.c201 * x * z
+                + LongDouble::from_f64(2.0) * self.c200 * x
+                + self.c130 * y * y * y
+                + self.c103 * z * z * z
+                + self.c121 * y * y * z
+                + self.c112 * y * z * z
+                + self.c120 * y * y
+                + self.c102 * z * z
+                + self.c111 * y * z
+                + self.c110 * y
+                + self.c101 * z
                 + self.c100,
-            4.0 * self.c040 * position.y.powi(3)
-                + 3.0 * self.c130 * position.y.powi(2) * position.x
-                + 3.0 * self.c031 * position.y.powi(2) * position.z
-                + 3.0 * self.c030 * position.y.powi(2)
-                + 2.0 * self.c220 * position.y * position.x.powi(2)
-                + 2.0 * self.c022 * position.y * position.z.powi(2)
-                + 2.0 * self.c121 * position.y * position.x * position.z
-                + 2.0 * self.c120 * position.y * position.x
-                + 2.0 * self.c021 * position.y * position.z
-                + 2.0 * self.c020 * position.y
-                + self.c310 * position.x.powi(3)
-                + self.c013 * position.z.powi(3)
-                + self.c211 * position.x.powi(2) * position.z
-                + self.c112 * position.x * position.z.powi(2)
-                + self.c210 * position.x.powi(2)
-                + self.c012 * position.z.powi(2)
-                + self.c111 * position.x * position.z
-                + self.c110 * position.x
-                + self.c011 * position.z
+            LongDouble::from_f64(4.0) * self.c040 * y * y * y
+                + LongDouble::from_f64(3.0) * self.c130 * y * y * x
+                + LongDouble::from_f64(3.0) * self.c031 * y * y * z
+                + LongDouble::from_f64(3.0) * self.c030 * y * y
+                + LongDouble::from_f64(2.0) * self.c220 * y * x * x
+                + LongDouble::from_f64(2.0) * self.c022 * y * z * z
+                + LongDouble::from_f64(2.0) * self.c121 * y * x * z
+                + LongDouble::from_f64(2.0) * self.c120 * y * x
+                + LongDouble::from_f64(2.0) * self.c021 * y * z
+                + LongDouble::from_f64(2.0) * self.c020 * y
+                + self.c310 * x * x * x
+                + self.c013 * z * z * z
+                + self.c211 * x * x * z
+                + self.c112 * x * z * z
+                + self.c210 * x * x
+                + self.c012 * z * z
+                + self.c111 * x * z
+                + self.c110 * x
+                + self.c011 * z
                 + self.c010,
-            4.0 * self.c004 * position.z.powi(3)
-                + 3.0 * self.c013 * position.z.powi(2) * position.y
-                + 3.0 * self.c103 * position.z.powi(2) * position.x
-                + 3.0 * self.c003 * position.z.powi(2)
-                + 2.0 * self.c022 * position.z * position.y.powi(2)
-                + 2.0 * self.c202 * position.z * position.x.powi(2)
-                + 2.0 * self.c112 * position.z * position.y * position.x
-                + 2.0 * self.c012 * position.z * position.y
-                + 2.0 * self.c102 * position.z * position.x
-                + 2.0 * self.c002 * position.z
-                + self.c031 * position.y.powi(3)
-                + self.c301 * position.x.powi(3)
-                + self.c121 * position.y.powi(2) * position.x
-                + self.c211 * position.y * position.x.powi(2)
-                + self.c021 * position.y.powi(2)
-                + self.c201 * position.x.powi(2)
-                + self.c111 * position.y * position.x
-                + self.c011 * position.y
-                + self.c101 * position.x
+            LongDouble::from_f64(4.0) * self.c004 * z * z * z
+                + LongDouble::from_f64(3.0) * self.c013 * z * z * y
+                + LongDouble::from_f64(3.0) * self.c103 * z * z * x
+                + LongDouble::from_f64(3.0) * self.c003 * z * z
+                + LongDouble::from_f64(2.0) * self.c022 * z * y * y
+                + LongDouble::from_f64(2.0) * self.c202 * z * x * x
+                + LongDouble::from_f64(2.0) * self.c112 * z * y * x
+                + LongDouble::from_f64(2.0) * self.c012 * z * y
+                + LongDouble::from_f64(2.0) * self.c102 * z * x
+                + LongDouble::from_f64(2.0) * self.c002 * z
+                + self.c031 * y * y * y
+                + self.c301 * x * x * x
+                + self.c121 * y * y * x
+                + self.c211 * y * x * x
+                + self.c021 * y * y
+                + self.c201 * x * x
+                + self.c111 * y * x
+                + self.c011 * y
+                + self.c101 * x
                 + self.c001,
         ))
     }
@@ -608,7 +741,7 @@ impl RTModel for Quartic {
         if inside {
             is_front_face = true;
             result.push(Hit {
-                distance: 0.0,
+                distance: LongDouble::from_f64(0.0),
                 normal: -ray.direction,
                 albedo: self.albedo,
                 is_front_face,
@@ -626,7 +759,7 @@ impl RTModel for Quartic {
         }
         if is_front_face {
             result.push(Hit {
-                distance: LongDouble::INFINITY,
+                distance: LongDouble::infinity(),
                 normal: ray.direction,
                 albedo: self.albedo,
                 is_front_face: false,

@@ -1,9 +1,9 @@
 use csg::{DeserializableDifference, DeserializableIntersection, DeserializableUnion};
 use cube::Cube;
 use plane::Plane;
-use quadratic::Quadratic;
-use quadric::Quadric;
-use quartic::Quartic;
+use quadratic::DeserializableQuadratic;
+use quadric::DeserializableQuadric;
+use quartic::DeserializableQuartic;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use seui_engine_raytracing_csg_renderer_core::types::{math::Direction, rt::Ray};
@@ -45,9 +45,9 @@ pub enum DeserializableRTModel {
     Sphere(DeserializableSphere),
     Plane(Plane),
     Cube(Cube),
-    Quadric(Quadric),
-    Quadratic(Quadratic),
-    Quartic(Quartic),
+    Quadric(DeserializableQuadric),
+    Quadratic(DeserializableQuadratic),
+    Quartic(DeserializableQuartic),
 }
 
 impl DeserializableRTModel {
@@ -62,9 +62,9 @@ impl DeserializableRTModel {
             DeserializableRTModel::Sphere(o) => o.into_rt_model(image_cache),
             DeserializableRTModel::Plane(o) => Box::new(o),
             DeserializableRTModel::Cube(o) => Box::new(o),
-            DeserializableRTModel::Quadric(o) => Box::new(o),
-            DeserializableRTModel::Quadratic(o) => Box::new(o),
-            DeserializableRTModel::Quartic(o) => Box::new(o),
+            DeserializableRTModel::Quadric(o) => o.into_rt_model(),
+            DeserializableRTModel::Quadratic(o) => o.into_rt_model(),
+            DeserializableRTModel::Quartic(o) => o.into_rt_model(),
         }
     }
 }

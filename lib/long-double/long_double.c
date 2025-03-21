@@ -84,7 +84,7 @@ long_double_t c_long_double_exp(long_double_t a) {
 }
 
 long_double_t c_long_double_abs(long_double_t a) {
-    return t(absl(f(a)));
+    return t(fabsl(f(a)));
 }
 
 bool c_long_double_isinf(long_double_t a) {
