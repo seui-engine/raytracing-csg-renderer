@@ -21,7 +21,7 @@ use std::{
 struct Args {
     scene: String,
     output: String,
-    #[arg(short, long)]
+    #[arg(short = 'N', long)]
     no_output_png_suffix: bool,
     #[arg(short = 'W', long, default_value_t = 1920)]
     width: usize,
@@ -33,6 +33,10 @@ struct Args {
     threads: usize,
     #[arg(short, long, default_value_t = 1)]
     super_sampling: usize,
+    #[arg(short, long, default_value_t = false)]
+    normal: bool,
+    #[arg(short, long, default_value_t = false)]
+    depth: bool,
 }
 
 pub fn save_ldr_image<P: AsRef<Path>>(
@@ -166,7 +170,31 @@ fn main() {
                                 / (args.width as f64 - 1.0);
                             let sample_y = (y as f64 + sy as f64 / ss_factor as f64)
                                 / (args.height as f64 - 1.0);
-                            color = color + sample(&scene, sample_x, sample_y);
+                            color = color
+                                + match (args.normal, args.depth) {
+                                    (false, false) => sample(&scene, sample_x, sample_y),
+                                    _ => {
+                                        let ray = scene.camera.ray(sample_x, sample_y);
+                                        if let Some(hit) = scene.test(ray) {
+                                            let mut r = 1.0;
+                                            let mut g = 1.0;
+                                            let mut b = 1.0;
+                                            if args.normal {
+                                                r = hit.normal.x * 0.5 + 0.5;
+                                                g = hit.normal.y * 0.5 + 0.5;
+                                                b = hit.normal.z * 0.5 + 0.5;
+                                            }
+                                            if args.depth {
+                                                r /= hit.distance.sqrt();
+                                                g /= hit.distance.sqrt();
+                                                b /= hit.distance.sqrt();
+                                            }
+                                            HDRColor { r, g, b }
+                                        } else {
+                                            HDRColor::BLACK
+                                        }
+                                    }
+                                };
                         }
                     }
                     tmp_hdr_to_ldr(color * inv_ss_factor)
