@@ -67,7 +67,7 @@ fn remove_duplicate_hits(sorted: &mut Vec<Hit>) {
     for hit in sorted.drain(..) {
         if let Some(last) = result.last() {
             if last.is_front_face != hit.is_front_face
-                && (last.distance - hit.distance).abs() < 0.001
+                && (last.distance - hit.distance).abs() < 1e-6
             {
                 result.pop();
                 continue;
