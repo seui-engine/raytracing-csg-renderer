@@ -1,35 +1,21 @@
-# Getting Started
+# Raytracing CSG Renderer
+
+## Getting Started
 
 ```sh
 sh scripts/usage.sh
 ```
 
+## Usage
 
+1. Write the scene in JSON, YAML, or TOML format (jsonc, json5, and hjson are also supported).
+2. Run the following command:
+   ```sh
+   cargo run --release [options] <path-to-scene> <path-to-output>
+   ```
 
-# Cube
+## Features
 
-### Schema
-```json
-{
-  "type": "object",
-  "required": ["albedo", "position", "size", "scale", "type"],
-  "properties": {
-    "albedo": {
-      "$ref": "#/definitions/LDRColor"
-    },
-    "position": {
-      "$ref": "#/definitions/Position"
-    },
-    "size": {
-      "$ref": "#/definitions/Size"
-    },
-    "scale": {
-      "$ref": "#/definitions/Scale"
-    },
-    "type": {
-      "type": "string",
-      "enum": ["cube"]
-    }
-  }
-}
-```
+- [x] Polynomial surface of degree 1 to 4
+- [x] Texture Mapping on Sphere
+- [ ] ... TODO
